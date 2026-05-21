@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Design Tokens — Infodive
+   Source of truth: tailwind.config.ts
+   ============================================================ */
+
+@layer base {
+  :root {
+    /* Brand */
+    --brand: #0E66FF;
+    --brand-deep: #001DFF;
+    --brand-mid: #0E5CFF;
+    --brand-light: #1469FD;
+    --brand-tint: #E4EAFF;
+
+    /* Accents */
+    --teal: #46BEA3;
+    --indigo: #5754FF;
+
+    /* Neutrals */
+    --ink-950: #141413;
+    --ink-900: #1A1919;
+    --ink-500: #7B7B7B;
+    --ink-300: #BFBFBF;
+    --ink-200: #D8D8D8;
+    --ink-50:  #FAFAFA;
+    --white:   #FFFFFF;
+
+    /* Spacing rhythm (rem) */
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 1.5rem;
+    --space-lg: 2.5rem;
+    --space-xl: 4rem;
+    --space-2xl: 6rem;
+  }
+
+  html {
+    @apply scroll-smooth;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+
+  body {
+    @apply bg-white text-ink-900 font-sans antialiased;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-ink-950 font-semibold tracking-tight;
+    line-height: 1.15;
+  }
+
+  h1 { @apply text-4xl md:text-5xl lg:text-6xl; }
+  h2 { @apply text-3xl md:text-4xl; }
+  h3 { @apply text-2xl md:text-3xl; }
+  h4 { @apply text-xl md:text-2xl; }
+
+  a {
+    @apply text-brand transition-colors;
+  }
+
+  a:hover {
+    color: var(--brand-deep);
+  }
+}
+
+/* ============================================================
+   Componentes Reutilizáveis
+   ============================================================ */
+
+@layer components {
+  /* Container padrão */
+  .container-default {
+    @apply mx-auto max-w-container px-6 md:px-10;
+  }
+
+  /* Botões */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium transition-all duration-200 rounded;
+  }
+
+  .btn-primary {
+    @apply btn bg-brand text-white hover:bg-brand-deep;
+  }
+
+  .btn-secondary {
+    @apply btn bg-white text-ink-950 border border-ink-200 hover:border-ink-500;
+  }
+
+  .btn-ghost {
+    @apply btn text-ink-900 hover:bg-ink-50;
+  }
+
+  .btn-dark {
+    @apply btn bg-ink-950 text-white hover:bg-ink-900;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white border border-ink-200 rounded-lg p-6 transition-all duration-200;
+  }
+
+  .card-hover {
+    @apply card hover:border-ink-500 hover:-translate-y-0.5;
+  }
+
+  /* Inputs */
+  .input {
+    @apply w-full px-4 py-3 border border-ink-200 rounded text-ink-900 placeholder:text-ink-300 transition-colors;
+    @apply focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/10;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-ink-900 mb-2;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded;
+  }
+
+  .badge-teal {
+    @apply badge bg-teal/10 text-teal;
+  }
+
+  .badge-brand {
+    @apply badge bg-brand-tint text-brand-deep;
+  }
+
+  /* Seções */
+  .section {
+    @apply py-20 md:py-28;
+  }
+
+  .section-dark {
+    @apply section bg-ink-950 text-white;
+  }
+
+  .section-tint {
+    @apply section bg-ink-50;
+  }
+
+  /* Eyebrow (label acima de heading) */
+  .eyebrow {
+    @apply text-xs font-medium uppercase tracking-widest text-brand mb-3;
+  }
+}
+
+/* ============================================================
+   Utilitários
+   ============================================================ */
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Scrollbar customizada para feed social */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: var(--ink-200);
+    border-radius: 3px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: var(--ink-500);
+  }
+}
