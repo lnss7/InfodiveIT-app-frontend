@@ -48,8 +48,6 @@ Sobre a Infodive
 /solucoes/[slug]           Página individual de Solução (×9)
 /produtos                  Catálogo de Produtos
 /produtos/[slug]           Página individual de Produto
-/fabricantes               Grid de Fabricantes
-/fabricantes/[slug]        Página individual de Fabricante
 /servicos                  Página de Serviços
 /conteudos                 Hub de Conteúdos
 /conteudos/[slug]          Artigo / Material individual
@@ -62,7 +60,6 @@ Sobre a Infodive
 ```
 /admin                     Dashboard
 /admin/categorias          CRUD de Categorias
-/admin/fabricantes         CRUD de Fabricantes
 /admin/produtos            CRUD de Produtos
 /admin/servicos            CRUD de Serviços
 /admin/conteudos           CRUD de Conteúdos
@@ -84,43 +81,41 @@ Sobre a Infodive
 - Subtítulo
 - 2 CTAs: "Conheça nossas soluções" + "Fale com um especialista"
 
-**Seção 2 — Números / Credenciais**
-- Desde 2003
-- 100% projetos entregues
-- N clientes atendidos
-- Animação de contagem no scroll (GSAP)
 
-**Seção 3 — Soluções**
+**Seção 2 — Fabricantes**
+- Marquee/strip infinito com logos dos parceiros
+- Animação suave contínua
+- Hover pausa o scroll
+
+**Seção 3 — Telas carrosel**
+- Telas dos produtos passando em carrosel
+
+**Seção 4 — Soluções**
 - Grid 3×3 ou 2×5 com as categorias do portfólio
 - Ícone + nome + descrição curta
 - Hover com micro-animação
 - CTA individual por card
 
-**Seção 4 — Produtos em Destaque**
+**Seção 5 — Produtos em Destaque**
 - Seleção manual de produtos marcados como destaque no admin
 - Cards com fabricante, categoria, nome
 - Link para página do produto
 
-**Seção 5 — Fabricantes**
-- Marquee/strip infinito com logos dos parceiros
-- Animação suave contínua
-- Hover pausa o scroll
+**Seção 6 — Cases**
+- Grid com cases de principais clientes
+- CTA para uma pagina especifica com todos os cases
 
-**Seção 6 — Problemas que Resolvemos**
+**Seção 7 — Problemas que Resolvemos**
 - Lista de desafios do mercado
 - Layout editorial em duas colunas
 - Cada item linkado para a solução correspondente
 
-**Seção 7 — Serviços**
-- Apresentação resumida dos serviços profissionais
-- Grid de ícone + nome + descrição curta
-
-**Seção 8 — Últimos Conteúdos**
+**Seção 8 — Últimos Conteúdos - blog**
 - 3 cards dos conteúdos mais recentes
 - Tipo, título, fabricante/categoria
 - CTA "Ver todos os conteúdos"
 
-**Seção 9 — Contato**
+**Seção 9 — Contato + formulario**
 - Headline de fechamento
 - Formulário de contato inline:
   - Nome, Empresa, E-mail, Telefone, Cargo
