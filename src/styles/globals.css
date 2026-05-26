@@ -39,7 +39,7 @@
   }
 
   html {
-    @apply scroll-smooth;
+    @apply scroll-smooth bg-ink-950;
     font-feature-settings: 'cv11', 'ss01';
   }
 
@@ -145,7 +145,7 @@
   }
 
   .hero {
-    @apply relative min-h-[95vh] flex items-center justify-center bg-ink-950 text-white overflow-hidden;
+    @apply relative min-h-[115vh] flex items-center justify-center bg-ink-950 text-white overflow-hidden;
   }
 
   /* Eyebrow (label acima de heading) */

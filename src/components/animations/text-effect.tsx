@@ -16,6 +16,8 @@ type TextEffectProps = {
     container?: Variants
     item?: Variants
   }
+  highlightWords?: string[]
+  highlightClassName?: string
 }
 
 const defaultContainerVariants: Variants = {
@@ -56,6 +58,8 @@ export function TextEffect({
   delay = 0,
   duration = 0.45,
   variants,
+  highlightWords = [],
+  highlightClassName,
 }: TextEffectProps) {
   // Split text into words or characters
   const segments = per === 'word' ? children.split(' ') : children.split('')
@@ -86,6 +90,12 @@ export function TextEffect({
         className="inline-flex flex-wrap justify-center"
       >
         {segments.map((segment, index) => {
+          // Normalize segment for checking highlight (remove commas/periods/etc)
+          const cleanSegment = segment.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+          const isHighlighted = highlightWords.some(
+            (word) => cleanSegment.toLowerCase() === word.toLowerCase()
+          )
+
           return (
             <motion.span
               key={`${segment}-${index}`}
@@ -93,7 +103,8 @@ export function TextEffect({
               transition={itemTransition}
               className={cn(
                 'inline-block',
-                per === 'word' && 'mr-[0.25em]'
+                per === 'word' && 'mr-[0.25em]',
+                isHighlighted && highlightClassName
               )}
             >
               {segment === '' ? '\u00A0' : segment}
