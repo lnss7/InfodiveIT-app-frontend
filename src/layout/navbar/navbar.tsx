@@ -64,20 +64,23 @@ export function Navbar() {
           <div
             className={cn(
               'pointer-events-auto relative',
-              'rounded-2xl border border-ink-200',
-              'backdrop-blur-xl backdrop-saturate-150',
-              'transition-[background-color,box-shadow] duration-200',
+              'rounded-2xl transition-[background-color,box-shadow,border-color] duration-300',
               scrolled
-                ? 'bg-white/85 shadow-[0_10px_30px_-12px_rgba(20,20,19,0.12),0_2px_6px_-2px_rgba(20,20,19,0.04)]'
-                : 'bg-white/70 shadow-[0_1px_0_0_rgba(20,20,19,0.04)]',
+                ? 'bg-white/85 border border-ink-200 backdrop-blur-xl backdrop-saturate-150 shadow-[0_10px_30px_-12px_rgba(20,20,19,0.12),0_2px_6px_-2px_rgba(20,20,19,0.04)]'
+                : 'bg-transparent border border-transparent shadow-none',
             )}
           >
             <div className="flex h-14 items-center justify-between px-4 md:h-16 md:px-5">
-              <Logo />
+              <Logo scrolled={scrolled} />
 
               <nav
                 aria-label="Navegação principal"
-                className="hidden lg:flex items-center gap-1"
+                className={cn(
+                  'hidden lg:flex items-center gap-1 transition-all duration-300',
+                  scrolled
+                    ? 'px-0 py-0 bg-transparent border-transparent'
+                    : 'rounded-full bg-white/[0.06] border border-white/10 px-5 py-1.5 backdrop-blur-md shadow-lg',
+                )}
               >
                 {navLinks.map((link) => {
                   const isDropdown = !!link.dropdown
@@ -102,17 +105,22 @@ export function Navbar() {
                           }
                           className={cn(
                             'inline-flex items-center gap-1 rounded-md px-3 py-1.5',
-                            'text-sm font-medium transition-colors',
+                            'text-sm font-medium transition-all duration-300',
                             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/30',
-                            isOpen
-                              ? 'bg-ink-50 text-ink-950'
-                              : 'text-ink-900 hover:bg-ink-50 hover:text-ink-950',
+                            scrolled
+                              ? isOpen
+                                ? 'bg-ink-50 text-ink-950'
+                                : 'text-ink-900 hover:bg-ink-50 hover:text-ink-950'
+                              : isOpen
+                                ? 'bg-white/15 text-white'
+                                : 'text-white/80 hover:bg-white/10 hover:text-white',
                           )}
                         >
                           {link.label}
                           <ChevronDown
                             className={cn(
-                              'h-3.5 w-3.5 text-ink-500 transition-transform duration-200',
+                              'h-3.5 w-3.5 transition-transform duration-300',
+                              scrolled ? 'text-ink-500' : 'text-white/60',
                               isOpen && 'rotate-180',
                             )}
                             strokeWidth={2}
@@ -128,9 +136,11 @@ export function Navbar() {
                       href={link.href}
                       className={cn(
                         'inline-flex items-center rounded-md px-3 py-1.5',
-                        'text-sm font-medium text-ink-900',
-                        'transition-colors hover:bg-ink-50 hover:text-ink-950',
+                        'text-sm font-medium transition-all duration-300',
                         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/30',
+                        scrolled
+                          ? 'text-ink-900 hover:bg-ink-50 hover:text-ink-950'
+                          : 'text-white/80 hover:bg-white/10 hover:text-white',
                       )}
                     >
                       {link.label}
@@ -143,10 +153,11 @@ export function Navbar() {
                 <Link
                   href="/contato"
                   className={cn(
-                    'hidden md:inline-flex items-center gap-1.5 rounded-md',
-                    'bg-ink-950 px-4 py-2 text-sm font-medium text-white',
-                    'transition-colors hover:bg-ink-900',
+                    'hidden md:inline-flex items-center gap-1.5 text-sm font-medium transition-all duration-300',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/30',
+                    scrolled
+                      ? 'bg-ink-950 px-4 py-2 text-white hover:bg-ink-900 rounded-md'
+                      : 'bg-brand hover:bg-brand-light px-5 py-2 text-white rounded-full border border-brand/20 shadow-[0_4px_14px_rgba(14,102,255,0.25)]',
                   )}
                 >
                   Fale com um especialista
@@ -160,8 +171,11 @@ export function Navbar() {
                   aria-expanded={mobileOpen}
                   className={cn(
                     'lg:hidden inline-flex h-9 w-9 items-center justify-center',
-                    'rounded-md text-ink-900 hover:bg-ink-50 transition-colors',
+                    'rounded-md transition-all duration-300',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/30',
+                    scrolled
+                      ? 'text-ink-900 hover:bg-ink-50'
+                      : 'text-white hover:bg-white/10',
                   )}
                 >
                   <Menu className="h-5 w-5" strokeWidth={2} />

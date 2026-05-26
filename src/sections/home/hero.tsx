@@ -42,7 +42,7 @@ const MARQUEE_PARTNERS = [...PARTNERS, ...PARTNERS];
 
 export function Hero() {
   return (
-    <section className="hero relative overflow-hidden bg-ink-950 flex flex-col justify-center min-h-[115vh]">
+    <section className="hero relative overflow-hidden bg-ink-950 flex flex-col justify-center min-h-screen md:min-h-[115vh]">
       {/* Background Interactive Grid filling the entire section */}
       <InteractiveGridPattern
         width={48}
@@ -52,7 +52,7 @@ export function Hero() {
         squaresClassName="hover:fill-brand/10 transition-all duration-150"
       />
 
-      <div className="container-default relative z-10 text-center py-20 md:py-28 flex flex-col items-center justify-center">
+      <div className="container-default relative z-10 text-center pt-28 pb-16 md:py-28 flex flex-col items-center justify-center w-full max-w-full">
         {/* Eyebrow */}
         <TextEffect
           per="word"
@@ -71,7 +71,7 @@ export function Hero() {
           preset="blur"
           delay={0.2}
           duration={0.9}
-          className="text-balance text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6 max-w-4xl leading-[1.15]"
+          className="text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6 max-w-4xl leading-[1.15] px-2"
           highlightWords={["missão", "crítica"]}
           highlightClassName="font-black text-[var(--brand-light)] drop-shadow-[0_2px_12px_rgba(14,102,255,0.2)]"
         >
@@ -85,24 +85,24 @@ export function Hero() {
           preset="blur"
           delay={0.5}
           duration={0.9}
-          className="text-balance text-base md:text-lg text-ink-300 mb-10 max-w-2xl leading-relaxed"
+          className="text-balance text-sm sm:text-base md:text-lg text-ink-300 mb-10 max-w-2xl leading-relaxed px-4"
         >
           Infraestrutura, segurança, cloud e inteligência artificial, integrados, gerenciados e sustentados pela Infodive.
         </TextEffect>
 
         {/* Buttons */}
-        <div className="flex flex-col sm:flex-row items-center gap-4">
-          <Link href="/solucoes" className="focus:outline-none" tabIndex={-1}>
-            <Button primary="#0E66FF" secondary="#001DFF">
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto justify-center px-4">
+          <Link href="/solucoes" className="focus:outline-none w-full sm:w-auto" tabIndex={-1}>
+            <Button primary="#0E66FF" secondary="#001DFF" className="w-full sm:w-auto">
               Conheça nossas soluções
               <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
             </Button>
           </Link>
-          <Link href="/contato" className="focus:outline-none" tabIndex={-1}>
+          <Link href="/contato" className="focus:outline-none w-full sm:w-auto" tabIndex={-1}>
             <Button
               primary="rgba(255, 255, 255, 0.06)"
               secondary="rgba(255, 255, 255, 0.16)"
-              className="border border-white/10"
+              className="border border-white/10 w-full sm:w-auto"
             >
               <MessageSquare className="h-4 w-4 text-ink-300" strokeWidth={2} />
               Fale conosco
@@ -111,20 +111,20 @@ export function Hero() {
         </div>
 
         {/* Social Proof */}
-        <p className="mt-16 text-[10px] font-semibold uppercase tracking-[0.25em] text-ink-500 mb-8">
+        <p className="mt-16 text-[10px] font-semibold uppercase tracking-[0.25em] text-ink-500 mb-8 px-4">
           Desde 2003 integrando tecnologia e negócios.
         </p>
 
         {/* Animated Infinite Marquee Carousel */}
-        <div className="w-full max-w-6xl mt-2 relative overflow-hidden py-4 [mask-image:linear-gradient(to_right,transparent,white_15%,white_85%,transparent)] select-none">
+        <div className="w-full max-w-full md:max-w-6xl mt-2 relative overflow-hidden py-4 [mask-image:linear-gradient(to_right,transparent,white_5%,white_95%,transparent)] sm:[mask-image:linear-gradient(to_right,transparent,white_15%,white_85%,transparent)] select-none">
           <div className="flex w-max animate-marquee gap-6 hover:[animation-play-state:paused] cursor-pointer">
             {MARQUEE_PARTNERS.map((partner, index) => (
-              <div key={index} className="w-[240px] shrink-0 p-1">
+              <div key={index} className="w-[200px] sm:w-[240px] shrink-0 p-1">
                 <SpotlightBorder className="h-full">
                   <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                  <CardContent className="p-6 flex flex-col items-center justify-between text-center h-full min-h-[170px]">
+                  <CardContent className="p-4 sm:p-6 flex flex-col items-center justify-between text-center h-full min-h-[150px] sm:min-h-[170px]">
                     {/* Logo Container */}
-                    <div className="h-12 flex items-center justify-center mb-3">
+                    <div className="h-10 sm:h-12 flex items-center justify-center mb-3">
                       <Image
                         src={partner.logo}
                         alt={`${partner.name} logo`}
@@ -144,7 +144,7 @@ export function Hero() {
                       <h4 className="text-xs font-bold text-white tracking-wider uppercase mb-1.5 group-hover:text-brand transition-colors duration-300">
                         {partner.name}
                       </h4>
-                      <p className="text-[11px] text-ink-500 leading-normal max-w-[180px] mx-auto group-hover:text-ink-300 transition-colors duration-300">
+                      <p className="text-[10px] sm:text-[11px] text-ink-500 leading-normal max-w-[160px] sm:max-w-[180px] mx-auto group-hover:text-ink-300 transition-colors duration-300">
                         {partner.description}
                       </p>
                     </div>
