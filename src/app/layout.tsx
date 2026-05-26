@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { IBM_Plex_Sans } from 'next/font/google'
+import { Navbar } from '@/layout/navbar'
+import { Hero } from '@/sections/home/hero'
 import '@/styles/globals.css'
 
 const ibmPlex = IBM_Plex_Sans({
@@ -26,7 +28,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" className={ibmPlex.variable}>
-      <body>{children}</body>
+      <body>
+        <Navbar />
+        <Hero />
+        {children}
+
+      </body>
     </html>
   )
 }

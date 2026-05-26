@@ -144,6 +144,10 @@
     @apply section bg-ink-50;
   }
 
+  .hero {
+    @apply relative min-h-[95vh] flex items-center justify-center bg-ink-950 text-white overflow-hidden;
+  }
+
   /* Eyebrow (label acima de heading) */
   .eyebrow {
     @apply text-xs font-medium uppercase tracking-widest text-brand mb-3;
