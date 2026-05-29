@@ -1,6 +1,6 @@
 'use client'
 
-import { InteractiveGridPattern } from "@/components/ui/interactive-grid-pattern";
+import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
 import { ArrowRight, MessageSquare } from "lucide-react";
 import { TextEffect } from "@/components/animations/text-effect";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,16 @@ import suseLogo from "@/assets/Suse Logo.svg";
 import veeamLogo from "@/assets/Veeam Logo.svg";
 import virtuozzoLogo from "@/assets/Virtuozzo Logo.svg";
 import { SpotlightBorder } from "@/components/ui/spotLightBorder";
+import { DashboardCarousel } from "@/components/ui/dashboard-carousel";
+import tela1 from "@/assets/telasCarrosselHero/tela-1.webp";
+import tela2 from "@/assets/telasCarrosselHero/tela-2.webp";
+import tela3 from "@/assets/telasCarrosselHero/tela-3.webp";
+
+const SHOWCASE_SLIDES = [
+  { src: tela1, alt: "Dashboard de monitoramento Infodive" },
+  { src: tela2, alt: "Painel de indicadores Infodive" },
+  { src: tela3, alt: "Tela de automação Infodive" },
+];
 
 const PARTNERS = [
   { name: "IBM", description: "Líder global em IA e nuvem híbrida segura.", logo: ibmLogo, className: "h-5" },
@@ -34,7 +44,7 @@ const PARTNERS = [
   { name: "Microsoft", description: "A nuvem do Azure para escala e inovação global.", logo: microsoftLogo },
   { name: "SUSE", description: "Soluções corporativas de Linux e Kubernetes open.", logo: suseLogo, className: "h-12", keepWhiteOnHover: true },
   { name: "Virtuozzo", description: "Virtualização eficiente e hiperconvergência em nuvem.", logo: virtuozzoLogo, className: "h-4", keepWhiteOnHover: true },
-  { name: "Apple", description: "Ecossistema tecnológico premium integrado.", logo: appleLogo },
+  { name: "Apple", description: "Ecossistema tecnológico premium integrado.", logo: appleLogo, keepWhiteOnHover: true },
 ];
 
 // Duplicate the array to create a seamless infinite scrolling effect
@@ -42,7 +52,7 @@ const MARQUEE_PARTNERS = [...PARTNERS, ...PARTNERS];
 
 export function Hero() {
   return (
-    <section className="hero relative overflow-hidden bg-ink-950 flex flex-col justify-center min-h-screen md:min-h-[115vh]">
+    <section className="hero relative overflow-hidden bg-ink-950 flex flex-col min-h-screen md:min-h-[115vh]">
       {/* Background Interactive Grid filling the entire section */}
       <InteractiveGridPattern
         width={48}
@@ -52,7 +62,7 @@ export function Hero() {
         squaresClassName="hover:fill-brand/10 transition-all duration-150"
       />
 
-      <div className="container-default relative z-10 text-center pt-28 pb-16 md:py-28 flex flex-col items-center justify-center w-full max-w-full">
+      <div className="container-default relative z-10 text-center pt-28 pb-8 flex-1 flex flex-col items-center justify-center w-full max-w-full">
         {/* Eyebrow */}
         <TextEffect
           per="word"
@@ -111,12 +121,14 @@ export function Hero() {
         </div>
 
         {/* Social Proof */}
-        <p className="mt-16 text-[10px] font-semibold uppercase tracking-[0.25em] text-ink-500 mb-8 px-4">
+        <p className="mt-16 text-[10px] font-semibold uppercase tracking-[0.25em] text-ink-500 px-4">
           Desde 2003 integrando tecnologia e negócios.
         </p>
+      </div>
+      {/* End of vertically-centered hero text */}
 
-        {/* Animated Infinite Marquee Carousel */}
-        <div className="w-full max-w-full md:max-w-6xl mt-2 relative overflow-hidden py-4 [mask-image:linear-gradient(to_right,transparent,white_5%,white_95%,transparent)] sm:[mask-image:linear-gradient(to_right,transparent,white_15%,white_85%,transparent)] select-none">
+      {/* Animated Infinite Marquee Carousel (logos) */}
+      <div className="relative z-10 w-full max-w-full md:max-w-6xl mx-auto mt-2 overflow-hidden py-4 [mask-image:linear-gradient(to_right,transparent,white_5%,white_95%,transparent)] sm:[mask-image:linear-gradient(to_right,transparent,white_15%,white_85%,transparent)] select-none">
           <div className="flex w-max animate-marquee gap-6 hover:[animation-play-state:paused] cursor-pointer">
             {MARQUEE_PARTNERS.map((partner, index) => (
               <div key={index} className="w-[200px] sm:w-[240px] shrink-0 p-1">
@@ -154,7 +166,12 @@ export function Hero() {
             ))}
           </div>
         </div>
-      </div>
+
+        {/* Dashboard showcase — preenche a base; slide central sobrepõe os laterais */}
+        <DashboardCarousel
+          slides={SHOWCASE_SLIDES}
+          className="relative z-0 w-full mt-6 translate-y-[12%]"
+        />
     </section>
   )
 }

@@ -124,7 +124,7 @@ export type BannerDTO = {
   id: string
   titulo?: string
   subtitulo?: string
-  secao: 'HERO_HOME' | 'SOLUCOES' | 'PRODUTOS' | 'SERVICOS' | 'SOBRE'
+  secao: 'HERO_HOME' | 'SOLUCOES' | 'PRODUTOS' | 'SERVICOS' | 'QUEM SOMOS'
   ctaTexto?: string
   ctaUrl?: string
   ativo: boolean

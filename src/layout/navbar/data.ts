@@ -41,8 +41,8 @@ export const navLinks: NavLink[] = [
   { label: 'Soluções', href: '/solucoes', dropdown: 'solucoes' },
   { label: 'Produtos', href: '/produtos', dropdown: 'produtos' },
   { label: 'Serviços', href: '/servicos' },
-  { label: 'Conteúdos', href: '/conteudos' },
-  { label: 'Sobre', href: '/sobre' },
+  { label: 'Nosso Blog', href: '/blog' },
+  { label: 'Quem Somos', href: '/sobre' },
 ]
 
 export const categorias: NavCategoria[] = [

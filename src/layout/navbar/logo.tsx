@@ -1,47 +1,66 @@
-import Link from 'next/link'
-import { cn } from '@/lib/utils'
+import Link from "next/link";
+import Image from "next/image";
+import logoImg from "@/assets/logo/Logo infodive.svg";
+import faviconImg from "@/assets/logo/Logo infodive 2.svg";
+import { cn } from "@/lib/utils";
 
 type LogoProps = {
-  className?: string
-  href?: string
-  scrolled?: boolean
-}
+  className?: string;
+  href?: string;
+  scrolled?: boolean;
+};
 
-export function Logo({ className, href = '/', scrolled = false }: LogoProps) {
+export function Logo({ className, href = "/", scrolled = false }: LogoProps) {
   return (
     <Link
       href={href}
       aria-label="Infodive — Portal de Soluções de TI"
       className={cn(
-        'inline-flex items-center gap-2.5 transition-colors duration-300',
-        scrolled ? 'text-ink-950 hover:text-ink-950' : 'text-white hover:text-white',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/30 rounded-md',
+        "inline-flex items-center transition-all duration-300 relative",
+        scrolled
+          ? "text-ink-950 hover:text-ink-950"
+          : "text-white hover:text-white",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/30 rounded-md",
         className,
       )}
     >
-      <span
-        aria-hidden
+      {/* Scrolled State (Favicon only, increased size) */}
+      <div
         className={cn(
-          'inline-flex h-8 w-8 items-center justify-center rounded-md transition-all duration-300',
-          scrolled ? 'bg-ink-950 text-white' : 'bg-white text-ink-950'
+          "flex items-center transition-all duration-300",
+          scrolled
+            ? "opacity-100 scale-100"
+            : "opacity-0 scale-95 pointer-events-none absolute inset-0"
         )}
       >
-        <svg
-          viewBox="0 0 32 32"
-          className="h-5 w-5"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          strokeLinecap="round"
-        >
-          <g className={cn('transition-colors duration-300', scrolled ? 'text-white' : 'text-ink-950')}>
-            <line x1="9" y1="11" x2="23" y2="11" />
-            <line x1="9" y1="16" x2="19" y2="16" />
-            <line x1="9" y1="21" x2="15" y2="21" />
-          </g>
-        </svg>
-      </span>
-      <span className="text-[15px] font-semibold tracking-tight">Infodive</span>
+        <div className="relative h-[26px] md:h-[32px] flex items-center justify-center">
+          <Image
+            src={faviconImg}
+            alt="Infodive Favicon"
+            className="h-[26px] md:h-[32px] w-auto object-contain"
+            priority
+          />
+        </div>
+      </div>
+
+      {/* Transparent State (Full Logo) */}
+      <div
+        className={cn(
+          "flex items-center transition-all duration-300",
+          scrolled
+            ? "opacity-0 scale-95 pointer-events-none absolute inset-0"
+            : "opacity-100 scale-100"
+        )}
+      >
+        <div className="relative h-[26px] md:h-[32px] flex items-center mb-1">
+          <Image
+            src={logoImg}
+            alt="Infodive Logo"
+            className="h-[26px] md:h-[32px] w-auto object-contain"
+            priority
+          />
+        </div>
+      </div>
     </Link>
-  )
+  );
 }
