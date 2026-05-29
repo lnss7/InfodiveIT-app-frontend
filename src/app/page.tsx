@@ -1,7 +1,9 @@
+import { Solutions } from '@/sections/home/solutions'
+
 export default function HomePage() {
   return (
     <main>
-      {/* Subsequent homepage sections will be added here step-by-step */}
+      <Solutions />
     </main>
   )
 }

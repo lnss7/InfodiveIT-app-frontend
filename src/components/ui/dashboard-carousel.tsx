@@ -3,7 +3,11 @@
 import * as React from "react"
 import Image, { type StaticImageData } from "next/image"
 import useEmblaCarousel from "embla-carousel-react"
+import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { cn } from "@/lib/utils"
+
+if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger)
 
 export type DashboardSlide = {
   src: StaticImageData | string
@@ -18,12 +22,17 @@ type DashboardCarouselProps = {
 // Tween: o slide central fica em scale 1 + z-index alto (na frente); os laterais
 // encolhem, perdem opacidade e ficam atrás — criando a sobreposição do print.
 const TWEEN_FACTOR_BASE = 0.42
-const MIN_SCALE = 0.74
-const MIN_OPACITY = 0.55
-// Quanto a opacidade cai conforme o slide se afasta do centro. Mais alto = o card
-// que sai desbota mais rápido, virando um crossfade suave em vez de troca seca de camada.
-const OPACITY_FALLOFF = 1.9
-const AUTOPLAY_MS = 2000
+const MIN_SCALE = 0.5
+const MIN_OPACITY = 0
+// Quanto a opacidade cai conforme o slide se afasta do centro. A proximidade de cada
+// vizinho é ≈ 0.42 × n (n = distância do centro). Com falloff 1.2: o 1º vizinho (n=1)
+// fica em ~0.5 de opacidade e o 2º+ (n≥2) zera — garantindo só 3 slides visíveis.
+const OPACITY_FALLOFF = 1.2
+const AUTOPLAY_MS = 4000
+// Quanto cada vizinho desliza para a lateral (px) no fim do scroll. Tunável.
+// Mobile tem valor menor porque a tela é estreita e as fotos são maiores.
+const MAX_SPREAD = 500
+const MAX_SPREAD_MOBILE = 110
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max)
@@ -51,6 +60,18 @@ export function DashboardCarousel({ slides, className }: DashboardCarouselProps)
   const tweenNodes = React.useRef<HTMLElement[]>([])
   const tweenFactor = React.useRef(0)
 
+  // Trigger do ScrollTrigger (div externa).
+  const rootRef = React.useRef<HTMLDivElement>(null)
+  // Estado por slide calculado pelo Embla (scale/opacity/lado), consumido tanto pelo
+  // tween do carrossel quanto pelo spread do scroll.
+  const slideStateRef = React.useRef<
+    { scale: number; opacity: number; spreadDir: number; isCenter: boolean }[]
+  >([])
+  // Progresso 0→1 do scroll que controla o quanto as laterais se afastam.
+  const spreadRef = React.useRef(0)
+  // Afastamento máximo em px (menor no mobile). Atualizado por breakpoint.
+  const maxSpreadRef = React.useRef(MAX_SPREAD)
+
   const setTweenNodes = React.useCallback((api: NonNullable<typeof emblaApi>) => {
     tweenNodes.current = api.slideNodes().map(
       (node) => node.querySelector(".dashboard-slide__tween") as HTMLElement
@@ -61,13 +82,43 @@ export function DashboardCarousel({ slides, className }: DashboardCarouselProps)
     tweenFactor.current = TWEEN_FACTOR_BASE * api.scrollSnapList().length
   }, [])
 
+  // Ponto único que escreve os transforms: combina o `scale`/`opacity` do tween do Embla
+  // com o `translateX` extra do scroll (spread). Os dois precisam viver no MESMO transform,
+  // senão um sobrescreve o outro. Chamado tanto pelo Embla quanto pelo ScrollTrigger.
+  const applyTransforms = React.useCallback(() => {
+    const state = slideStateRef.current
+    for (let i = 0; i < tweenNodes.current.length; i++) {
+      const node = tweenNodes.current[i]
+      const s = state[i]
+      if (!node || !s) continue
+      // translateX(-50%) mantém o card largo centrado no slot (gera a sobreposição);
+      // o offset do spread empurra os vizinhos para fora conforme o scroll.
+      const offset = s.spreadDir * spreadRef.current * maxSpreadRef.current
+      node.style.transform = `translateX(calc(-50% + ${offset}px)) scale(${s.scale})`
+      node.style.opacity = `${s.opacity}`
+
+      // z-index NO SLOT (pai): o card tem `transform` e cria stacking context próprio,
+      // então pôr o z-index no slot garante que o central realmente suba acima dos vizinhos.
+      const slot = node.parentElement
+      if (slot) {
+        slot.style.zIndex = s.isCenter ? "50" : `${Math.round(s.scale * 20)}`
+      }
+    }
+  }, [])
+
   const tweenEffect = React.useCallback(
     (api: NonNullable<typeof emblaApi>) => {
       const engine = api.internalEngine()
       const scrollProgress = api.scrollProgress()
 
-      // 1ª passada: calcula scale/opacity de cada slide e guarda a proximidade.
-      const computed: { slideIndex: number; scale: number; opacity: number; proximity: number }[] = []
+      // 1ª passada: calcula scale/opacity/lado de cada slide e guarda a proximidade.
+      const computed: {
+        slideIndex: number
+        scale: number
+        opacity: number
+        proximity: number
+        spreadDir: number
+      }[] = []
 
       api.scrollSnapList().forEach((scrollSnap, snapIndex) => {
         let diffToTarget = scrollSnap - scrollProgress
@@ -83,10 +134,14 @@ export function DashboardCarousel({ slides, className }: DashboardCarouselProps)
             }
           })
 
-          const proximity = Math.abs(diffToTarget * tweenFactor.current)
+          const signedProximity = diffToTarget * tweenFactor.current
+          const proximity = Math.abs(signedProximity)
           const scale = clamp(1 - proximity * (1 - MIN_SCALE), MIN_SCALE, 1)
           const opacity = clamp(1 - proximity * OPACITY_FALLOFF, MIN_OPACITY, 1)
-          computed.push({ slideIndex, scale, opacity, proximity })
+          // sinal = lado (negativo = esquerda, positivo = direita); magnitude cresce com
+          // a distância do centro. É o vetor de afastamento do spread.
+          const spreadDir = clamp(signedProximity, -1, 1)
+          computed.push({ slideIndex, scale, opacity, proximity, spreadDir })
         })
       })
 
@@ -100,24 +155,20 @@ export function DashboardCarousel({ slides, className }: DashboardCarouselProps)
         }
       }
 
-      // 2ª passada: aplica transform/opacity no card e o z-index NO SLOT (elemento pai).
-      // O card tem `transform`, então cria stacking context próprio; pôr o z-index no
-      // slot garante que o slide central realmente suba acima dos vizinhos.
+      // 2ª passada: guarda o estado por slide; o desenho fica a cargo de applyTransforms
+      // (que também aplica o spread do scroll).
       for (const item of computed) {
-        const node = tweenNodes.current[item.slideIndex]
-        if (!node) continue
-        // translateX(-50%) mantém o card largo centrado no slot (gera a sobreposição)
-        node.style.transform = `translateX(-50%) scale(${item.scale})`
-        node.style.opacity = `${item.opacity}`
-
-        const slot = node.parentElement
-        if (slot) {
-          slot.style.zIndex =
-            item.slideIndex === centerSlideIndex ? "50" : `${Math.round(item.scale * 20)}`
+        slideStateRef.current[item.slideIndex] = {
+          scale: item.scale,
+          opacity: item.opacity,
+          spreadDir: item.spreadDir,
+          isCenter: item.slideIndex === centerSlideIndex,
         }
       }
+
+      applyTransforms()
     },
-    []
+    [applyTransforms]
   )
 
   React.useEffect(() => {
@@ -143,6 +194,38 @@ export function DashboardCarousel({ slides, className }: DashboardCarouselProps)
         .off("slideFocus", tweenEffect)
     }
   }, [emblaApi, setTweenNodes, setTweenFactor, tweenEffect])
+
+  // Spread por scroll: liga o progresso 0→1 do ScrollTrigger ao afastamento das laterais.
+  // Ao descer a página as laterais se afastam da central; ao subir, voltam.
+  React.useEffect(() => {
+    if (!rootRef.current) return
+    // Respeita usuários que preferem menos movimento.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+
+    const st = ScrollTrigger.create({
+      trigger: rootRef.current,
+      start: "top 85%", // começa quando o carrossel aparece
+      end: "top 25%", // completa o afastamento conforme rola para baixo (tunável)
+      onUpdate: (self) => {
+        spreadRef.current = self.progress
+        applyTransforms()
+      },
+    })
+
+    return () => st.kill()
+  }, [applyTransforms])
+
+  // Afastamento responsivo: menor no mobile (< sm). Atualiza no resize/troca de breakpoint.
+  React.useEffect(() => {
+    const mq = window.matchMedia("(max-width: 639px)")
+    const update = () => {
+      maxSpreadRef.current = mq.matches ? MAX_SPREAD_MOBILE : MAX_SPREAD
+      applyTransforms()
+    }
+    update()
+    mq.addEventListener("change", update)
+    return () => mq.removeEventListener("change", update)
+  }, [applyTransforms])
 
   // Autoplay infinito (pausa ao interagir / hover).
   const autoplayRef = React.useRef<ReturnType<typeof setInterval> | null>(null)
@@ -178,6 +261,7 @@ export function DashboardCarousel({ slides, className }: DashboardCarouselProps)
 
   return (
     <div
+      ref={rootRef}
       className={cn("w-full select-none", className)}
       onMouseEnter={stopAutoplay}
       onMouseLeave={startAutoplay}
@@ -187,23 +271,23 @@ export function DashboardCarousel({ slides, className }: DashboardCarouselProps)
           {data.map((slide, index) => (
             <div
               key={index}
-              className="relative min-w-0 shrink-0 grow-0 basis-[68%] sm:basis-[44%] md:basis-[36%]"
+              className="relative min-w-0 shrink-0 grow-0 basis-[66%] sm:basis-[46%] md:basis-[40%]"
               role="group"
               aria-roledescription="slide"
             >
               {/* Card mais largo que o slot → vizinhos se sobrepõem */}
               <div
-                className="dashboard-slide__tween relative left-1/2 w-[130%] sm:w-[150%] origin-center will-change-transform"
+                className="dashboard-slide__tween relative left-1/2 w-[120%] sm:w-[150%] origin-center will-change-transform"
                 style={{ transform: "translateX(-50%)" }}
               >
-                <div className="overflow-hidden rounded-xl border border-white/10 bg-ink-900 shadow-2xl shadow-black/50 ring-1 ring-black/5">
+                <div className="overflow-hidden rounded-xl border border-white/10 bg-ink-900 shadow-2xl shadow-black/50 ring-1 ring-black/5 aspect-[10/8] sm:aspect-auto">
                   {items ? (
                     <Image
                       src={(slide as DashboardSlide).src}
                       alt={(slide as DashboardSlide).alt}
                       width={1280}
                       height={720}
-                      className="h-auto w-full object-cover"
+                      className="h-full w-full object-cover object-top sm:h-auto"
                       draggable={false}
                       priority={index === 0}
                     />
