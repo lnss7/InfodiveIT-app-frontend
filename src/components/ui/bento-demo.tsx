@@ -1,37 +1,294 @@
-import { Server, ShieldCheck, Cloud, Cpu } from "lucide-react"
-import { BentoCard, BentoGrid } from "@/components/ui/bento-grid"
+"use client"
 
-// Fundo decorativo leve e on-brand (sem animações que distraem) — um ícone grande
-// e desbotado no canto, mascarado pra cima, que ganha leve destaque no hover.
-function SoftBackground({ Icon }: { Icon: React.ElementType }) {
+import * as React from "react"
+import {
+  Server,
+  ShieldCheck,
+  Cloud,
+  BrainCircuit,
+  Building2,
+  HardDrive,
+  Network,
+  Database,
+  Globe,
+  Lock,
+  KeyRound,
+  FileCheck2,
+  Activity,
+  Laptop,
+  Boxes,
+  Sparkles,
+  MessageSquare,
+  Workflow,
+} from "lucide-react"
+import Image from "next/image"
+import { BentoCard, BentoGrid } from "@/components/ui/bento-grid"
+import { AnimatedBeam } from "@/components/animations/animated-beam"
+import { OrbitingCircles } from "@/components/ui/orbiting-circles"
+import { cn } from "@/lib/utils"
+import iaImage from "@/assets/bento-grid/inteligencia-artificial.webp"
+
+// Nó circular (hub ou periférico). forwardRef para o AnimatedBeam conseguir medir
+// sua posição e ancorar o feixe no centro do círculo.
+const Circle = React.forwardRef<
+  HTMLDivElement,
+  { className?: string; children: React.ReactNode }
+>(({ className, children }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "z-10 flex items-center justify-center rounded-full border border-ink-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)]",
+      className
+    )}
+  >
+    {children}
+  </div>
+))
+Circle.displayName = "Circle"
+
+// RefObjects estáveis para uma lista de N nós (não dá pra chamar useRef em loop).
+function useRefArray<T>(length: number) {
+  const refs = React.useRef<React.RefObject<T>[]>([])
+  if (refs.current.length !== length) {
+    refs.current = Array.from(
+      { length },
+      (_, i) => refs.current[i] ?? React.createRef<T>()
+    )
+  }
+  return refs.current
+}
+
+// Fundo animado de cada card: um hub central de marca, uma fonte à esquerda e uma
+// coluna de serviços à direita, com feixes pulsando do hub para cada nó (estilo do
+// print de "Integrations", porém monocromático/on-brand — sem logos coloridos).
+function BeamBackground({
+  center: Center,
+  left: Left,
+  right: rightIcons,
+}: {
+  center: React.ElementType
+  left: React.ElementType
+  right: React.ElementType[]
+}) {
+  const containerRef = React.useRef<HTMLDivElement>(null)
+  const centerRef = React.useRef<HTMLDivElement>(null)
+  const leftRef = React.useRef<HTMLDivElement>(null)
+  const rightRefs = useRefArray<HTMLDivElement>(rightIcons.length)
+  const mid = (rightIcons.length - 1) / 2
+
   return (
-    <div className="pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_top,transparent_30%,#000_100%)]">
-      <Icon
-        className="absolute -right-6 -top-6 h-48 w-48 text-ink-200/60 transition-transform duration-300 ease-out group-hover:scale-105"
-        strokeWidth={1}
+    <div
+      ref={containerRef}
+      className="absolute inset-0 flex items-center justify-between px-8 pb-28 pt-8 [mask-image:linear-gradient(to_top,transparent_8%,#000_55%)]"
+    >
+      {/* Fonte (esquerda) */}
+      <Circle ref={leftRef} className="size-11 border-ink-300">
+        <Left className="h-5 w-5 text-ink-500" strokeWidth={1.75} />
+      </Circle>
+
+      {/* Hub central (marca) */}
+      <Circle ref={centerRef} className="size-16 border-brand/30 ring-4 ring-brand/5">
+        <Center className="h-7 w-7 text-brand" strokeWidth={1.75} />
+      </Circle>
+
+      {/* Serviços (coluna direita) */}
+      <div className="flex flex-col gap-3">
+        {rightIcons.map((Icon, i) => (
+          <Circle ref={rightRefs[i]} key={i} className="size-11">
+            <Icon className="h-5 w-5 text-ink-500" strokeWidth={1.75} />
+          </Circle>
+        ))}
+      </div>
+
+      {/* Feixes: fonte → hub, e hub → cada serviço (com leve curvatura/escalonamento).
+          Cores on-brand: trilho cinza claro + ponto luminoso no azul de marca. */}
+      <AnimatedBeam
+        containerRef={containerRef}
+        fromRef={leftRef}
+        toRef={centerRef}
+        duration={5}
+        delay={0.2}
+        pathColor="#D8D8D8"
+        pathWidth={1.5}
+        pathOpacity={0.7}
+        gradientStartColor="#0E66FF"
+        gradientStopColor="#001DFF"
       />
+      {rightRefs.map((ref, i) => (
+        <AnimatedBeam
+          key={i}
+          containerRef={containerRef}
+          fromRef={centerRef}
+          toRef={ref}
+          curvature={(i - mid) * 22}
+          duration={4 + (i % 3)}
+          delay={i * 0.45}
+          pathColor="#D8D8D8"
+          pathWidth={1.5}
+          pathOpacity={0.7}
+          gradientStartColor="#0E66FF"
+          gradientStopColor="#001DFF"
+        />
+      ))}
+    </div>
+  )
+}
+
+// Card de Cloud: nuvem no centro com dois anéis de ícones de serviços orbitando
+// (anel interno horário, externo anti-horário). Container centralizado é requisito
+// do OrbitingCircles (os itens absolutos partem do centro).
+function CloudOrbit() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center [mask-image:linear-gradient(to_top,transparent_12%,#000_62%)]">
+      {/* Hub central (marca) */}
+      <div className="z-10 flex size-16 items-center justify-center rounded-full border border-brand/30 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] ring-4 ring-brand/5">
+        <Cloud className="h-7 w-7 text-brand" strokeWidth={1.75} />
+      </div>
+
+      {/* Anel interno */}
+      <OrbitingCircles
+        radius={66}
+        duration={22}
+        iconSize={36}
+        className="border border-ink-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+      >
+        <Server className="h-4 w-4 text-ink-500" strokeWidth={1.75} />
+        <Database className="h-4 w-4 text-ink-500" strokeWidth={1.75} />
+        <Globe className="h-4 w-4 text-ink-500" strokeWidth={1.75} />
+      </OrbitingCircles>
+
+      {/* Anel externo (sentido invertido, mais lento) */}
+      <OrbitingCircles
+        radius={120}
+        duration={34}
+        iconSize={36}
+        reverse
+        className="border border-ink-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+      >
+        <Boxes className="h-4 w-4 text-ink-500" strokeWidth={1.75} />
+        <Laptop className="h-4 w-4 text-ink-500" strokeWidth={1.75} />
+        <ShieldCheck className="h-4 w-4 text-ink-500" strokeWidth={1.75} />
+        <Network className="h-4 w-4 text-ink-500" strokeWidth={1.75} />
+      </OrbitingCircles>
+    </div>
+  )
+}
+
+// Eventos no estilo "feed de SOC" — passam num marquee desfocado; ao passar o mouse,
+// o item sob o cursor fica nítido e a esteira pausa (efeito do 1º card do Magic UI).
+const securityEvents = [
+  {
+    Icon: ShieldCheck,
+    title: "Ameaça bloqueada",
+    body: "Ataque Ransomware contido com sucesso no endpoint SRV-03 antes de comprometer dados da operação.",
+  },
+  {
+    Icon: Database,
+    title: "Backup concluído",
+    body: "Snapshot diário concluído às 02:00. 2,4 TB de dados criptografados e replicados de forma segura na nuvem.",
+  },
+  {
+    Icon: Lock,
+    title: "Volume criptografado",
+    body: "Protocolo AES-256 ativo em 100% dos discos da operação, garantindo proteção total de dados em repouso.",
+  },
+  {
+    Icon: KeyRound,
+    title: "Login barrado por MFA",
+    body: "Tentativa de acesso por IP externo suspeito bloqueada de forma preventiva através de autenticação MFA.",
+  },
+  {
+    Icon: FileCheck2,
+    title: "Conformidade LGPD",
+    body: "Políticas de governança e retenção de logs aplicadas para total conformidade e proteção de dados pessoais.",
+  },
+  {
+    Icon: Activity,
+    title: "Monitoramento 24/7",
+    body: "142 endpoints monitorados ativamente em tempo integral. Zero incidentes nas últimas 24 horas de operação.",
+  },
+]
+
+function SecurityMarquee() {
+  return (
+    <div className="absolute inset-x-0 top-6 [mask-image:linear-gradient(to_top,transparent_18%,#000_60%)]">
+      {/* Esteira: conteúdo duplicado + translateX(-50%) (animate-marquee) = loop contínuo.
+          group-hover pausa a animação ao passar o mouse no card. */}
+      <div className="flex w-max animate-marquee items-start gap-4 px-4 group-hover:[animation-play-state:paused]">
+        {[...securityEvents, ...securityEvents].map(({ Icon, title, body }, i) => (
+          <figure
+            key={i}
+            className={cn(
+              "relative h-[210px] w-[240px] shrink-0 cursor-pointer overflow-hidden rounded-lg border border-ink-200 bg-white p-3",
+              "shadow-[0_1px_3px_rgba(0,0,0,0.04)]",
+              // desfocado por padrão; nítido no hover do próprio item
+              "transform-gpu blur-[1.5px] transition-all duration-300 ease-out hover:border-ink-300 hover:blur-none"
+            )}
+          >
+            {/* Marca d'água preenche a altura do card sem poluir */}
+            <Icon
+              className="pointer-events-none absolute -bottom-4 -right-4 h-24 w-24 text-ink-200/60"
+              strokeWidth={1}
+            />
+            <div className="relative z-10 flex items-center gap-2">
+              <Icon className="h-5 w-5 shrink-0 text-brand" strokeWidth={1.75} />
+              <figcaption className="text-sm font-semibold text-ink-950">
+                {title}
+              </figcaption>
+            </div>
+            <blockquote className="relative z-10 mt-2 text-[13px] leading-snug text-ink-500">
+              {body}
+            </blockquote>
+          </figure>
+        ))}
+      </div>
     </div>
   )
 }
 
 const features = [
   {
-    Icon: Server,
-    name: "Infraestrutura",
-    description: "Servidores, storage e redes de alta performance para cargas críticas.",
-    href: "/solucoes",
-    cta: "Saiba mais",
-    className: "col-span-3 lg:col-span-1",
-    background: <SoftBackground Icon={Server} />,
-  },
-  {
     Icon: ShieldCheck,
     name: "Segurança & Proteção de Dados",
     description: "Cibersegurança, backup e recuperação para manter a operação sempre de pé.",
     href: "/solucoes",
     cta: "Saiba mais",
+    className: "col-span-3 lg:col-span-1",
+    background: <SecurityMarquee />,
+  },
+    {
+    Icon: Server,
+    name: "Infraestrutura",
+    description: "Servidores, storage e redes de alta performance para cargas críticas.",
+    href: "/solucoes",
+    cta: "Saiba mais",
     className: "col-span-3 lg:col-span-2",
-    background: <SoftBackground Icon={ShieldCheck} />,
+    background: (
+      <BeamBackground
+        center={Server}
+        left={Building2}
+        right={[HardDrive, Network, Database, Boxes]}
+      />
+    ),
+  },
+  {
+    Icon: BrainCircuit,
+    name: "Inteligência Artificial",
+    description: "IA aplicada ao negócio, integrada à sua infraestrutura.",
+    href: "/solucoes",
+    cta: "Saiba mais",
+    className: "col-span-3 lg:col-span-2",
+    background: (
+      <div className="absolute inset-0">
+        <Image
+          src={iaImage}
+          alt="Inteligência Artificial"
+          fill
+          sizes="(max-width: 1024px) 100vw, 66vw"
+          className="object-cover object-center transition-transform duration-300 ease-out [mask-image:linear-gradient(to_top,transparent_22%,#000_85%)] group-hover:scale-105 lg:object-contain lg:object-right"
+        />
+      </div>
+    ),
   },
   {
     Icon: Cloud,
@@ -39,17 +296,8 @@ const features = [
     description: "Migração, gestão e otimização de nuvem pública, privada e híbrida.",
     href: "/solucoes",
     cta: "Saiba mais",
-    className: "col-span-3 lg:col-span-2",
-    background: <SoftBackground Icon={Cloud} />,
-  },
-  {
-    Icon: Cpu,
-    name: "Inteligência Artificial",
-    description: "IA aplicada ao negócio, integrada à sua infraestrutura.",
-    href: "/solucoes",
-    cta: "Saiba mais",
     className: "col-span-3 lg:col-span-1",
-    background: <SoftBackground Icon={Cpu} />,
+    background: <CloudOrbit />,
   },
 ]
 

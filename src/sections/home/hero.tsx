@@ -52,7 +52,7 @@ const MARQUEE_PARTNERS = [...PARTNERS, ...PARTNERS];
 
 export function Hero() {
   return (
-    <section className="hero relative overflow-hidden bg-ink-950 flex flex-col min-h-screen">
+    <section className="hero relative overflow-hidden bg-ink-950 flex flex-col min-h-0 sm:min-h-screen">
       {/* Background Interactive Grid filling the entire section */}
       <InteractiveGridPattern
         width={48}
@@ -62,7 +62,7 @@ export function Hero() {
         squaresClassName="hover:fill-brand/10 transition-all duration-150"
       />
 
-      <div className="container-default relative z-10 text-center pt-16 sm:pt-24 pb-4 flex flex-col items-center justify-center w-full max-w-full mt-0 sm:mt-6">
+      <div className="container-default relative z-10 text-center pt-28 sm:pt-24 pb-4 flex flex-col items-center justify-center w-full max-w-full mt-0 sm:mt-6">
         {/* Eyebrow */}
         <TextEffect
           per="word"
@@ -174,7 +174,7 @@ export function Hero() {
         {/* Dashboard showcase — slide central sobrepõe os laterais.
             Cortado a ~75%: a margem negativa encolhe a caixa do wrapper e o fundo
             da foto some no overflow-hidden (corte seco, sem invadir a seção branca). */}
-        <div className="relative z-0 w-full mt-auto sm:mt-12 overflow-hidden">
+        <div className="relative z-0 w-full mt-8 sm:mt-12 overflow-hidden">
           <div className="-mb-16 sm:-mb-20 md:-mb-28 lg:-mb-40">
             <DashboardCarousel slides={SHOWCASE_SLIDES} className="w-full" />
           </div>
