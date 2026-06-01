@@ -301,7 +301,7 @@ const features = [
   },
 ]
 
-export function BentoDemo() {
+export function BentoGridSolutions() {
   return (
     <BentoGrid>
       {features.map((feature, idx) => (

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { Spotlight } from "@/components/animations/spotLight";
+import { Spotlight } from "@/components/animations/spot-light";
 
 interface SpotlightBorderProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
