@@ -29,7 +29,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" className={ibmPlex.variable} style={{ backgroundColor: "#050507" }}>
-      <body style={{ backgroundColor: "#050507" }}>
+      <body style={{ backgroundColor: "transparent" }}>
         <SmoothScroll />
         <ScrollToTop />
         <Navbar />
