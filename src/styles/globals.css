@@ -41,12 +41,13 @@
   html {
     /* Sem `scroll-smooth`: o smooth scroll é feito pelo Lenis (ver SmoothScroll).
        Os dois juntos brigam pelo controle do scroll e causam travadas. */
-    @apply bg-ink-950;
+    background-color: #050507;
     font-feature-settings: 'cv11', 'ss01';
   }
 
   body {
-    @apply bg-white text-ink-900 font-sans antialiased;
+    background-color: #050507;
+    @apply text-ink-900 font-sans antialiased;
     font-weight: 400;
     line-height: 1.6;
   }
@@ -184,3 +185,479 @@
     background: var(--ink-500);
   }
 }
+
+/* ============================================================
+   GSAP Menu Scoped Theme Styles
+   ============================================================ */
+
+@font-face {
+  font-display: block;
+  font-family: Mori;
+  font-weight: 400;
+  src: url(https://assets.codepen.io/16327/PPMori-Regular.woff) format("woff");
+}
+@font-face {
+  font-display: block;
+  font-family: Mori;
+  font-weight: 600;
+  src: url(https://assets.codepen.io/16327/PPMori-SemiBold.woff) format("woff");
+}
+@font-face {
+  font-display: block;
+  font-family: Fraktion Mono;
+  font-weight: 400;
+  src: url(https://assets.codepen.io/16327/PPFraktionMono-Bold.woff) format("woff");
+}
+
+.gsap-menu-theme {
+  --green: #0E66FF; /* Infodive Brand Blue */
+  --lt: #E4EAFF;    /* Brand Light Blue Tint */
+  --black: #141413; /* Ink-950 (Dark Background) */
+  --white: #FFFFFF; /* Pure White */
+  --s75: #BFBFBF;   /* Ink-300 */
+  --s50: #7B7B7B;   /* Ink-500 */
+  --s25: #2E2D2D;   /* Ink-800 */
+  --color-shockingly-green: #0E66FF;
+  --color-just-black: #141413;
+  --color-surface-white: #FFFFFF;
+  --color-lt-green: #E4EAFF;
+  --color-grey: #1A1919;
+  --color-grey-dark: #141413;
+  --color-surface75: #BFBFBF;
+  --color-surface50: #7B7B7B;
+  --color-surface25: #2E2D2D;
+  --gradient-macha: linear-gradient(114.41deg, var(--green) 20.74%, var(--lt) 65.5%);
+  --dark: var(--color-just-black);
+  --light: var(--color-surface-white);
+  --green: var(--color-shockingly-green);
+
+  font-family: var(--font-ibm-plex), sans-serif;
+}
+
+.gsap-menu-theme *,
+.gsap-menu-theme *::before,
+.gsap-menu-theme *::after {
+  box-sizing: border-box;
+}
+
+/* Desliga transições/animações CSS APENAS nos elementos controlados pelo GSAP,
+   para não brigarem com a timeline. O restante (inputs, botões, links) volta a
+   animar normalmente, dando as micro-interações suaves. */
+.gsap-menu-theme .nav-bg,
+.gsap-menu-theme .nav-panel,
+.gsap-menu-theme .nav-item,
+.gsap-menu-theme .nav-login {
+  transition: none !important;
+  animation: none !important;
+}
+
+.gsap-menu-theme .topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  pointer-events: none;
+}
+
+.gsap-menu-theme .logo {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--white);
+  z-index: 310;
+  pointer-events: auto;
+}
+
+.gsap-menu-theme .logo img {
+  width: 60px;
+}
+
+.gsap-menu-theme .menu-toggle {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 310;
+  position: relative;
+  padding: 0;
+  pointer-events: auto;
+}
+
+.gsap-demo-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  gap: 16px;
+  padding: 24px;
+  border: 1px dashed var(--s25);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  text-align: center;
+}
+
+.gsap-demo-header h1 {
+  color: var(--light);
+  font-weight: 400;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+}
+
+.gsap-demo-header p {
+  color: var(--s50);
+  font-size: 0.88rem;
+  max-width: 70ch;
+}
+
+.gsap-menu-theme code {
+  font-family: Fraktion Mono, monospace;
+  font-size: 0.72rem;
+  background: rgba(10, 228, 72, 0.08);
+  color: var(--green);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.gsap-demo-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  font-size: 0.72rem;
+  color: var(--s50);
+}
+
+.gsap-demo-controls label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.gsap-demo-controls input[type="checkbox"] {
+  accent-color: var(--green);
+}
+
+.gsap-demo-controls input[type="range"] {
+  width: 64px;
+  accent-color: var(--green);
+}
+
+.gsap-menu-theme .speed-val {
+  font-family: Fraktion Mono, monospace;
+  font-size: 0.66rem;
+  min-width: 2em;
+  color: var(--green);
+}
+
+/* ── Nav overlay ── */
+.gsap-menu-theme .nav {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  padding: 1rem;
+  pointer-events: none;
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.gsap-menu-theme .nav-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+}
+
+.gsap-menu-theme .nav-border {
+  border: solid 2px;
+  border-radius: 10px;
+}
+
+.gsap-menu-theme .nav-top {
+  flex: 1;
+  width: 100%;
+  background: var(--white);
+  color: var(--black);
+  transform: translateX(-101%);
+  display: flex;
+  flex-direction: column;
+  padding: 50px 28px 28px;
+  overflow-y: auto;
+  position: relative;
+  z-index: 3;
+  border-color: var(--black);
+  overscroll-behavior: contain;
+}
+
+.gsap-menu-theme .nav-middle {
+  position: relative;
+  width: 100%;
+  background: linear-gradient(
+    135deg,
+    #0E66FF 0%,
+    #5754FF 50%,
+    #001DFF 100%
+  );
+  color: var(--white);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 24px 28px;
+  z-index: 2;
+  border-color: #0c4cbd;
+  min-height: 180px;
+}
+
+.gsap-menu-theme .nav-middle-header {
+  font-family: var(--font-ibm-plex), sans-serif;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+  margin-bottom: 12px;
+}
+
+.gsap-menu-theme .nav-panel {
+  max-width: 700px;
+  width: 100%;
+}
+
+.gsap-menu-theme .nav-middle-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.gsap-menu-theme .nav-middle-badge {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gsap-menu-theme .nav-middle-badge svg {
+  width: 24px;
+  height: 24px;
+}
+
+.gsap-menu-theme .nav-middle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gsap-menu-theme .nav-middle-title {
+  font-weight: 600;
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.gsap-menu-theme .nav-middle-desc {
+  font-size: 0.78rem;
+  opacity: 0.7;
+  line-height: 1.4;
+}
+
+.gsap-menu-theme .nav-middle-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.gsap-menu-theme .nav-middle-actions a {
+  font-family: var(--font-ibm-plex), sans-serif;
+  font-size: 0.7rem;
+  text-decoration: none;
+  color: var(--black);
+  padding: 6px 14px;
+  border-radius: 100px;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+.gsap-menu-theme .nav-middle-actions a:first-child {
+  background: var(--black);
+  color: var(--lt);
+  border-color: var(--black);
+}
+
+.gsap-menu-theme .nav-bottom {
+  position: relative;
+  height: 120px;
+  width: 100%;
+  background: var(--black);
+  color: var(--s50);
+  transform: translateX(101%);
+  display: flex;
+  align-items: center;
+  padding: 24px 28px;
+  z-index: 1;
+  border-color: var(--s25);
+}
+
+.gsap-menu-theme .nav-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+  justify-content: center;
+}
+
+.gsap-menu-theme .nav-item {
+  /* overflow: hidden; Removed to prevent clipping input focus rings and checkboxes */
+}
+
+.gsap-menu-theme .nav-link {
+  display: block;
+  text-decoration: none;
+  color: var(--black);
+  padding: 10px 0;
+  font-size: clamp(1.5rem, 4vw, 1.8rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.gsap-menu-theme .nav-login {
+  margin-top: auto;
+  padding-top: 20px;
+  font-size: 0.82rem;
+  color: var(--s50);
+  font-family: var(--font-ibm-plex), sans-serif;
+}
+
+.gsap-menu-theme .nav-socials {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.gsap-menu-theme .nav-socials a {
+  font-family: var(--font-ibm-plex), sans-serif;
+  font-size: 0.8rem;
+  color: var(--s50);
+  text-decoration: none;
+}
+
+.gsap-menu-theme .nav-asset {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.gsap-menu-theme .nav-asset img {
+  width: 132px;
+  height: auto;
+  filter: brightness(0) invert(1); /* garante a logo em branco puro */
+  opacity: 0.9;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── Micro-interações suaves (mesma linguagem clean do resto do site) ── */
+
+/* Campos: transição suave de borda/brilho */
+.gsap-menu-theme .nav-top input:not([type="checkbox"]),
+.gsap-menu-theme .nav-top select,
+.gsap-menu-theme .nav-top textarea {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+/* Hover: ilumina a borda em azul */
+.gsap-menu-theme .nav-top input:not([type="checkbox"]):hover,
+.gsap-menu-theme .nav-top select:hover,
+.gsap-menu-theme .nav-top textarea:hover {
+  border-color: rgba(14, 102, 255, 0.55);
+  box-shadow: 0 0 0 4px rgba(14, 102, 255, 0.06);
+}
+
+/* Foco: borda azul cheia + brilho um pouco mais forte */
+.gsap-menu-theme .nav-top input:not([type="checkbox"]):focus,
+.gsap-menu-theme .nav-top select:focus,
+.gsap-menu-theme .nav-top textarea:focus {
+  border-color: #0E66FF;
+  box-shadow: 0 0 0 4px rgba(14, 102, 255, 0.12);
+}
+
+/* Checkboxes: cor da marca + leve resposta ao clique e brilho no hover */
+.gsap-menu-theme .nav-top input[type="checkbox"] {
+  accent-color: #0E66FF;
+  border-radius: 4px;
+  transition: box-shadow 0.18s ease, transform 0.12s ease;
+}
+.gsap-menu-theme .nav-top input[type="checkbox"]:hover {
+  box-shadow: 0 0 0 3px rgba(14, 102, 255, 0.14);
+}
+.gsap-menu-theme .nav-top input[type="checkbox"]:active {
+  transform: scale(0.88);
+}
+
+/* Botão de fechar (X): leve resposta tátil ao clicar */
+.gsap-menu-theme .nav-top button[aria-label="Fechar"] {
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+.gsap-menu-theme .nav-top button[aria-label="Fechar"]:active {
+  transform: scale(0.9);
+}
+
+/* CTA "Ver Soluções" no painel azul: hover eleva, clique afunda */
+.gsap-menu-theme .nav-middle-actions a {
+  transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.gsap-menu-theme .nav-middle-actions a:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22);
+}
+.gsap-menu-theme .nav-middle-actions a:active {
+  transform: translateY(0) scale(0.96);
+}
+
+/* Redes sociais: transição suave de cor no hover */
+.gsap-menu-theme .nav-socials a {
+  transition: color 0.2s ease;
+}
+
+/* ── Estado de erro de validação ── */
+/* !important para vencer as regras de hover/foco azul acima */
+.gsap-menu-theme .nav-top .field-error {
+  border-color: #E5484D !important;
+}
+.gsap-menu-theme .nav-top .field-error:hover,
+.gsap-menu-theme .nav-top .field-error:focus {
+  border-color: #E5484D !important;
+  box-shadow: 0 0 0 4px rgba(229, 72, 77, 0.12) !important;
+}
+.gsap-menu-theme .nav-top input[type="checkbox"].field-error {
+  outline: 2px solid rgba(229, 72, 77, 0.6);
+  outline-offset: 1px;
+}
+
+/* ── Estilos do Footer (Forçar Links Brancos) ── */
+.footer-wrap a {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+.footer-wrap a:hover {
+  color: #ffffff !important;
+}
+

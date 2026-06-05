@@ -172,7 +172,7 @@ export function Products() {
                       width={120}
                       height={32}
                       className={cn(
-                        "w-auto object-contain opacity-60 brightness-0 transition-opacity duration-300 group-hover:opacity-100",
+                        "w-auto object-contain opacity-90 transition-opacity duration-300 group-hover:opacity-100",
                         produto.logoClass
                       )}
                     />

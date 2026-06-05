@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import logoImg from "@/assets/logo/Logo infodive.svg";
-import faviconImg from "@/assets/logo/Logo infodive 2.svg";
+import logoImg from "@/assets/logo/Logo infodive.webp";
+import faviconImg from "@/assets/logo/Logos Infodive 2.png";
 import { cn } from "@/lib/utils";
 
 type LogoProps = {

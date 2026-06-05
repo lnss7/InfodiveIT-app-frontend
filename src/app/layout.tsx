@@ -28,8 +28,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="pt-BR" className={ibmPlex.variable}>
-      <body>
+    <html lang="pt-BR" className={ibmPlex.variable} style={{ backgroundColor: "#050507" }}>
+      <body style={{ backgroundColor: "#050507" }}>
         <SmoothScroll />
         <ScrollToTop />
         <Navbar />

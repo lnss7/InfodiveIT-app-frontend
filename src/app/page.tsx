@@ -5,17 +5,23 @@ import { Solutions } from '@/sections/solutions'
 import { Problems } from '@/sections/problems'
 import { TrustPoints } from '@/sections/trust-points'
 import { Blog } from '@/sections/blog'
+import { Contact } from '@/sections/contact'
+import { Footer } from '@/layout/footer'
 
 export default function HomePage() {
   return (
-    <main>
-      <Hero />
-      <Solutions />
-      <Products />
-      <Problems />
-      <Cases />
-      <TrustPoints />
-      <Blog />
-    </main>
+    <>
+      <main className="relative z-20 bg-white">
+        <Hero />
+        <Solutions />
+        <Products />
+        <Problems />
+        <Cases />
+        <TrustPoints />
+        <Blog />
+        <Contact />
+      </main>
+      <Footer />
+    </>
   )
 }

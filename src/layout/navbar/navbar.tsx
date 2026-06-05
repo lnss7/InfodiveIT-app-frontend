@@ -18,14 +18,45 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [dropdown, setDropdown] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [visible, setVisible] = useState(true);
+  const lastScrollY = useRef(0);
   const closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > SCROLL_THRESHOLD);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Update scrolled state for background styles
+      setScrolled(currentScrollY > SCROLL_THRESHOLD);
+
+      // Keep navbar visible if mobile menu is open
+      if (mobileOpen) {
+        lastScrollY.current = currentScrollY;
+        return;
+      }
+
+      if (currentScrollY < 100) {
+        setVisible(true);
+      } else {
+        if (currentScrollY > lastScrollY.current) {
+          // Scrolling down - hide navbar and close dropdowns
+          setVisible(false);
+          setDropdown(null);
+        } else {
+          // Scrolling up - show navbar
+          setVisible(true);
+        }
+      }
+      
+      lastScrollY.current = currentScrollY;
+    };
+
+    // Initial check
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [mobileOpen]);
 
   const openDropdown = useCallback((key: string) => {
     if (closeTimeout.current) {
@@ -56,7 +87,10 @@ export function Navbar() {
   return (
     <>
       <header
-        className={cn("fixed inset-x-0 top-0 z-50", "pointer-events-none")}
+        className={cn(
+          "fixed inset-x-0 top-0 z-50 transition-transform duration-300 pointer-events-none",
+          visible ? "translate-y-0" : "-translate-y-full"
+        )}
       >
         <div className="container-default pt-3 md:pt-4">
           <div
