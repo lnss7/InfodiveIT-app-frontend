@@ -39,7 +39,9 @@
   }
 
   html {
-    @apply scroll-smooth bg-ink-950;
+    /* Sem `scroll-smooth`: o smooth scroll é feito pelo Lenis (ver SmoothScroll).
+       Os dois juntos brigam pelo controle do scroll e causam travadas. */
+    @apply bg-ink-950;
     font-feature-settings: 'cv11', 'ss01';
   }
 

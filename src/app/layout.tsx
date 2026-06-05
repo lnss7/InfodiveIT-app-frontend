@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { IBM_Plex_Sans } from 'next/font/google'
 import { Navbar } from '@/layout/navbar'
 import { ScrollToTop } from '@/components/scroll-to-top'
+import { SmoothScroll } from '@/components/smooth-scroll'
 import '@/styles/globals.css'
 
 const ibmPlex = IBM_Plex_Sans({
@@ -29,6 +30,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={ibmPlex.variable}>
       <body>
+        <SmoothScroll />
         <ScrollToTop />
         <Navbar />
         {children}

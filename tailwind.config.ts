@@ -47,11 +47,22 @@ const config: Config = {
       animation: {
         'marquee': 'marquee 40s linear infinite',
         'orbit': 'orbit calc(var(--duration)*1s) linear infinite',
+        'aurora': 'aurora 8s ease-in-out infinite alternate',
+        'shine': 'shine 14s linear infinite',
       },
       keyframes: {
         marquee: {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
+        },
+        aurora: {
+          '0%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' },
+        },
+        shine: {
+          '0%': { backgroundPosition: '200% center' },
+          '100%': { backgroundPosition: '-200% center' },
         },
         orbit: {
           '0%': {

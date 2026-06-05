@@ -98,13 +98,10 @@ export function Products() {
       ? FEATURED
       : FEATURED.filter((p) => p.categoria === active)
 
-  // Limite de cards: 4 no mobile, 6 do `sm` pra cima (os extras são escondidos via
-  // CSS). O link "Ver todos" aparece quando o total ultrapassa o limite do breakpoint.
+  // Limite de cards: 4 no mobile, 6 do `sm` pra cima (os extras são escondidos via CSS).
   const MOBILE_VISIBLE = 4
   const MAX_VISIBLE = 6
   const visible = filtered.slice(0, MAX_VISIBLE)
-  const showSeeAllMobile = FEATURED.length > MOBILE_VISIBLE
-  const showSeeAllDesktop = FEATURED.length > MAX_VISIBLE
 
   return (
     <section id="produtos" className="relative bg-ink-50 py-20 md:py-28">
@@ -204,26 +201,18 @@ export function Products() {
           </AnimatePresence>
         </motion.div>
 
-        {showSeeAllMobile && (
-          <div
-            className={cn(
-              "mt-12 flex justify-center",
-              // se cabe tudo no desktop (≤6), o link fica só no mobile
-              !showSeeAllDesktop && "sm:hidden"
-            )}
-          >
-            <Link href="/produtos" className="focus:outline-none w-full sm:w-auto flex justify-center" tabIndex={-1}>
-              <Button
-                primary="#0E66FF"
-                secondary="#001DFF"
-                className="w-full sm:w-auto text-xs px-4 py-2.5 sm:text-sm sm:px-6 sm:py-3 font-semibold"
-              >
-                Ver todos os produtos
-                <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
-              </Button>
-            </Link>
-          </div>
-        )}
+        <div className="mt-12 flex justify-center">
+          <Link href="/produtos" className="focus:outline-none w-full sm:w-auto flex justify-center" tabIndex={-1}>
+            <Button
+              primary="#0E66FF"
+              secondary="#001DFF"
+              className="w-full sm:w-auto text-xs px-4 py-2.5 sm:text-sm sm:px-6 sm:py-3 font-semibold"
+            >
+              Ver todos os produtos
+              <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+            </Button>
+          </Link>
+        </div>
       </div>
     </section>
   )

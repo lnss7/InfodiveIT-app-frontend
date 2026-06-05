@@ -3,6 +3,7 @@
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
 import { ArrowRight, MessageSquare } from "lucide-react";
 import { TextEffect } from "@/components/animations/text-effect";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
@@ -74,19 +75,20 @@ export function Hero() {
           INFODIVE IT
         </TextEffect>
 
-        {/* Title */}
-        <TextEffect
-          per="word"
-          as="h1"
-          preset="blur"
-          delay={0.2}
-          duration={0.9}
+        {/* Title — "missão crítica" é um span único, então o brilho varre a frase
+            inteira de uma vez (não palavra por palavra). */}
+        <motion.h1
+          initial={{ opacity: 0, filter: "blur(6px)", y: 8 }}
+          animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+          transition={{ delay: 0.2, duration: 0.9, ease: [0.25, 1, 0.5, 1] }}
           className="text-balance text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-4 max-w-4xl leading-[1.15] px-2"
-          highlightWords={["missão", "crítica"]}
-          highlightClassName="font-black text-[var(--brand-light)] drop-shadow-[0_2px_12px_rgba(14,102,255,0.2)]"
         >
-          Tecnologia de missão crítica para empresas que não param
-        </TextEffect>
+          Tecnologia de{" "}
+          <span className="font-black animate-shine bg-[linear-gradient(110deg,#0E66FF,#0E66FF_38%,#7aa9ff_47%,#eaf1ff_50%,#7aa9ff_53%,#0E66FF_62%,#0E66FF)] bg-[length:200%_auto] bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(14,102,255,0.25)]">
+            missão crítica
+          </span>{" "}
+          para empresas que não param
+        </motion.h1>
 
         {/* Description */}
         <TextEffect
