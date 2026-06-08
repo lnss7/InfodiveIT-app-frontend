@@ -1,7 +1,6 @@
 "use client"
 
-import React, { useRef } from "react"
-import { motion, useScroll, useTransform } from "framer-motion"
+import { motion } from "framer-motion"
 import { NumberTicker } from "@/components/ui/number-ticker"
 
 type Stat = {
@@ -47,56 +46,36 @@ const STATS: Stat[] = [
 ]
 
 export const TrustPoints = () => {
-  const sectionRef = useRef<HTMLElement>(null)
-
-  // Progresso da seção atravessando a viewport (suavizado pelo Lenis).
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  })
-
-  // Parallax vertical por coluna — magnitudes distintas dão profundidade/staggered.
-  // No meio da passagem (progresso ~0.5) o offset é 0 (posição "de descanso").
-  const yCol1 = useTransform(scrollYProgress, [0, 1], [40, -40])
-  const yCol2 = useTransform(scrollYProgress, [0, 1], [18, -18])
-  const yCol3 = useTransform(scrollYProgress, [0, 1], [32, -32])
-  const parallax = [yCol1, yCol2, yCol3]
-
   return (
-    <section
-      ref={sectionRef}
-      className="relative overflow-hidden bg-ink-50 py-20 md:py-24"
-    >
+    <section className="relative overflow-hidden bg-ink-50 pb-14 pt-8 md:py-16">
       <div className="container-default relative z-10">
-        <div className="relative grid grid-cols-1 divide-y divide-ink-200/80 md:grid-cols-3 md:divide-y-0">
+        <div className="relative">
 
-          {/* Divisórias verticais animadas (desktop) — "crescem" ao entrar */}
-          {[1, 2].map((pos) => (
-            <motion.span
-              key={pos}
-              aria-hidden
-              initial={{ scaleY: 0, opacity: 0 }}
-              whileInView={{ scaleY: 1, opacity: 1 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.7, delay: 0.25 + pos * 0.1, ease: [0.25, 1, 0.5, 1] }}
-              style={{ left: `${(pos * 100) / 3}%` }}
-              className="absolute top-1/2 hidden h-2/3 w-px -translate-y-1/2 origin-center md:block"
-            />
-          ))}
+          {/* Divisórias verticais animadas — camada própria, só no desktop.
+              Ficam FORA do grid com divide-y para não virar border-top nos stats. */}
+          <div aria-hidden className="pointer-events-none absolute inset-0 hidden md:block">
+            {[1, 2].map((pos) => (
+              <motion.span
+                key={pos}
+                initial={{ scaleY: 0, opacity: 0 }}
+                whileInView={{ scaleY: 1, opacity: 1 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.7, delay: 0.25 + pos * 0.1, ease: [0.25, 1, 0.5, 1] }}
+                style={{ left: `${(pos * 100) / 3}%` }}
+                className="absolute top-1/4 bottom-1/4 w-px origin-center bg-ink-200/80"
+              />
+            ))}
+          </div>
 
-          {STATS.map((stat, index) => (
-            // Wrapper de parallax (não conflita com o y da entrada, que vai no filho)
-            <motion.div key={stat.eyebrow} style={{ y: parallax[index] }}>
+          <div className="grid grid-cols-1 divide-y divide-ink-200/80 md:grid-cols-3 md:divide-y-0">
+            {STATS.map((stat, index) => (
               <motion.div
-                initial={{ opacity: 0, y: 28 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                key={stat.eyebrow}
+                initial={{ opacity: 0, y: 24, filter: "blur(8px)" }}
+                whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 viewport={{ once: true, margin: "-80px" }}
-                transition={{
-                  duration: 0.6,
-                  delay: index * 0.12,
-                  ease: [0.25, 1, 0.5, 1],
-                }}
-                className="flex flex-col items-center justify-center p-6 text-center md:p-8"
+                transition={{ duration: 0.7, delay: index * 0.12, ease: [0.25, 1, 0.5, 1] }}
+                className="flex flex-col items-center justify-center p-6 text-center md:px-8 md:py-7"
               >
                 <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-brand">
                   {stat.eyebrow}
@@ -117,8 +96,8 @@ export const TrustPoints = () => {
                   {stat.desc}
                 </p>
               </motion.div>
-            </motion.div>
-          ))}
+            ))}
+          </div>
 
         </div>
       </div>

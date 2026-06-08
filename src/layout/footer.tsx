@@ -7,6 +7,12 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ShieldCheck, Cpu } from "lucide-react";
 import logoImg from "@/assets/logo/Logo infodive.webp";
+import facebookImg from "@/assets/footer/facebook.png";
+import facebookColorImg from "@/assets/footer/facebook-colorfull.png";
+import instagramImg from "@/assets/footer/instagram.png";
+import instagramColorImg from "@/assets/footer/instagram-colorfull.png";
+import linkedinImg from "@/assets/footer/linkedin.png";
+import linkedinColorImg from "@/assets/footer/linkedin-colorfull.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -232,68 +238,60 @@ export function Footer() {
             </div>
 
             {/* Social Media links */}
-            <div className="flex gap-4">
+            <div className="flex gap-5">
               <a
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/company/infodiveit/posts/?feedView=all"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
+                className="relative group block h-5 w-5"
                 aria-label="LinkedIn"
-                className="p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-[#0E66FF] hover:border-[#0E66FF] hover:text-white hover:-translate-y-1 transition-all duration-300 flex items-center justify-center"
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-4.5 w-4.5"
-                >
-                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                  <rect x="2" y="9" width="4" height="12" />
-                  <circle cx="4" cy="4" r="2" />
-                </svg>
+                <Image
+                  src={linkedinImg}
+                  alt="LinkedIn"
+                  className="absolute inset-0 h-5 w-5 object-contain opacity-60 transition-opacity duration-300 group-hover:opacity-0"
+                />
+                <Image
+                  src={linkedinColorImg}
+                  alt="LinkedIn"
+                  className="absolute inset-0 h-5 w-5 object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                />
               </a>
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/infodiveit/"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
+                className="relative group block h-5 w-5"
                 aria-label="Instagram"
-                className="p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-[#E1306C] hover:border-[#E1306C] hover:text-white hover:-translate-y-1 transition-all duration-300 flex items-center justify-center"
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-4.5 w-4.5"
-                >
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-                </svg>
+                <Image
+                  src={instagramImg}
+                  alt="Instagram"
+                  className="absolute inset-0 h-5 w-5 object-contain opacity-60 transition-opacity duration-300 group-hover:opacity-0"
+                />
+                <Image
+                  src={instagramColorImg}
+                  alt="Instagram"
+                  className="absolute inset-0 h-5 w-5 object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                />
               </a>
               <a
-                href="https://youtube.com"
+                href="https://www.facebook.com/InfodiveIt"
                 target="_blank"
-                rel="noreferrer"
-                aria-label="YouTube"
-                className="p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-[#FF0000] hover:border-[#FF0000] hover:text-white hover:-translate-y-1 transition-all duration-300 flex items-center justify-center"
+                rel="noopener noreferrer"
+                className="relative group block h-5 w-5"
+                aria-label="Facebook"
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-4.5 w-4.5"
-                >
-                  <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" />
-                  <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" />
-                </svg>
+                <Image
+                  src={facebookImg}
+                  alt="Facebook"
+                  className="absolute inset-0 h-5 w-5 object-contain opacity-60 transition-opacity duration-300 group-hover:opacity-0"
+                />
+                <Image
+                  src={facebookColorImg}
+                  alt="Facebook"
+                  className="absolute inset-0 h-5 w-5 object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                />
               </a>
             </div>
           </div>

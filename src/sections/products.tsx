@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import { ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { GlowBorder, GlowBorderOverlay, handleGlowMove } from "@/components/ui/glow-border"
+import { Reveal } from "@/components/animations/reveal"
 
 import ibmLogo from "@/assets/IBM Logo.svg"
 import veeamLogo from "@/assets/Veeam Logo.svg"
@@ -106,7 +107,7 @@ export function Products() {
   return (
     <section id="produtos" className="relative bg-ink-50 py-20 md:py-28">
       <div className="container-default">
-        <div className="flex flex-col items-center gap-4 text-center">
+        <Reveal className="flex flex-col items-center gap-4 text-center">
           <p className="eyebrow text-sm">Produtos</p>
           <h2 className="text-ink-950 max-w-4xl text-balance text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.15]">
             Produtos em <span className="text-[var(--brand-light)]">destaque</span>
@@ -115,10 +116,10 @@ export function Products() {
             Uma seleção do nosso catálogo dos principais fabricantes do mundo — prontos
             para resolver desafios reais de infraestrutura, segurança e cloud.
           </p>
-        </div>
+        </Reveal>
 
         {/* Tabs de categoria */}
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
+        <Reveal delay={0.08} className="mt-10 flex flex-wrap items-center justify-center gap-2">
           {CATEGORIES.map((categoria) => {
             const isActive = active === categoria
             return (
@@ -139,12 +140,13 @@ export function Products() {
               </GlowBorder>
             )
           })}
-        </div>
+        </Reveal>
 
         {/* Grid de produtos (filtra com transição) */}
+        <Reveal delay={0.12} className="mt-10">
         <motion.div
           layout
-          className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
         >
           <AnimatePresence mode="popLayout">
             {visible.map((produto, index) => (
@@ -200,8 +202,9 @@ export function Products() {
             ))}
           </AnimatePresence>
         </motion.div>
+        </Reveal>
 
-        <div className="mt-12 flex justify-center">
+        <Reveal delay={0.06} className="mt-12 flex justify-center">
           <Link href="/produtos" className="focus:outline-none w-full sm:w-auto flex justify-center" tabIndex={-1}>
             <Button
               primary="#0E66FF"
@@ -212,7 +215,7 @@ export function Products() {
               <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
             </Button>
           </Link>
-        </div>
+        </Reveal>
       </div>
     </section>
   )

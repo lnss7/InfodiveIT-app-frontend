@@ -7,6 +7,7 @@ import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { api } from "@/lib/api"
 import { Button } from "@/components/ui/button"
+import { Reveal } from "@/components/animations/reveal"
 
 // Imagens geradas correspondendo ao estilo e temas do screenshot
 import peopleImg from "@/assets/blog/people.png"
@@ -110,7 +111,7 @@ export function Blog() {
       <div className="container-default">
         
         {/* Cabeçalho do Blog */}
-        <div className="mb-10 flex items-center justify-between gap-4">
+        <Reveal className="mb-10 flex items-center justify-between gap-4">
           <h2 className="text-3xl sm:text-4xl font-bold text-ink-950 tracking-tight">
             Blog
           </h2>
@@ -124,17 +125,17 @@ export function Blog() {
               Todos os artigos
             </Button>
           </Link>
-        </div>
+        </Reveal>
 
         {/* Grade de 3 Cards com Bordas Compartilhadas */}
         <div className="border border-ink-200 rounded-2xl overflow-hidden grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-ink-200 bg-transparent">
           {items.map((item, index) => (
             <motion.article
               key={item.id}
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 15, filter: "blur(8px)" }}
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.4, delay: index * 0.1, ease: "easeOut" }}
+              transition={{ duration: 0.6, delay: index * 0.1, ease: [0.25, 1, 0.5, 1] }}
               className="group flex flex-col p-6 transition-colors duration-300 hover:bg-ink-50/50"
             >
               {/* Imagem do Card com Proporção do Screenshot */}

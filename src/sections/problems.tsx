@@ -4,6 +4,8 @@ import React from "react"
 import Link from "next/link"
 import { ArrowRight, Activity } from "lucide-react"
 import { TextReveal } from "@/components/ui/text-reveal"
+import { Reveal } from "@/components/animations/reveal"
+import { cn } from "@/lib/utils"
 
 type ChallengeItem = {
   title: string
@@ -64,7 +66,7 @@ export function Problems() {
 
             {/* Coluna Esquerda: Título Editorial Pinned (Sticky) */}
             <div className="lg:col-span-5">
-              <div className="lg:sticky lg:top-28">
+              <Reveal className="lg:sticky lg:top-28">
                 <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#7aa9ff]">
                   Problemas que resolvemos
                 </span>
@@ -88,16 +90,20 @@ export function Problems() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </Reveal>
             </div>
 
             {/* Coluna Direita: Lista de Desafios Interativos */}
             <div className="divide-y divide-white/10 lg:col-span-7">
               {CHALLENGES.map((item, index) => (
+                <Reveal as="div" key={index} delay={index * 0.07}>
                 <Link
                   href={item.href}
-                  key={index}
-                  className="group block py-7 transition-colors duration-300 first:pt-0 last:pb-0"
+                  className={cn(
+                    "group block py-7 transition-colors duration-300",
+                    index === 0 && "pt-0",
+                    index === CHALLENGES.length - 1 && "pb-0"
+                  )}
                 >
                   <div className="flex items-start gap-4">
                     {/* Número Editorial */}
@@ -135,6 +141,7 @@ export function Problems() {
                     </div>
                   </div>
                 </Link>
+                </Reveal>
               ))}
             </div>
 

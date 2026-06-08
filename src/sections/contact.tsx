@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Reveal } from "@/components/animations/reveal";
 import { GsapMenu } from "@/components/GsapMenu";
 import { Mail, Phone, MapPin, Clock, MessageSquare, Check, ArrowRight } from "lucide-react";
 
@@ -40,7 +41,7 @@ export function Contact() {
           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
           
           {/* Contact Details (Left Column) */}
-          <div className="lg:col-span-7 flex flex-col gap-6">
+          <Reveal className="lg:col-span-7 flex flex-col gap-6">
             <p className="eyebrow text-sm text-white/70">Contato</p>
             <h2 className="text-white text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight leading-[1.15] text-balance">
               Pronto para evoluir a <span className="text-[#9DB8FF]">TI da sua empresa</span>?
@@ -70,7 +71,7 @@ export function Contact() {
                 <div>
                   <h4 className="text-sm font-semibold text-white">Telefone</h4>
                   <a href="tel:+551140030000" className="text-xs text-[#BFBFBF] hover:text-[#0E66FF] transition-colors mt-0.5 block">
-                    +55 (11) 4003-0000
+                    +55 (51) 3330-0444
                   </a>
                 </div>
               </div>
@@ -82,7 +83,7 @@ export function Contact() {
                 <div>
                   <h4 className="text-sm font-semibold text-white">Localização</h4>
                   <span className="text-xs text-[#BFBFBF] mt-0.5 block leading-relaxed">
-                    Av. Paulista, 1000 - Bela Vista<br />São Paulo - SP, CEP 01310-100
+                    Av. Cristovão Colombo, 3000 - Sala 704 | Floresta, Porto Alegre - RS
                   </span>
                 </div>
               </div>
@@ -100,10 +101,10 @@ export function Contact() {
               </div>
 
             </div>
-          </div>
+          </Reveal>
 
           {/* CTA Box (Right Column) */}
-          <div className="lg:col-span-5 relative flex flex-col p-8 md:p-10 rounded-2xl bg-white/[0.08] border border-white/15 backdrop-blur-xl overflow-hidden shadow-xl shadow-black/20">
+          <Reveal as="div" delay={0.12} className="lg:col-span-5 relative flex flex-col p-8 md:p-10 rounded-2xl bg-white/[0.08] border border-white/15 backdrop-blur-xl overflow-hidden shadow-xl shadow-black/20">
             {/* Top accent border */}
             <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#0E66FF] to-transparent" />
             {/* Soft inner glow */}
@@ -156,7 +157,7 @@ export function Contact() {
                 Especialistas online no momento
               </div>
             </div>
-          </div>
+          </Reveal>
 
           </div>
         </div>

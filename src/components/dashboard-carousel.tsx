@@ -280,24 +280,27 @@ export function DashboardCarousel({ slides, className }: DashboardCarouselProps)
                 className="dashboard-slide__tween relative left-1/2 w-[120%] sm:w-[150%] origin-center will-change-transform"
                 style={{ transform: "translateX(-50%)" }}
               >
-                <div className="overflow-hidden rounded-xl border border-white/10 bg-ink-900 shadow-2xl shadow-black/50 ring-1 ring-black/5 aspect-[10/8] sm:aspect-auto">
-                  {items ? (
-                    <Image
-                      src={(slide as DashboardSlide).src}
-                      alt={(slide as DashboardSlide).alt}
-                      width={1280}
-                      height={720}
-                      className="h-full w-full object-cover object-top sm:h-auto"
-                      draggable={false}
-                      priority={index === 0}
-                    />
-                  ) : (
-                    <div className="aspect-[16/9] w-full bg-gradient-to-br from-ink-800 to-ink-950 grid place-items-center">
-                      <span className="text-xs font-semibold uppercase tracking-[0.25em] text-ink-500">
-                        Tela {(index % 3) + 1}
-                      </span>
-                    </div>
-                  )}
+                {/* Liquid Glass Effect Frame */}
+                <div className="p-1.5 sm:p-2.5 rounded-[18px] sm:rounded-[28px] bg-gradient-to-tr from-white/[0.02] via-white/[0.08] to-white/[0.03] backdrop-blur-[16px] border border-white/10 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.75),inset_0_1px_1px_rgba(255,255,255,0.2)] ring-1 ring-black/40">
+                  <div className="overflow-hidden rounded-[12px] sm:rounded-[18px] border border-white/10 bg-ink-900/90 aspect-[10/8] sm:aspect-auto">
+                    {items ? (
+                      <Image
+                        src={(slide as DashboardSlide).src}
+                        alt={(slide as DashboardSlide).alt}
+                        width={1280}
+                        height={720}
+                        className="h-full w-full object-cover object-top sm:h-auto"
+                        draggable={false}
+                        priority={index === 0}
+                      />
+                    ) : (
+                      <div className="aspect-[16/9] w-full bg-gradient-to-br from-ink-800 to-ink-950 grid place-items-center">
+                        <span className="text-xs font-semibold uppercase tracking-[0.25em] text-ink-500">
+                          Tela {(index % 3) + 1}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

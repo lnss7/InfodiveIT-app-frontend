@@ -3,10 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence } from "framer-motion";
-import { ArrowRight, ChevronDown, Menu } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
 import { MobileMenu } from "./mobile-menu";
+import { MenuToggle } from "./menu-toggle";
 import { SolucoesDropdown } from "./dropdown-solucoes";
 import { ProdutosDropdown } from "./dropdown-produtos";
 import { Button } from "@/components/ui/button";
@@ -84,12 +85,17 @@ export function Navbar() {
     return () => window.removeEventListener("keydown", onKey);
   }, [closeDropdown]);
 
+  // Quando o menu mobile está aberto, o conteúdo da navbar (logo + botão) fica
+  // sobre o painel branco em tela cheia → força o estado "sólido" (logo escura).
+  const solid = scrolled || mobileOpen;
+  const showHeader = visible || mobileOpen;
+
   return (
     <>
       <header
         className={cn(
-          "fixed inset-x-0 top-0 z-50 transition-transform duration-300 pointer-events-none",
-          visible ? "translate-y-0" : "-translate-y-full"
+          "fixed inset-x-0 top-0 z-[80] transition-transform duration-300 pointer-events-none",
+          showHeader ? "translate-y-0" : "-translate-y-full"
         )}
       >
         <div className="container-default pt-3 md:pt-4">
@@ -103,7 +109,7 @@ export function Navbar() {
             )}
           >
             <div className="flex h-14 items-center justify-between px-4 md:h-16 md:px-5">
-              <Logo scrolled={scrolled} />
+              <Logo scrolled={solid} />
 
               <nav
                 aria-label="Navegação principal"
@@ -202,22 +208,11 @@ export function Navbar() {
                   </Button>
                 </Link>
 
-                <button
-                  type="button"
-                  onClick={() => setMobileOpen(true)}
-                  aria-label="Abrir menu"
-                  aria-expanded={mobileOpen}
-                  className={cn(
-                    "lg:hidden inline-flex h-9 w-9 items-center justify-center",
-                    "rounded-md transition-all duration-300",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/30",
-                    scrolled
-                      ? "text-ink-900 hover:bg-ink-50"
-                      : "text-white hover:bg-white/10",
-                  )}
-                >
-                  <Menu className="h-5 w-5" strokeWidth={2} />
-                </button>
+                <MenuToggle
+                  open={mobileOpen}
+                  dark={solid}
+                  onClick={() => setMobileOpen((v) => !v)}
+                />
               </div>
             </div>
 
