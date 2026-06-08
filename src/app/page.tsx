@@ -5,6 +5,7 @@ import { Solutions } from '@/sections/solutions'
 import { Problems } from '@/sections/problems'
 import { TrustPoints } from '@/sections/trust-points'
 import { Blog } from '@/sections/blog'
+import { FAQ } from '@/sections/faq'
 import { Contact } from '@/sections/contact'
 import { Footer } from '@/layout/footer'
 
@@ -19,6 +20,7 @@ export default function HomePage() {
         <Cases />
         <TrustPoints />
         <Blog />
+        <FAQ />
         <Contact />
       </main>
       <Footer />
