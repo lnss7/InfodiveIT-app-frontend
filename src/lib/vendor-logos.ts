@@ -1,0 +1,25 @@
+import awsLogo from "@/assets/AWS Logo.svg";
+import acronisLogo from "@/assets/Acronis Logo.svg";
+import appleLogo from "@/assets/Apple Logo.svg";
+import dellLogo from "@/assets/Dell Logo.svg";
+import ibmLogo from "@/assets/IBM Logo.svg";
+import lenovoLogo from "@/assets/Lenovo Logo.svg";
+import microsoftLogo from "@/assets/Microsoft Logo.svg";
+import redhatLogo from "@/assets/Red Hat Logo.svg";
+import suseLogo from "@/assets/Suse Logo.svg";
+import veeamLogo from "@/assets/Veeam Logo.svg";
+import virtuozzoLogo from "@/assets/Virtuozzo Logo.svg";
+
+export const VENDOR_LOGOS: Record<string, any> = {
+  "AWS": awsLogo,
+  "Acronis": acronisLogo,
+  "Apple": appleLogo,
+  "Dell Technologies": dellLogo,
+  "IBM": ibmLogo,
+  "Lenovo": lenovoLogo,
+  "Microsoft": microsoftLogo,
+  "Red Hat": redhatLogo,
+  "SUSE": suseLogo,
+  "Veeam": veeamLogo,
+  "Virtuozzo": virtuozzoLogo,
+};
