@@ -9,6 +9,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { Reveal } from "@/components/animations/reveal";
 
 // Import partner logo SVGs from assets
 import awsLogo from "@/assets/AWS Logo.svg";
@@ -103,84 +104,88 @@ export function Hero() {
         </TextEffect>
 
         {/* Buttons */}
-        <div className="flex flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto justify-center px-4">
-          <Link href="/solucoes" className="focus:outline-none flex-1 sm:flex-none sm:w-auto" tabIndex={-1}>
-            <Button
-              primary="#0E66FF"
-              secondary="#001DFF"
-              className="w-full sm:w-auto text-xs px-4 py-2.5 sm:text-sm sm:px-6 sm:py-3 font-semibold"
-            >
-              Explorar soluções
-              <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
-            </Button>
-          </Link>
-          <Link href="/contato" className="focus:outline-none flex-1 sm:flex-none sm:w-auto" tabIndex={-1}>
-            <Button
-              primary="rgba(255, 255, 255, 0.06)"
-              secondary="rgba(255, 255, 255, 0.16)"
-              className="border border-white/10 w-full sm:w-auto text-xs px-4 py-2.5 sm:text-sm sm:px-6 sm:py-3 font-semibold"
-            >
-              <MessageSquare className="h-4 w-4 text-ink-300" strokeWidth={2} />
-              Fale conosco
-            </Button>
-          </Link>
-        </div>
+        <Reveal delay={0.6}>
+          <div className="flex flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto justify-center px-4">
+            <Link href="/solucoes" className="focus:outline-none flex-1 sm:flex-none sm:w-auto" tabIndex={-1}>
+              <Button
+                primary="#0E66FF"
+                secondary="#001DFF"
+                className="w-full sm:w-auto text-xs px-4 py-2.5 sm:text-sm sm:px-6 sm:py-3 font-semibold"
+              >
+                Explorar soluções
+                <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+              </Button>
+            </Link>
+            <Link href="/contato" className="focus:outline-none flex-1 sm:flex-none sm:w-auto" tabIndex={-1}>
+              <Button
+                primary="rgba(255, 255, 255, 0.06)"
+                secondary="rgba(255, 255, 255, 0.16)"
+                className="border border-white/10 w-full sm:w-auto text-xs px-4 py-2.5 sm:text-sm sm:px-6 sm:py-3 font-semibold"
+              >
+                <MessageSquare className="h-4 w-4 text-ink-300" strokeWidth={2} />
+                Fale conosco
+              </Button>
+            </Link>
+          </div>
+        </Reveal>
 
         {/* Social Proof */}
-        <p className="mt-8 text-[10px] font-semibold uppercase tracking-[0.25em] text-ink-500 px-4">
-          Desde 2003 integrando tecnologia e negócios.
-        </p>
+        <Reveal delay={0.7}>
+          <p className="mt-8 text-[10px] font-semibold uppercase tracking-[0.25em] text-ink-500 px-4">
+            Desde 2003 integrando tecnologia e negócios.
+          </p>
+        </Reveal>
       </div>
       {/* End of vertically-centered hero text */}
 
       {/* Animated Infinite Marquee Carousel (logos) */}
-      <div className="relative z-10 w-full max-w-full md:max-w-6xl mx-auto mt-2 overflow-hidden py-2 [mask-image:linear-gradient(to_right,transparent,white_5%,white_95%,transparent)] sm:[mask-image:linear-gradient(to_right,transparent,white_15%,white_85%,transparent)] select-none">
-          <div className="flex w-max animate-marquee gap-6 hover:[animation-play-state:paused] cursor-pointer">
-            {MARQUEE_PARTNERS.map((partner, index) => (
-              <div key={index} className="w-[200px] sm:w-[240px] shrink-0 p-1">
-                <SpotlightBorder className="h-full">
-                  <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                  <CardContent className="p-2.5 pt-4 sm:p-4 flex flex-col items-center justify-between text-center h-full min-h-[120px] sm:min-h-[136px]">
-                    {/* Logo Container */}
-                    <div className="h-7 sm:h-10 flex items-center justify-center mb-2">
-                      <Image
-                        src={partner.logo}
-                        alt={`${partner.name} logo`}
-                        width={120}
-                        height={32}
-                        className={cn(
-                          "w-auto object-contain brightness-0 invert opacity-50 group-hover:opacity-100 transition-all duration-300",
-                          partner.keepWhiteOnHover
-                            ? ""
-                            : "group-hover:brightness-100 group-hover:invert-0",
-                          partner.className || "h-8"
-                        )}
-                      />
-                    </div>
-                    {/* Info */}
-                    <div className="flex flex-col justify-center flex-grow">
-                      <h4 className="text-xs font-bold text-white tracking-wider uppercase mb-1.5 group-hover:text-brand transition-colors duration-300">
-                        {partner.name}
-                      </h4>
-                      <p className="text-[10px] sm:text-[11px] text-ink-500 leading-normal max-w-[160px] sm:max-w-[180px] mx-auto group-hover:text-ink-300 transition-colors duration-300">
-                        {partner.description}
-                      </p>
-                    </div>
-                  </CardContent>
-                </SpotlightBorder>
-              </div>
-            ))}
-          </div>
+      <Reveal delay={0.8} className="relative z-10 w-full max-w-full md:max-w-6xl mx-auto mt-2 overflow-hidden py-2 [mask-image:linear-gradient(to_right,transparent,white_5%,white_95%,transparent)] sm:[mask-image:linear-gradient(to_right,transparent,white_15%,white_85%,transparent)] select-none">
+        <div className="flex w-max animate-marquee gap-6 hover:[animation-play-state:paused] cursor-pointer">
+          {MARQUEE_PARTNERS.map((partner, index) => (
+            <div key={index} className="w-[200px] sm:w-[240px] shrink-0 p-1">
+              <SpotlightBorder className="h-full">
+                <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                <CardContent className="p-2.5 pt-4 sm:p-4 flex flex-col items-center justify-between text-center h-full min-h-[120px] sm:min-h-[136px]">
+                  {/* Logo Container */}
+                  <div className="h-7 sm:h-10 flex items-center justify-center mb-2">
+                    <Image
+                      src={partner.logo}
+                      alt={`${partner.name} logo`}
+                      width={120}
+                      height={32}
+                      className={cn(
+                        "w-auto object-contain brightness-0 invert opacity-50 group-hover:opacity-100 transition-all duration-300",
+                        partner.keepWhiteOnHover
+                          ? ""
+                          : "group-hover:brightness-100 group-hover:invert-0",
+                        partner.className || "h-8"
+                      )}
+                    />
+                  </div>
+                  {/* Info */}
+                  <div className="flex flex-col justify-center flex-grow">
+                    <h4 className="text-xs font-bold text-white tracking-wider uppercase mb-1.5 group-hover:text-brand transition-colors duration-300">
+                      {partner.name}
+                    </h4>
+                    <p className="text-[10px] sm:text-[11px] text-ink-500 leading-normal max-w-[160px] sm:max-w-[180px] mx-auto group-hover:text-ink-300 transition-colors duration-300">
+                      {partner.description}
+                    </p>
+                  </div>
+                </CardContent>
+              </SpotlightBorder>
+            </div>
+          ))}
         </div>
+      </Reveal>
 
-        {/* Dashboard showcase — slide central sobrepõe os laterais.
-            Cortado a ~75%: a margem negativa encolhe a caixa do wrapper e o fundo
-            da foto some no overflow-hidden (corte seco, sem invadir a seção branca). */}
-        <div className="relative z-0 w-full mt-8 sm:mt-12 overflow-hidden">
-          <div className="-mb-16 sm:-mb-20 md:-mb-28 lg:-mb-40">
-            <DashboardCarousel slides={SHOWCASE_SLIDES} className="w-full" />
-          </div>
+      {/* Dashboard showcase — slide central sobrepõe os laterais.
+          Cortado a ~75%: a margem negativa encolhe a caixa do wrapper e o fundo
+          da foto some no overflow-hidden (corte seco, sem invadir a seção branca). */}
+      <Reveal delay={0.9} className="relative z-0 w-full mt-8 sm:mt-12 overflow-hidden">
+        <div className="-mb-16 sm:-mb-20 md:-mb-28 lg:-mb-40">
+          <DashboardCarousel slides={SHOWCASE_SLIDES} className="w-full" />
         </div>
+      </Reveal>
     </section>
   )
 }
