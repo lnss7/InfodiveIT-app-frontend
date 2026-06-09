@@ -39,6 +39,18 @@ export function FAQ() {
     setActiveIndex(activeIndex === index ? null : index)
   }
 
+  const handleMouseEnter = (index: number) => {
+    if (typeof window !== "undefined" && window.innerWidth >= 1024) {
+      setActiveIndex(index)
+    }
+  }
+
+  const handleMouseLeave = (index: number) => {
+    if (typeof window !== "undefined" && window.innerWidth >= 1024) {
+      setActiveIndex((prev) => (prev === index ? null : prev))
+    }
+  }
+
   const handleContactClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const contactSection = document.getElementById("contact");
     if (contactSection) {
@@ -93,11 +105,13 @@ export function FAQ() {
               return (
                 <Reveal key={index} delay={index * 0.06} as="div">
                   <div 
-                    className={`border-b border-ink-200/40 py-6 transition-all duration-300 ${
+                    className={`border-b py-6 transition-all duration-300 ${
                       isOpen 
-                        ? "border-l-2 border-red-700 pl-4 -ml-4" 
-                        : "border-l-2 border-transparent pl-4 -ml-4"
+                        ? "border-l-2 border-red-700 border-b-transparent pl-4 -ml-4" 
+                        : "border-ink-200/40 border-l-2 border-transparent pl-4 -ml-4"
                     }`}
+                    onMouseEnter={() => handleMouseEnter(index)}
+                    onMouseLeave={() => handleMouseLeave(index)}
                   >
                     <button
                       type="button"

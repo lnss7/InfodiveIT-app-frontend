@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, ShieldCheck } from "lucide-react";
+import { motion } from "framer-motion";
 import { type Solution, SOLUTION_ICONS } from "@/lib/solutions-data";
 import { VENDOR_LOGOS } from "@/lib/vendor-logos";
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
@@ -10,6 +12,7 @@ import { Reveal } from "@/components/animations/reveal";
 import { Button } from "@/components/ui/button";
 import { GlowBorderOverlay, handleGlowMove } from "@/components/ui/glow-border";
 import { BorderBeam } from "@/components/ui/border-beam";
+import { GsapMenu } from "@/components/GsapMenu";
 
 interface SolutionDetailContentProps {
   solution: Solution;
@@ -19,6 +22,7 @@ export function SolutionDetailContent({
   solution,
 }: SolutionDetailContentProps) {
   const Icon = SOLUTION_ICONS[solution.iconName];
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <div className="relative z-20 w-full min-h-screen bg-white text-ink-900">
@@ -212,11 +216,39 @@ export function SolutionDetailContent({
                   className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-[#0E66FF]/25 blur-[120px]"
                 />
                 {/* Arcos finos nos cantos (como o print e a seção Contact) */}
-                <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full border border-white/15" />
-                <div aria-hidden className="pointer-events-none absolute -right-28 -top-28 h-80 w-80 rounded-full border border-white/10" />
+                <motion.div
+                  aria-hidden
+                  initial={{ opacity: 0, scale: 0.7, x: 30, y: -30 }}
+                  whileInView={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 1, ease: "easeOut", delay: 0.1 }}
+                  className="pointer-events-none absolute -right-10 -top-10 sm:-right-16 sm:-top-16 h-36 w-36 sm:h-56 sm:w-56 rounded-full border border-white/15"
+                />
+                <motion.div
+                  aria-hidden
+                  initial={{ opacity: 0, scale: 0.7, x: 45, y: -45 }}
+                  whileInView={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
+                  className="pointer-events-none absolute -right-16 -top-16 sm:-right-28 sm:-top-28 h-48 w-48 sm:h-80 sm:w-80 rounded-full border border-white/10"
+                />
                 
-                <div aria-hidden className="pointer-events-none absolute -left-16 -bottom-16 h-56 w-56 rounded-full border border-white/15" />
-                <div aria-hidden className="pointer-events-none absolute -left-28 -bottom-28 h-80 w-80 rounded-full border border-white/10" />
+                <motion.div
+                  aria-hidden
+                  initial={{ opacity: 0, scale: 0.7, x: -30, y: 30 }}
+                  whileInView={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 1, ease: "easeOut", delay: 0.1 }}
+                  className="pointer-events-none absolute -left-10 -bottom-10 sm:-left-16 sm:-bottom-16 h-36 w-36 sm:h-56 sm:w-56 rounded-full border border-white/15"
+                />
+                <motion.div
+                  aria-hidden
+                  initial={{ opacity: 0, scale: 0.7, x: -45, y: 45 }}
+                  whileInView={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
+                  className="pointer-events-none absolute -left-16 -bottom-16 sm:-left-28 sm:-bottom-28 h-48 w-48 sm:h-80 sm:w-80 rounded-full border border-white/10"
+                />
                 
                 {/* Padrão de pontos sutil no canto inferior esquerdo */}
                 <div
@@ -231,22 +263,22 @@ export function SolutionDetailContent({
                   <p className="text-[#BFBFBF] text-sm sm:text-base font-light leading-relaxed max-w-2xl mx-auto mb-8 text-pretty">
                     Agende uma reunião estratégica de 15 minutos com nossos arquitetos de TI para mapear a melhor arquitetura e SLA para sua operação.
                   </p>
-                  <Link href={`/contato?solucao=${solution.slug}`}>
-                    <Button
-                      primary="#0E66FF"
-                      secondary="#001DFF"
-                      className="text-sm px-8 py-4 font-bold rounded-full text-white cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)]"
-                    >
-                      Falar com especialista
-                      <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
-                    </Button>
-                  </Link>
+                  <Button
+                    primary="#0E66FF"
+                    secondary="#001DFF"
+                    onClick={() => setIsMenuOpen(true)}
+                    className="text-sm px-8 py-4 font-bold rounded-full text-white cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)]"
+                  >
+                    Falar com especialista
+                    <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+                  </Button>
                 </div>
               </div>
             </Reveal>
           </div>
         </div>
       </div>
+      <GsapMenu isOpen={isMenuOpen} onToggle={setIsMenuOpen} />
     </div>
   );
 }

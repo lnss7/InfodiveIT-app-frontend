@@ -17,7 +17,7 @@ export function Solutions() {
             <Button
               primary="#0E66FF"
               secondary="#001DFF"
-              className="mt-2 w-full sm:w-auto text-xs px-4 py-2.5 sm:text-sm sm:px-6 sm:py-3 font-semibold"
+              className="mt-2 w-full sm:w-auto text-sm font-bold py-3.5 sm:px-6 sm:py-3 flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)]"
             >
               Ver todas as soluções
               <ArrowRight className="h-4 w-4" strokeWidth={2.5} />

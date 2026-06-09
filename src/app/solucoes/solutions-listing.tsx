@@ -8,6 +8,8 @@ import { InteractiveGridPattern } from "@/components/animations/interactive-grid
 import { Reveal } from "@/components/animations/reveal";
 import { Button } from "@/components/ui/button";
 import { GlowBorderOverlay, handleGlowMove } from "@/components/ui/glow-border";
+import { GsapMenu } from "@/components/GsapMenu";
+import { motion } from "framer-motion";
 
 const CATEGORIES = [
   "Todas",
@@ -22,6 +24,7 @@ const CATEGORIES = [
 export function SolutionsListing() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todas");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Filter solutions based on search input and selected category tab
   const filteredSolutions = useMemo(() => {
@@ -114,20 +117,28 @@ export function SolutionsListing() {
               </div>
 
               {/* Filter Tabs */}
-              <div className="flex flex-wrap items-center justify-center gap-1.5 w-full lg:w-auto">
+              <div className="flex overflow-x-auto no-scrollbar gap-1.5 w-full lg:w-auto justify-start lg:justify-center py-2 px-1 select-none">
                 {CATEGORIES.map((category) => {
                   const isActive = selectedCategory === category;
                   return (
                     <button
                       key={category}
                       onClick={() => setSelectedCategory(category)}
-                      className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                      className={`relative px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-300 focus:outline-none cursor-pointer select-none whitespace-nowrap ${
                         isActive
-                          ? "bg-brand text-white shadow-[0_4px_12px_rgba(14,102,255,0.25)]"
-                          : "bg-transparent border border-transparent text-ink-600 hover:text-ink-950 hover:bg-ink-100/50"
+                          ? "text-white"
+                          : "text-ink-600 hover:text-ink-950"
                       }`}
                     >
-                      {category}
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeTab"
+                          className="absolute inset-0 bg-brand rounded-lg shadow-[0_4px_12px_rgba(14,102,255,0.25)]"
+                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                          style={{ zIndex: 0 }}
+                        />
+                      )}
+                      <span className="relative z-10">{category}</span>
                     </button>
                   );
                 })}
@@ -247,21 +258,21 @@ export function SolutionsListing() {
                 </p>
               </div>
               <div className="relative z-10 shrink-0">
-                <Link href="/contato">
-                  <Button
-                    primary="#0E66FF"
-                    secondary="#001DFF"
-                    className="text-xs px-5 py-3 sm:text-sm sm:px-6 sm:py-3.5 font-semibold rounded-xl text-white"
-                  >
-                    Falar com especialista
-                    <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
-                  </Button>
-                </Link>
+                <Button
+                  primary="#0E66FF"
+                  secondary="#001DFF"
+                  onClick={() => setIsMenuOpen(true)}
+                  className="text-xs px-5 py-3 sm:text-sm sm:px-6 sm:py-3.5 font-semibold rounded-xl text-white cursor-pointer"
+                >
+                  Falar com especialista
+                  <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+                </Button>
               </div>
             </div>
           </Reveal>
         </div>
       </div>
+      <GsapMenu isOpen={isMenuOpen} onToggle={setIsMenuOpen} />
     </div>
   );
 }

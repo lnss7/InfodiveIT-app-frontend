@@ -52,6 +52,25 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
   const [solucoesOpen, setSolucoesOpen] = useState(false)
   const [produtosOpen, setProdutosOpen] = useState(false)
 
+  const handleContactClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (window.location.pathname === "/") {
+      const contactSection = document.getElementById("contact");
+      if (contactSection) {
+        e.preventDefault();
+        onClose();
+        setTimeout(() => {
+          if ((window as any).lenis) {
+            (window as any).lenis.scrollTo(contactSection, { duration: 1.2 });
+          } else {
+            contactSection.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 200);
+      }
+    } else {
+      onClose();
+    }
+  };
+
   useEffect(() => {
     if (!open) return
     const original = document.body.style.overflow
@@ -246,8 +265,8 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
             className="border-t border-ink-200 px-6 pb-8 pt-5"
           >
             <Link
-              href="/contato"
-              onClick={onClose}
+              href="/#contact"
+              onClick={handleContactClick}
               className={cn(
                 'inline-flex w-full items-center justify-center gap-2 rounded-xl',
                 'bg-ink-950 px-5 py-4 text-[15px] font-semibold text-white',
