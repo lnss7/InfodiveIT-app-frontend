@@ -6,7 +6,6 @@ import { ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   categorias,
-  fabricantesDestaque,
   ultimoConteudoDestaque,
 } from './data'
 

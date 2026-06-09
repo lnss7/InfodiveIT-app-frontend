@@ -17,9 +17,6 @@ import {
   Activity,
   Laptop,
   Boxes,
-  Sparkles,
-  MessageSquare,
-  Workflow,
 } from "lucide-react"
 import Image from "next/image"
 import { BentoCard, BentoGrid } from "@/components/ui/bento-grid"

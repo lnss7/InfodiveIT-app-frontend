@@ -23,7 +23,7 @@ import redhatLogo from "@/assets/Red Hat Logo.svg";
 import suseLogo from "@/assets/Suse Logo.svg";
 import veeamLogo from "@/assets/Veeam Logo.svg";
 import virtuozzoLogo from "@/assets/Virtuozzo Logo.svg";
-import { SpotlightBorder } from "@/components/ui/spot-light-border";
+import { MagicCard } from "@/components/ui/magic-card";
 import { DashboardCarousel } from "@/components/dashboard-carousel";
 import tela1 from "@/assets/telasCarrosselHero/tela-1.webp";
 import tela2 from "@/assets/telasCarrosselHero/tela-2.webp";
@@ -61,6 +61,20 @@ export function Hero() {
         (window as any).lenis.scrollTo(contactSection, { duration: 1.2 });
       } else {
         contactSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
+  const handleSolutionsClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (window.location.pathname === "/") {
+      const solutionsSection = document.getElementById("solutions");
+      if (solutionsSection) {
+        e.preventDefault();
+        if ((window as any).lenis) {
+          (window as any).lenis.scrollTo(solutionsSection, { duration: 1.2 });
+        } else {
+          solutionsSection.scrollIntoView({ behavior: "smooth" });
+        }
       }
     }
   };
@@ -117,7 +131,11 @@ export function Hero() {
         {/* Buttons */}
         <Reveal delay={0.6}>
           <div className="flex flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto justify-center px-4">
-            <Link href="/solucoes" className="focus:outline-none flex-1 sm:flex-none sm:w-auto" tabIndex={-1}>
+            <Link href="/#solucoes" 
+                  onClick={handleSolutionsClick} 
+                  className="focus:outline-none flex-1 sm:flex-none sm:w-auto" 
+                  tabIndex={-1}
+            >
               <Button
                 primary="#0E66FF"
                 secondary="#001DFF"
@@ -159,8 +177,19 @@ export function Hero() {
         <div className="flex w-max animate-marquee gap-6 hover:[animation-play-state:paused] cursor-pointer">
           {MARQUEE_PARTNERS.map((partner, index) => (
             <div key={index} className="w-[200px] sm:w-[240px] shrink-0 p-1">
-              <SpotlightBorder className="h-full">
-                <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+              <MagicCard
+                className="h-full rounded-lg"
+                gradientColor="rgba(255, 255, 255, 0.05)"
+                gradientFrom="rgba(255, 255, 255, 0.35)"
+                gradientTo="rgba(255, 255, 255, 0.05)"
+                gradientSize={150}
+                gradientOpacity={0.8}
+                style={{
+                  "--color-background": "rgba(20, 20, 19, 0.3)",
+                  "--card-face-background": "rgba(20, 20, 19, 0.55)",
+                  "--color-border": "rgba(255, 255, 255, 0.05)",
+                } as React.CSSProperties}
+              >
                 <CardContent className="p-2.5 pt-4 sm:p-4 flex flex-col items-center justify-between text-center h-full min-h-[120px] sm:min-h-[136px]">
                   {/* Logo Container */}
                   <div className="h-7 sm:h-10 flex items-center justify-center mb-2">
@@ -188,7 +217,7 @@ export function Hero() {
                     </p>
                   </div>
                 </CardContent>
-              </SpotlightBorder>
+              </MagicCard>
             </div>
           ))}
         </div>

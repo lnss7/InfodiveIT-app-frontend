@@ -3,8 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { ArrowRight, Search, ArrowUpRight } from "lucide-react";
-import { SOLUTIONS, SOLUTION_ICONS, type Solution } from "@/lib/solutions-data";
-import { SpotlightBorder } from "@/components/ui/spot-light-border";
+import { SOLUTIONS, SOLUTION_ICONS } from "@/lib/solutions-data";
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
 import { Reveal } from "@/components/animations/reveal";
 import { Button } from "@/components/ui/button";

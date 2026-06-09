@@ -17,6 +17,7 @@ import linkedinColorImg from "@/assets/footer/linkedin-colorfull.png";
 gsap.registerPlugin(ScrollTrigger);
 
 export function Footer() {
+  const containerRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLElement>(null);
 
   // Reveal por parallax — APENAS no desktop (lg+).
@@ -24,7 +25,7 @@ export function Footer() {
   // deslocado pra cima (yPercent), deixando uma faixa branca embaixo. Então no mobile
   // o footer fica parado na posição natural (sem transform) — sem faixa, sem branco.
   useEffect(() => {
-    if (!footerRef.current) return;
+    if (!footerRef.current || !containerRef.current) return;
 
     const mm = gsap.matchMedia();
     mm.add("(min-width: 1024px)", () => {
@@ -35,9 +36,9 @@ export function Footer() {
           yPercent: 0,
           ease: "none",
           scrollTrigger: {
-            trigger: footerRef.current,
-            start: "top bottom", // quando o topo do footer entra por baixo da viewport
-            end: "bottom bottom", // até a base do footer chegar à base da tela (fim da página)
+            trigger: containerRef.current,
+            start: "top bottom", // quando o topo do container entra por baixo da viewport
+            end: "bottom bottom", // até a base do container chegar à base da tela (fim da página)
             scrub: true,
             invalidateOnRefresh: true,
           },
@@ -45,13 +46,22 @@ export function Footer() {
       );
     });
 
-    return () => mm.revert();
+    // Garante que ScrollTrigger recalcule a altura da página depois de carregar sliders/imagens
+    const timeout = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 400);
+
+    return () => {
+      mm.revert();
+      clearTimeout(timeout);
+    };
   }, []);
 
   return (
-    <footer
-      ref={footerRef}
-      className="relative w-full z-10 text-white overflow-hidden flex flex-col justify-end footer-wrap"
+    <div ref={containerRef} className="relative w-full">
+      <footer
+        ref={footerRef}
+        className="relative w-full z-10 text-white overflow-hidden flex flex-col justify-end footer-wrap"
       style={{
         background:
           "linear-gradient(to bottom, rgba(8,3,16,0.55) 0%, #050507 72%), linear-gradient(135deg, #6F0101 0%, #3B1F59 50%, #063FB4 100%)",
@@ -300,5 +310,6 @@ export function Footer() {
           </div>
         </div>
       </footer>
+    </div>
   );
 }

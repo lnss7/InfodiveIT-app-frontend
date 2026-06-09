@@ -27,6 +27,8 @@ export type SolutionIconName = keyof typeof SOLUTION_ICONS;
 export interface Feature {
   title: string;
   description: string;
+  /** Palavra-chave curta exibida como selo no card (ex.: "HARDWARE"). */
+  tag?: string;
 }
 
 export interface Metric {
@@ -68,14 +70,17 @@ export const SOLUTIONS: Solution[] = [
     features: [
       {
         title: "Servidores Dedicados de Alta Densidade",
+        tag: "Hardware",
         description: "Processamento maciço com servidores de última geração (como Dell PowerEdge e Lenovo ThinkSystem), configurados sob medida para o ERP e bases de dados do seu negócio.",
       },
       {
         title: "Arquitetura de Rede Enterprise",
+        tag: "Rede",
         description: "Switches de baixa latência, roteamento inteligente e firewalls integrados para garantir tráfego interno ultraveloz e seguro.",
       },
       {
         title: "Gestão e Sustentação Avançada",
+        tag: "Suporte 24/7",
         description: "Suporte especializado nível 3 constante, monitoramento de integridade física e substituição preventiva de componentes.",
       },
     ],
@@ -102,14 +107,17 @@ export const SOLUTIONS: Solution[] = [
     features: [
       {
         title: "All-Flash & Storages Híbridos",
+        tag: "All-Flash",
         description: "Aceleração de leitura e escrita com storages de alto desempenho para virtualização e analytics pesado.",
       },
       {
         title: "Tiering Inteligente & FinOps",
+        tag: "FinOps",
         description: "Movimentação automática de dados frios para camadas de armazenamento econômicas ou nuvem, otimizando o TCO.",
       },
       {
         title: "Deduplicação por Hardware",
+        tag: "Dedup",
         description: "Compactação em nível de bloco que maximiza o aproveitamento físico dos storages sem degradar a performance das aplicações.",
       },
     ],
@@ -136,14 +144,17 @@ export const SOLUTIONS: Solution[] = [
     features: [
       {
         title: "Backup Imutável (Anti-Ransomware)",
+        tag: "Imutável",
         description: "Gravação sob protocolo WORM (Write Once, Read Many). Mesmo se credenciais de administrador forem roubadas, o backup não pode ser apagado ou criptografado.",
       },
       {
         title: "Replicação Híbrida Automática",
+        tag: "Replicação",
         description: "Replicamos os dados no tripé local, nuvem privada Infodive e hiperescaladores em tempo real para total tolerância a desastres físicos.",
       },
       {
         title: "Orquestração de Desastres (DRaaS)",
+        tag: "DRaaS",
         description: "Planos automatizados de contingência que sobem instâncias na nuvem em minutos, assumindo o processamento caso o datacenter local sofra uma parada total.",
       },
     ],
@@ -170,14 +181,17 @@ export const SOLUTIONS: Solution[] = [
     features: [
       {
         title: "Zero Trust Network Access (ZTNA)",
+        tag: "Zero Trust",
         description: "Substituição de VPNs legadas por acessos granulares, contextualizados e seguros para cada colaborador, reduzindo drasticamente a superfície de ataque.",
       },
       {
         title: "EDR & MDR Avançados nos Endpoints",
+        tag: "EDR / MDR",
         description: "Agentes inteligentes que detectam e bloqueiam comportamentos suspeitos e ameaças de dia zero em servidores e desktops em tempo real.",
       },
       {
         title: "Gestão e Proteção de Dados Sensíveis",
+        tag: "LGPD",
         description: "Descoberta, classificação automática e proteção ativa de dados confidenciais com soluções integradas como IBM Guardium.",
       },
     ],
@@ -204,14 +218,17 @@ export const SOLUTIONS: Solution[] = [
     features: [
       {
         title: "Monitoramento APM e Infraestrutura",
+        tag: "APM",
         description: "Rastreamento completo do ciclo de requisições de software, latência de banco de dados e utilização de recursos físicos da infraestrutura.",
       },
       {
         title: "Correlação Inteligente de Logs",
+        tag: "Logs",
         description: "Centralização e análise de logs com algoritmos avançados para identificar a causa raiz de anomalias em poucos segundos.",
       },
       {
         title: "Painéis Executivos & Técnicos",
+        tag: "Dashboards",
         description: "Dashboards customizados que traduzem a saúde técnica dos sistemas em métricas e indicadores de negócios diretamente compreensíveis.",
       },
     ],
@@ -238,14 +255,17 @@ export const SOLUTIONS: Solution[] = [
     features: [
       {
         title: "Clusters de Alta Disponibilidade",
+        tag: "Alta Disponibilidade",
         description: "Agrupamento de múltiplos servidores físicos que realocam e iniciam workloads virtuais de forma automática caso algum nó apresente falhas.",
       },
       {
         title: "Live Migration Sem Interrupção",
+        tag: "Live Migration",
         description: "Migração de sistemas ativos entre servidores físicos em tempo real para manutenções programadas, sem gerar impacto no uso.",
       },
       {
         title: "Hiperconvergência Eficiente",
+        tag: "HCI",
         description: "Fusão lógica de processamento, armazenamento e redes em uma única camada virtualizada simplificada e inteligente.",
       },
     ],
@@ -272,14 +292,17 @@ export const SOLUTIONS: Solution[] = [
     features: [
       {
         title: "Nuvem Híbrida Sob Medida",
+        tag: "Nuvem Híbrida",
         description: "Integração segura entre sua infraestrutura física (on-premises) e nuvens públicas, permitindo processamento elástico sem expor dados confidenciais.",
       },
       {
         title: "Governança Híbrida e Compliance",
+        tag: "Governança",
         description: "Políticas de segurança centralizadas e controle de tráfego que evitam vazamentos e mantêm total conformidade legal.",
       },
       {
         title: "Otimização de Custos (FinOps)",
+        tag: "FinOps",
         description: "Monitoramento e redimensionamento constante de recursos em nuvem para eliminar desperdícios e manter as faturas previsíveis.",
       },
     ],
@@ -306,14 +329,17 @@ export const SOLUTIONS: Solution[] = [
     features: [
       {
         title: "Infraestrutura de Processamento para IA",
+        tag: "GPU",
         description: "Configuração e entrega de servidores equipados com GPUs avançadas e arquitetura otimizada para treinamento e inferência de modelos analíticos.",
       },
       {
         title: "Plataformas de Modelagem e Dados",
+        tag: "Data Pipeline",
         description: "Pipelines de dados modernos estruturados para alimentar modelos de machine learning de forma automatizada e com total integridade.",
       },
       {
         title: "Modelos Privativos (Local LLMs)",
+        tag: "Local LLM",
         description: "Instalação de modelos de linguagem inteligência artificial em servidores próprios da empresa para análise de dados com garantia de sigilo industrial.",
       },
     ],
@@ -340,14 +366,17 @@ export const SOLUTIONS: Solution[] = [
     features: [
       {
         title: "Unified Endpoint Management (UEM)",
+        tag: "UEM",
         description: "Gerenciamento centralizado de sistemas operacionais híbridos (Windows, macOS, Linux) para auditorias de segurança e políticas unificadas.",
       },
       {
         title: "Distribuição e Patching Automático",
+        tag: "Patching",
         description: "Atualizações de segurança críticas implantadas sem interrupção de produtividade dos colaboradores e com relatórios automáticos de conformidade.",
       },
       {
         title: "Segurança de Dispositivos Remotos",
+        tag: "Criptografia",
         description: "Criptografia de disco local compulsória, bloqueio de portas USB e isolamento de máquinas perdidas ou roubadas para proteção total de informações corporativas.",
       },
     ],

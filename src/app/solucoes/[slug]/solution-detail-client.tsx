@@ -5,33 +5,19 @@ import Image from "next/image";
 import { ArrowLeft, ArrowRight, ShieldCheck } from "lucide-react";
 import { type Solution, SOLUTION_ICONS } from "@/lib/solutions-data";
 import { VENDOR_LOGOS } from "@/lib/vendor-logos";
-import { SpotlightBorder } from "@/components/ui/spot-light-border";
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
 import { Reveal } from "@/components/animations/reveal";
-import { NumberTicker } from "@/components/ui/number-ticker";
 import { Button } from "@/components/ui/button";
 import { GlowBorderOverlay, handleGlowMove } from "@/components/ui/glow-border";
+import { BorderBeam } from "@/components/ui/border-beam";
 
 interface SolutionDetailContentProps {
   solution: Solution;
 }
 
-// Helper function to extract number for NumberTicker
-function parseMetric(metricStr: string) {
-  const match = metricStr.match(/([\d.]+)/);
-  if (!match) return { prefix: "", value: 0, suffix: metricStr, decimals: 0 };
-  
-  const numStr = match[1];
-  const value = parseFloat(numStr);
-  const decimals = numStr.includes(".") ? numStr.split(".")[1].length : 0;
-  const index = metricStr.indexOf(numStr);
-  const prefix = metricStr.slice(0, index);
-  const suffix = metricStr.slice(index + numStr.length);
-  
-  return { prefix, value, suffix, decimals };
-}
-
-export function SolutionDetailContent({ solution }: SolutionDetailContentProps) {
+export function SolutionDetailContent({
+  solution,
+}: SolutionDetailContentProps) {
   const Icon = SOLUTION_ICONS[solution.iconName];
 
   return (
@@ -56,17 +42,20 @@ export function SolutionDetailContent({ solution }: SolutionDetailContentProps) 
           <div className="mb-10 px-4">
             <Reveal>
               <nav className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-ink-500 mb-6">
-                <Link href="/solucoes" className="hover:text-brand transition-colors">
+                <Link
+                  href="/solucoes"
+                  className="hover:text-brand transition-colors"
+                >
                   Soluções
                 </Link>
                 <span>/</span>
                 <span className="text-white">{solution.title}</span>
               </nav>
             </Reveal>
-            
+
             <Reveal delay={0.08}>
-              <Link 
-                href="/solucoes" 
+              <Link
+                href="/solucoes"
                 className="inline-flex items-center gap-2 text-sm text-ink-300 hover:text-white transition-colors group"
               >
                 <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
@@ -104,36 +93,13 @@ export function SolutionDetailContent({ solution }: SolutionDetailContentProps) 
               </Reveal>
             </div>
 
-            {/* Hero Right: Fast Metrics Section (Stays dark for high aesthetic impact) */}
-            <div className="lg:col-span-5 w-full">
+            {/* Hero Right: Container para imagem da solução (virá da API/backend) */}
+            <div className="lg:col-span-5 w-full flex items-center justify-center">
               <Reveal delay={0.28} className="w-full">
-                <div className="border border-white/5 bg-white/[0.02] backdrop-blur-md p-8 rounded-2xl relative overflow-hidden shadow-2xl">
-                  <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-transparent pointer-events-none" />
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-ink-400 mb-8 border-b border-white/5 pb-4">
-                    Indicadores de Performance
-                  </h3>
-
-                  <div className="space-y-8">
-                    {solution.metrics.map((metric, i) => {
-                      const { prefix, value, suffix, decimals } = parseMetric(metric.value);
-                      return (
-                        <div key={i} className="flex flex-col">
-                          <div className="text-3xl font-black text-brand tracking-tight flex items-baseline gap-0.5">
-                            {prefix && <span className="text-2xl font-bold">{prefix}</span>}
-                            {value > 0 ? (
-                              <NumberTicker value={value} decimalPlaces={decimals} />
-                            ) : (
-                              <span>{metric.value}</span>
-                            )}
-                            {suffix && <span className="text-xl font-bold ml-0.5">{suffix}</span>}
-                          </div>
-                          <span className="text-xs text-ink-300 font-medium mt-1">
-                            {metric.label}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
+                <div className="relative mx-auto aspect-[4/3] w-full max-w-[440px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.02] flex items-center justify-center">
+                  <BorderBeam size={120} duration={8} colorFrom="#0E66FF" colorTo="#7aa9ff" />
+                  {/* Quando a API fornecer a imagem, renderizar:
+                      <Image src={solution.imageUrl} alt={solution.title} fill className="object-cover" /> */}
                 </div>
               </Reveal>
             </div>
@@ -147,14 +113,18 @@ export function SolutionDetailContent({ solution }: SolutionDetailContentProps) 
           {/* Technical Capabilities Section */}
           <div className="mb-20 px-4">
             <Reveal className="mb-10 text-center">
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand mb-3">Recursos & Tecnologia</p>
-              <h2 className="text-2xl sm:text-3xl font-bold text-ink-950 tracking-tight">Capacidades Técnicas</h2>
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand mb-3">
+                Recursos & Tecnologia
+              </p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-ink-950 tracking-tight">
+                Capacidades Técnicas
+              </h2>
             </Reveal>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {solution.features.map((feat, index) => (
                 <Reveal key={index} delay={0.1 + index * 0.08}>
-                  <div 
+                  <div
                     onMouseMove={handleGlowMove}
                     className="group relative flex h-full flex-col rounded-xl border border-ink-200 bg-white p-6 transition-all duration-300 hover:border-ink-300 hover:shadow-[0_12px_24px_rgba(20,20,19,0.06)]"
                   >
@@ -164,8 +134,12 @@ export function SolutionDetailContent({ solution }: SolutionDetailContentProps) 
                         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand/5 border border-brand/10 text-brand mb-4">
                           <ShieldCheck className="h-4.5 w-4.5" />
                         </div>
-                        <h4 className="text-base font-bold text-ink-950 mb-2 leading-snug">{feat.title}</h4>
-                        <p className="text-sm text-ink-500 font-light leading-relaxed">{feat.description}</p>
+                        <h4 className="text-base font-bold text-ink-950 mb-2 leading-snug">
+                          {feat.title}
+                        </h4>
+                        <p className="text-sm text-ink-500 font-light leading-relaxed">
+                          {feat.description}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -174,103 +148,103 @@ export function SolutionDetailContent({ solution }: SolutionDetailContentProps) 
             </div>
           </div>
 
-          {/* Integrated Technology Stack & Use Case */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch px-4 mb-16">
-            {/* Tech Partners Integration (Left - White background) */}
-            <div className="lg:col-span-5 flex flex-col justify-between border border-ink-200 bg-white rounded-2xl p-8 shadow-sm">
+          {/* Parcerias e Fabricantes Homologados */}
+          <div className="mb-20 px-4">
+            <div className="border border-ink-200 bg-white rounded-2xl p-8 md:p-12 shadow-sm">
               <Reveal>
-                <h3 className="text-lg font-bold text-ink-950 mb-3">Parcerias e Fabricantes Homologados</h3>
-                <p className="text-sm text-ink-500 font-light leading-relaxed mb-8">
-                  Trabalhamos com os líderes globais de hardware e software para desenhar projetos corporativos que garantem suporte direto de fábrica e conformidade.
-                </p>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  {solution.vendors.map((vendorName) => {
-                    const logoAsset = VENDOR_LOGOS[vendorName];
-                    return (
-                      <div 
-                        key={vendorName}
-                        className="flex items-center justify-center h-16 rounded-xl bg-ink-50 border border-ink-200/80 p-4 hover:border-brand/20 transition-all duration-300 group"
-                      >
-                        {logoAsset ? (
-                          <Image
-                            src={logoAsset}
-                            alt={vendorName}
-                            className="max-h-7 object-contain opacity-50 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-300"
-                          />
-                        ) : (
-                          <span className="text-xs font-bold text-ink-500 group-hover:text-brand transition-colors">
-                            {vendorName}
-                          </span>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </Reveal>
-            </div>
-
-            {/* Use Case / Editorial Detail (Right - Alternating background) */}
-            <div className="lg:col-span-7 border border-ink-200 bg-white rounded-2xl p-8 shadow-sm relative overflow-hidden flex flex-col justify-between">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_90%_10%,rgba(14,102,255,0.02),transparent_50%)] pointer-events-none" />
-              <Reveal className="h-full flex flex-col justify-between">
-                <div>
-                  <span className="inline-flex rounded-full bg-brand/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-brand mb-6">
-                    Estudo de Caso Relacionado
-                  </span>
-                  
-                  <p className="text-xs font-semibold uppercase tracking-wider text-ink-400 mb-2">{solution.caseStudy.segmento}</p>
-                  <h4 className="text-xl font-bold text-ink-950 mb-2">{solution.caseStudy.client}</h4>
-                  
-                  <blockquote className="text-sm text-ink-600 font-light leading-relaxed mb-6 italic pl-4 border-l-2 border-brand">
-                    &ldquo;{solution.caseStudy.resultado}&rdquo;
-                  </blockquote>
-                </div>
-                
-                <div className="flex items-center justify-between border-t border-ink-100 pt-5 mt-auto">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] uppercase font-bold text-ink-400 tracking-[0.1em]">Métrica Chave</span>
-                    <span className="text-lg font-black text-brand tracking-tight mt-0.5">{solution.caseStudy.metric}</span>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                  <div className="lg:col-span-5">
+                    <h3 className="text-lg font-bold text-ink-950 mb-3">
+                      Parcerias e Fabricantes Homologados
+                    </h3>
+                    <p className="text-sm text-ink-500 font-light leading-relaxed">
+                      Trabalhamos com os líderes globais de hardware e software para
+                      desenhar projetos corporativos que garantem suporte direto de
+                      fábrica e conformidade.
+                    </p>
                   </div>
 
-                  <Link 
-                    href="/#cases" 
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-950 hover:text-brand transition-colors"
-                  >
-                    Ver todos os cases
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
+                  <div className="lg:col-span-7">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                      {solution.vendors.map((vendorName) => {
+                        const logoAsset = VENDOR_LOGOS[vendorName];
+                        return (
+                          <div
+                            key={vendorName}
+                            className="flex items-center justify-center h-16 rounded-xl bg-ink-50 border border-ink-200/80 p-4 hover:border-brand/20 transition-all duration-300 group"
+                          >
+                            {logoAsset ? (
+                              <Image
+                                src={logoAsset}
+                                alt={vendorName}
+                                className="max-h-7 object-contain opacity-50 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-300"
+                              />
+                            ) : (
+                              <span className="text-xs font-bold text-ink-500 group-hover:text-brand transition-colors">
+                                {vendorName}
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
               </Reveal>
             </div>
           </div>
 
           {/* Global Conversion Box */}
-          <Reveal delay={0.1} className="max-w-4xl mx-auto">
-            <div className="relative rounded-2xl border border-ink-200 bg-white p-8 md:p-12 overflow-hidden shadow-sm flex flex-col md:flex-row items-center justify-between gap-8">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_120%,rgba(14,102,255,0.03),transparent_50%)] pointer-events-none" />
-              <div className="relative z-10 text-left md:max-w-xl">
-                <h3 className="text-xl sm:text-2xl font-bold text-ink-950 mb-3">
-                  Quer desenhar um projeto de {solution.title.split(" ")[0]} para sua empresa?
-                </h3>
-                <p className="text-sm text-ink-500 leading-relaxed font-light">
-                  Agende uma reunião estratégica de 15 minutos com nossos arquitetos de TI para mapear a melhor arquitetura e SLA para sua operação.
-                </p>
+          <div className="px-4">
+            <Reveal delay={0.1}>
+              <div
+                className="relative overflow-hidden rounded-[2rem] px-6 py-12 sm:px-10 md:px-14 md:py-16 text-center text-white shadow-2xl shadow-[#3B1F59]/30"
+                style={{ background: "linear-gradient(135deg, #6F0101 0%, #3B1F59 50%, #063FB4 100%)" }}
+              >
+                {/* Brilho suave no canto superior esquerdo */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.16),transparent_55%)]"
+                />
+                {/* Orb de luz azul — profundidade central/fundo */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-[#0E66FF]/25 blur-[120px]"
+                />
+                {/* Arcos finos nos cantos (como o print e a seção Contact) */}
+                <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full border border-white/15" />
+                <div aria-hidden className="pointer-events-none absolute -right-28 -top-28 h-80 w-80 rounded-full border border-white/10" />
+                
+                <div aria-hidden className="pointer-events-none absolute -left-16 -bottom-16 h-56 w-56 rounded-full border border-white/15" />
+                <div aria-hidden className="pointer-events-none absolute -left-28 -bottom-28 h-80 w-80 rounded-full border border-white/10" />
+                
+                {/* Padrão de pontos sutil no canto inferior esquerdo */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 opacity-[0.15] [background-image:radial-gradient(rgba(255,255,255,0.7)_1px,transparent_1px)] [background-size:22px_22px] [mask-image:radial-gradient(ellipse_at_bottom_left,black,transparent_45%)]"
+                />
+
+                <div className="relative z-10 flex flex-col items-center justify-center">
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white mb-4 leading-[1.2]">
+                    Comece a transformação da sua empresa
+                  </h3>
+                  <p className="text-[#BFBFBF] text-sm sm:text-base font-light leading-relaxed max-w-2xl mx-auto mb-8 text-pretty">
+                    Agende uma reunião estratégica de 15 minutos com nossos arquitetos de TI para mapear a melhor arquitetura e SLA para sua operação.
+                  </p>
+                  <Link href={`/contato?solucao=${solution.slug}`}>
+                    <Button
+                      primary="#0E66FF"
+                      secondary="#001DFF"
+                      className="text-sm px-8 py-4 font-bold rounded-full text-white cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)]"
+                    >
+                      Falar com especialista
+                      <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+                    </Button>
+                  </Link>
+                </div>
               </div>
-              <div className="relative z-10 shrink-0">
-                <Link href={`/contato?solucao=${solution.slug}`}>
-                  <Button
-                    primary="#0E66FF"
-                    secondary="#001DFF"
-                    className="text-xs px-5 py-3 sm:text-sm sm:px-6 sm:py-3.5 font-semibold rounded-xl text-white animate-none"
-                  >
-                    Falar com especialista
-                    <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </Reveal>
+            </Reveal>
+          </div>
         </div>
       </div>
     </div>

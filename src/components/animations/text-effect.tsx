@@ -20,15 +20,6 @@ type TextEffectProps = {
   highlightClassName?: string
 }
 
-const defaultContainerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.05,
-    },
-  },
-}
 
 const presetVariants: Record<string, Variants> = {
   blur: {
