@@ -24,6 +24,9 @@ export function SmoothScroll() {
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     })
 
+    // Expose lenis globally for smooth scrolling from other components
+    ;(window as any).lenis = lenis
+
     // Mantém o ScrollTrigger em sincronia com o scroll suavizado do Lenis.
     lenis.on("scroll", ScrollTrigger.update)
 
@@ -34,6 +37,7 @@ export function SmoothScroll() {
     return () => {
       gsap.ticker.remove(raf)
       lenis.destroy()
+      delete (window as any).lenis
     }
   }, [])
 

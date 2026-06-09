@@ -39,6 +39,18 @@ export function FAQ() {
     setActiveIndex(activeIndex === index ? null : index)
   }
 
+  const handleContactClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const contactSection = document.getElementById("contact");
+    if (contactSection) {
+      e.preventDefault();
+      if ((window as any).lenis) {
+        (window as any).lenis.scrollTo(contactSection, { duration: 1.2 });
+      } else {
+        contactSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
   return (
     <section id="faq" className="relative bg-ink-50 py-20 md:py-28 border-t border-ink-200/40">
       <div className="container-default">
@@ -55,14 +67,15 @@ export function FAQ() {
               <h2 className="text-5xl sm:text-6xl lg:text-[4.75rem] font-extrabold uppercase leading-[0.85] tracking-tighter flex flex-col mb-8">
                 <span className="text-ink-950">Tudo que</span>
                 <span className="text-ink-950">você</span>
-                <span className="text-transparent text-red-700" style={{ WebkitTextStroke: "1.8px currentColor", WebkitTextFillColor: "transparent" }}>precisa</span>
-                <span className="text-transparent text-red-700" style={{ WebkitTextStroke: "1.8px currentColor", WebkitTextFillColor: "transparent" }}>saber</span>
+                <span className="text-transparent text-red-700" style={{ WebkitTextStroke: "1.8px #b91c1c", WebkitTextFillColor: "transparent" }}>precisa</span>
+                <span className="text-transparent text-red-700" style={{ WebkitTextStroke: "1.8px #b91c1c", WebkitTextFillColor: "transparent" }}>saber</span>
               </h2>
 
               <p className="text-sm text-ink-500 font-medium leading-relaxed">
                 Não encontrou sua resposta?{" "}
                 <a 
                   href="#contact" 
+                  onClick={handleContactClick}
                   className="text-red-700 hover:text-red-800 underline underline-offset-4 transition-colors font-bold"
                 >
                   Fale com um especialista

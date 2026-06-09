@@ -28,18 +28,21 @@ export function Footer() {
 
     const mm = gsap.matchMedia();
     mm.add("(min-width: 1024px)", () => {
-      gsap.from(footerRef.current, {
-        yPercent: -30,
-        ease: "none",
-        immediateRender: false,
-        scrollTrigger: {
-          trigger: footerRef.current,
-          start: "top bottom", // quando o topo do footer entra por baixo da viewport
-          end: "bottom bottom", // até a base do footer chegar à base da tela (fim da página)
-          scrub: true,
-          invalidateOnRefresh: true,
-        },
-      });
+      gsap.fromTo(
+        footerRef.current,
+        { yPercent: -30 },
+        {
+          yPercent: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: "top bottom", // quando o topo do footer entra por baixo da viewport
+            end: "bottom bottom", // até a base do footer chegar à base da tela (fim da página)
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        }
+      );
     });
 
     return () => mm.revert();

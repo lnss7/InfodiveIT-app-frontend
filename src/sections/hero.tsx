@@ -53,6 +53,17 @@ const PARTNERS = [
 const MARQUEE_PARTNERS = [...PARTNERS, ...PARTNERS];
 
 export function Hero() {
+  const handleContactClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const contactSection = document.getElementById("contact");
+    if (contactSection) {
+      e.preventDefault();
+      if ((window as any).lenis) {
+        (window as any).lenis.scrollTo(contactSection, { duration: 1.2 });
+      } else {
+        contactSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
   return (
     <section className="hero relative overflow-hidden bg-ink-950 flex flex-col min-h-0 sm:min-h-screen">
       {/* Background Interactive Grid filling the entire section */}
@@ -116,7 +127,12 @@ export function Hero() {
                 <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
               </Button>
             </Link>
-            <Link href="/contato" className="focus:outline-none flex-1 sm:flex-none sm:w-auto" tabIndex={-1}>
+            <Link 
+              href="/#contact" 
+              onClick={handleContactClick}
+              className="focus:outline-none flex-1 sm:flex-none sm:w-auto" 
+              tabIndex={-1}
+            >
               <Button
                 primary="rgba(255, 255, 255, 0.06)"
                 secondary="rgba(255, 255, 255, 0.16)"

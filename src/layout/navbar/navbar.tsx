@@ -16,6 +16,19 @@ import { navLinks } from "./data";
 const SCROLL_THRESHOLD = 8;
 
 export function Navbar() {
+  const handleContactClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (window.location.pathname === "/") {
+      const contactSection = document.getElementById("contact");
+      if (contactSection) {
+        e.preventDefault();
+        if ((window as any).lenis) {
+          (window as any).lenis.scrollTo(contactSection, { duration: 1.2 });
+        } else {
+          contactSection.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    }
+  };
   const [scrolled, setScrolled] = useState(false);
   const [dropdown, setDropdown] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -189,7 +202,8 @@ export function Navbar() {
 
               <div className="flex items-center gap-2">
                 <Link
-                  href="/contato"
+                  href="/#contact"
+                  onClick={handleContactClick}
                   className="hidden md:inline-block focus:outline-none"
                   tabIndex={-1}
                 >

@@ -69,7 +69,6 @@ export function GsapMenu({
   const [phone, setPhone] = useState("");
   const [company, setCompany] = useState("");
   const [role, setRole] = useState("");
-  const [country, setCountry] = useState("");
   const [technologies, setTechnologies] = useState<string[]>([]);
   const [message, setMessage] = useState("");
   const [agreeToTerms, setAgreeToTerms] = useState(false);
@@ -286,7 +285,6 @@ export function GsapMenu({
           setPhone("");
           setCompany("");
           setRole("");
-          setCountry("");
           setTechnologies([]);
           setMessage("");
           setAgreeToTerms(false);
@@ -481,24 +479,6 @@ export function GsapMenu({
                       ]}
                     />
                   </div>
-                </div>
-
-                {/* País */}
-                <div className="nav-item">
-                  <label className="block text-xs font-medium text-gray-700 mb-2">País</label>
-                  <SelectField
-                    value={country}
-                    onChange={setCountry}
-                    ariaLabel="País"
-                    placeholder="Selecione o país"
-                    disabled={status === "submitting"}
-                    options={[
-                      { value: "Brasil", label: "Brasil" },
-                      { value: "Estados Unidos", label: "Estados Unidos" },
-                      { value: "Portugal", label: "Portugal" },
-                      { value: "Outro", label: "Outro" },
-                    ]}
-                  />
                 </div>
 
                 {/* Qual tecnologia está procurando? */}
