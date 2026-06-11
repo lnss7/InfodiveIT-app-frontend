@@ -1,0 +1,460 @@
+"use client"
+
+import { createRef, useRef, useState } from "react"
+import Link from "next/link"
+import Image from "next/image"
+import { ArrowLeft, ArrowRight, ArrowUpRight, Check } from "lucide-react"
+import { type Product, getProductBySlug, getRelatedProducts } from "@/lib/products-data"
+import { VENDOR_LOGOS } from "@/lib/vendor-logos"
+import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern"
+import { AnimatedBeam } from "@/components/animations/animated-beam"
+import { Reveal } from "@/components/animations/reveal"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { BorderBeam } from "@/components/ui/border-beam"
+import { GlowBorderOverlay, handleGlowMove } from "@/components/ui/glow-border"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { TracingBeam } from "@/components/ui/tracing-beam"
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import useEmblaCarousel from "embla-carousel-react"
+import { ProductCard } from "@/components/product-card"
+import { ConversionCTA } from "@/components/conversion-cta"
+import { GsapMenu } from "@/components/GsapMenu"
+
+/** Diagrama "integra com nossos serviços" (AnimatedBeam). */
+function ServicesDiagram({ product }: { product: Product }) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const centerRef = useRef<HTMLDivElement>(null)
+  const serviceRefs = useRef(product.servicos.map(() => createRef<HTMLDivElement>()))
+  const fabLogo = VENDOR_LOGOS[product.fabricante]
+  const count = product.servicos.length
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative mx-auto flex h-[320px] w-full max-w-2xl items-center justify-between px-2 sm:px-8"
+    >
+      {/* Nó central: o produto */}
+      <div
+        ref={centerRef}
+        className="z-10 flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-ink-200 bg-white p-3 shadow-[0_8px_30px_rgba(20,20,19,0.10)]"
+      >
+        {fabLogo ? (
+          <Image
+            src={fabLogo}
+            alt={product.fabricante}
+            className="h-6 w-auto max-w-[52px] object-contain"
+          />
+        ) : (
+          <span className="text-[10px] font-bold text-ink-700">{product.fabricante}</span>
+        )}
+      </div>
+
+      {/* Nós laterais: serviços */}
+      <div className="z-10 flex flex-col gap-4">
+        {product.servicos.map((service, i) => {
+          const Icon = service.icon
+          return (
+            <div
+              key={service.nome}
+              ref={serviceRefs.current[i]}
+              className="flex items-center gap-2.5 rounded-xl border border-ink-200 bg-white px-3 py-2 shadow-sm"
+            >
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand/5 text-brand">
+                <Icon className="h-4 w-4" strokeWidth={1.75} />
+              </span>
+              <span className="whitespace-nowrap text-xs font-semibold text-ink-800 sm:text-sm">
+                {service.nome}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Feixes animados ligando o produto a cada serviço */}
+      {product.servicos.map((service, i) => (
+        <AnimatedBeam
+          key={service.nome}
+          containerRef={containerRef}
+          fromRef={centerRef}
+          toRef={serviceRefs.current[i]}
+          curvature={(i - (count - 1) / 2) * 45}
+          gradientStartColor="#0E66FF"
+          gradientStopColor="#7aa9ff"
+          pathColor="#D8D8D8"
+          pathWidth={1.5}
+          pathOpacity={0.35}
+          duration={4}
+          delay={i * 0.5}
+        />
+      ))}
+    </div>
+  )
+}
+
+/** Carrossel (embla) de produtos relacionados — arraste para navegar. */
+function RelatedCarousel({ products }: { products: Product[] }) {
+  const [emblaRef] = useEmblaCarousel({ align: "start", loop: false, dragFree: true })
+  return (
+    <div className="overflow-hidden" ref={emblaRef}>
+      <div className="flex gap-6">
+        {products.map((rel) => (
+          <div
+            key={rel.slug}
+            className="min-w-0 shrink-0 grow-0 basis-[85%] sm:basis-1/2 lg:basis-1/3"
+          >
+            <ProductCard product={rel} />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export function ProductDetailContent({ slug }: { slug: string }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const product = getProductBySlug(slug)
+
+  if (!product) return null
+
+  const related = getRelatedProducts(product)
+  const fabLogo = VENDOR_LOGOS[product.fabricante]
+
+  return (
+    <div className="relative z-20 w-full min-h-screen bg-white text-ink-900">
+      {/* 1. Hero escuro */}
+      <div className="relative bg-[#050507] text-white pt-28 sm:pt-36 pb-20 overflow-hidden border-b border-white/5">
+        <div className="absolute inset-0 h-full w-full overflow-hidden pointer-events-none z-0">
+          <InteractiveGridPattern
+            width={48}
+            height={48}
+            squares={[50, 25]}
+            className="absolute inset-0 h-full w-full stroke-white/[0.04] [mask-image:radial-gradient(ellipse_at_top,white_30%,transparent_80%)] opacity-40"
+            squaresClassName="hover:fill-brand/10 transition-all duration-150"
+          />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[500px] bg-brand/10 rounded-full blur-[140px] pointer-events-none" />
+        </div>
+
+        <div className="container-default relative z-10">
+          {/* Breadcrumb + voltar */}
+          <div className="mb-10 px-4">
+            <Reveal>
+              <Breadcrumb className="mb-6 text-ink-500">
+                <BreadcrumbList>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href="/produtos">Produtos</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href={`/solucoes/${product.categoriaSlug}`}>
+                      {product.categoria}
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage className="text-white">{product.nome}</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+            </Reveal>
+
+            <Reveal delay={0.08}>
+              <Link
+                href="/produtos"
+                className="inline-flex items-center gap-2 text-sm text-ink-300 hover:text-white transition-colors group"
+              >
+                <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                Voltar para o catálogo
+              </Link>
+            </Reveal>
+          </div>
+
+          {/* Hero grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start px-4">
+            {/* Esquerda */}
+            <div className="lg:col-span-7">
+              <Reveal delay={0.12}>
+                <div className="mb-6 flex items-center gap-4">
+                  <div className="flex h-14 items-center justify-center rounded-2xl border border-white/10 bg-white px-4">
+                    {fabLogo ? (
+                      <Image
+                        src={fabLogo}
+                        alt={product.fabricante}
+                        className="h-6 w-auto object-contain"
+                      />
+                    ) : (
+                      <span className="text-sm font-bold text-ink-900">
+                        {product.fabricante}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="brand">{product.categoria}</Badge>
+                    <Badge variant="outline" className="border-white/15 text-ink-300">
+                      {product.subcategoria}
+                    </Badge>
+                  </div>
+                </div>
+              </Reveal>
+
+              <Reveal delay={0.16}>
+                <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white mb-6 leading-tight">
+                  {product.nome}
+                </h1>
+              </Reveal>
+
+              <Reveal delay={0.2}>
+                <p className="text-base sm:text-lg text-ink-300 font-light leading-relaxed mb-8 max-w-xl">
+                  {product.descricaoCurta}
+                </p>
+              </Reveal>
+
+              <Reveal delay={0.24}>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button
+                    primary="#0E66FF"
+                    secondary="#001DFF"
+                    onClick={() => setIsMenuOpen(true)}
+                    className="text-sm px-6 py-3.5 font-bold rounded-full text-white cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)]"
+                  >
+                    Solicitar proposta
+                    <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+                  </Button>
+                  <Button
+                    primary="rgba(255,255,255,0.06)"
+                    secondary="rgba(255,255,255,0.16)"
+                    onClick={() => setIsMenuOpen(true)}
+                    className="text-sm px-6 py-3.5 font-semibold rounded-full text-white border border-white/10 cursor-pointer"
+                  >
+                    Falar com especialista
+                  </Button>
+                </div>
+              </Reveal>
+            </div>
+
+            {/* Direita: imagem do produto (placeholder até a API ter imagem) */}
+            <div className="lg:col-span-5 w-full flex items-center justify-center">
+              <Reveal delay={0.28} className="w-full">
+                <div className="relative mx-auto aspect-[4/3] w-full max-w-[440px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.02] flex items-center justify-center">
+                  <BorderBeam size={120} duration={8} colorFrom="#0E66FF" colorTo="#7aa9ff" />
+                  {fabLogo && (
+                    <Image
+                      src={fabLogo}
+                      alt={product.fabricante}
+                      className="h-10 w-auto max-w-[160px] object-contain opacity-30 brightness-0 invert"
+                    />
+                  )}
+                  {/* Quando a API fornecer a imagem:
+                      <Image src={product.imageUrl} alt={product.nome} fill className="object-cover" /> */}
+                </div>
+              </Reveal>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. Seção clara */}
+      <div className="bg-ink-50/50 py-16 sm:py-20 text-ink-900">
+        <div className="container-default">
+          <TracingBeam className="px-4">
+            <div className="space-y-20">
+              {/* Visão geral / Diferenciais / Casos de uso + ficha técnica */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                <div className="lg:col-span-8">
+                  <Tabs defaultValue="overview">
+                    <TabsList className="mb-8">
+                      <TabsTrigger value="overview">Visão geral</TabsTrigger>
+                      <TabsTrigger value="diferenciais">Diferenciais</TabsTrigger>
+                      <TabsTrigger value="casos">Casos de uso</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="overview">
+                      <p className="text-base text-ink-600 font-light leading-relaxed">
+                        {product.descricaoCompleta}
+                      </p>
+                    </TabsContent>
+
+                    <TabsContent value="diferenciais">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        {product.diferenciais.map((dif) => (
+                          <div
+                            key={dif.title}
+                            onMouseMove={handleGlowMove}
+                            className="group relative flex flex-col rounded-xl border border-ink-200 bg-white p-5 transition-all duration-300 hover:border-ink-300 hover:shadow-[0_12px_24px_rgba(20,20,19,0.06)]"
+                          >
+                            <GlowBorderOverlay glowColor="#0E66FF" glowSize={200} />
+                            <div className="relative z-10">
+                              <h4 className="text-sm font-bold text-ink-950 mb-1.5">
+                                {dif.title}
+                              </h4>
+                              <p className="text-sm text-ink-500 font-light leading-relaxed">
+                                {dif.description}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </TabsContent>
+
+                    <TabsContent value="casos">
+                      <ul className="space-y-4">
+                        {product.casosDeUso.map((uc) => (
+                          <li
+                            key={uc.title}
+                            className="flex gap-3 rounded-xl border border-ink-200 bg-white p-4"
+                          >
+                            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand">
+                              <Check className="h-3 w-3" strokeWidth={3} />
+                            </span>
+                            <div>
+                              <h4 className="text-sm font-bold text-ink-950">{uc.title}</h4>
+                              <p className="text-sm text-ink-500 font-light leading-relaxed">
+                                {uc.description}
+                              </p>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </TabsContent>
+                  </Tabs>
+                </div>
+
+                {/* Ficha técnica sticky */}
+                <aside className="lg:col-span-4">
+                  <div className="sticky top-28 rounded-2xl border border-ink-200 bg-white p-6 shadow-sm">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-ink-400 mb-4">
+                      Ficha técnica
+                    </p>
+                    <dl className="space-y-3 text-sm">
+                      <div className="flex items-center justify-between gap-3">
+                        <dt className="text-ink-500">Fabricante</dt>
+                        <dd className="font-semibold text-ink-950">{product.fabricante}</dd>
+                      </div>
+                      <div className="flex items-center justify-between gap-3 border-t border-ink-100 pt-3">
+                        <dt className="text-ink-500">Categoria</dt>
+                        <dd className="font-semibold text-ink-950">{product.categoria}</dd>
+                      </div>
+                      <div className="flex items-center justify-between gap-3 border-t border-ink-100 pt-3">
+                        <dt className="text-ink-500">Subcategoria</dt>
+                        <dd className="font-semibold text-ink-950">{product.subcategoria}</dd>
+                      </div>
+                    </dl>
+                    <Button
+                      primary="#0E66FF"
+                      secondary="#001DFF"
+                      onClick={() => setIsMenuOpen(true)}
+                      className="mt-6 w-full text-sm py-3 font-bold rounded-xl text-white cursor-pointer justify-center"
+                    >
+                      Solicitar proposta
+                      <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+                    </Button>
+                  </div>
+                </aside>
+              </div>
+
+              {/* Integra com nossos serviços */}
+              <section>
+                <Reveal className="mb-8 text-center">
+                  <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand mb-3">
+                    Mais que um produto
+                  </p>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-ink-950 tracking-tight">
+                    Integra com nossos serviços
+                  </h2>
+                  <p className="mt-3 text-sm text-ink-500 font-light leading-relaxed max-w-xl mx-auto">
+                    Não entregamos só a licença: projetamos, implantamos e sustentamos o
+                    {" "}{product.nome} dentro do seu ambiente, de ponta a ponta.
+                  </p>
+                </Reveal>
+                <Reveal delay={0.1}>
+                  <div className="rounded-2xl border border-ink-200 bg-white">
+                    <ServicesDiagram product={product} />
+                  </div>
+                </Reveal>
+              </section>
+
+              {/* Sobre o fabricante */}
+              <section>
+                <div className="rounded-2xl border border-ink-200 bg-white p-8 md:p-10 shadow-sm">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 justify-between">
+                    <div className="flex items-center gap-5">
+                      <div className="flex h-14 w-28 items-center justify-center rounded-xl bg-ink-50 border border-ink-200/80 p-3">
+                        {fabLogo ? (
+                          <Image
+                            src={fabLogo}
+                            alt={product.fabricante}
+                            className="max-h-7 w-auto object-contain"
+                          />
+                        ) : (
+                          <span className="text-sm font-bold text-ink-700">
+                            {product.fabricante}
+                          </span>
+                        )}
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-ink-950 mb-1">
+                          {product.fabricante}
+                        </h3>
+                        <p className="text-sm text-ink-500 font-light leading-relaxed max-w-md">
+                          Parceiro homologado Infodive. Explore todo o portfólio
+                          {" "}{product.fabricante} disponível no nosso catálogo.
+                        </p>
+                      </div>
+                    </div>
+                    <Link
+                      href={`/fabricantes/${product.fabricanteSlug}`}
+                      className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-brand hover:text-brand-deep transition-colors"
+                    >
+                      Ver fabricante
+                      <ArrowUpRight className="h-4 w-4" strokeWidth={2.5} />
+                    </Link>
+                  </div>
+                </div>
+              </section>
+
+              {/* Produtos relacionados */}
+              {related.length > 0 && (
+                <section>
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl sm:text-2xl font-bold text-ink-950 tracking-tight">
+                      Produtos relacionados
+                    </h2>
+                    <Link
+                      href="/produtos"
+                      className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold text-brand hover:text-brand-deep transition-colors"
+                    >
+                      Ver tudo
+                      <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+                    </Link>
+                  </div>
+                  <RelatedCarousel products={related} />
+                </section>
+              )}
+            </div>
+          </TracingBeam>
+
+          {/* CTA final */}
+          <div className="mt-20 max-w-6xl mx-auto px-4">
+            <Reveal delay={0.1}>
+              <ConversionCTA
+                title="Comece a transformação da sua empresa"
+                subtitle={`Agende uma conversa com nossos especialistas e veja como o ${product.nome} se encaixa na sua estratégia de TI — com projeto, implantação e SLA garantidos.`}
+                ctaLabel="Falar com especialista"
+                onCtaClick={() => setIsMenuOpen(true)}
+              />
+            </Reveal>
+          </div>
+        </div>
+      </div>
+
+      <GsapMenu isOpen={isMenuOpen} onToggle={setIsMenuOpen} />
+    </div>
+  )
+}
