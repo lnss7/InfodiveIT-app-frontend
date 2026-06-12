@@ -117,7 +117,7 @@ export function SolutionsListing() {
               </div>
 
               {/* Filter Tabs */}
-              <div className="flex overflow-x-auto no-scrollbar gap-1.5 w-full lg:w-auto justify-start lg:justify-center py-2 px-1 select-none">
+              <div className="flex overflow-x-auto no-scrollbar gap-1.5 w-full lg:flex-1 lg:min-w-0 justify-start py-2 px-1 select-none">
                 {CATEGORIES.map((category) => {
                   const isActive = selectedCategory === category;
                   return (

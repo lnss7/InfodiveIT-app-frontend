@@ -55,7 +55,7 @@ export function TabsList({ className, ...props }: React.ComponentProps<"div">) {
     <div
       role="tablist"
       className={cn(
-        "inline-flex items-center gap-1 rounded-xl border border-ink-200 bg-ink-50 p-1",
+        "flex w-full overflow-x-auto no-scrollbar items-center gap-1 rounded-xl border border-ink-200 bg-ink-50 p-1 sm:inline-flex sm:w-auto",
         className
       )}
       {...props}
@@ -77,7 +77,7 @@ export function TabsTrigger({ value, className, children, ...props }: TabsTrigge
       aria-selected={isActive}
       onClick={() => setValue(value)}
       className={cn(
-        "cursor-pointer rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/30",
+        "cursor-pointer rounded-lg px-3.5 py-1.5 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/30 whitespace-nowrap shrink-0",
         isActive
           ? "bg-white text-ink-950 shadow-[0_1px_3px_rgba(20,20,19,0.08)]"
           : "text-ink-500 hover:text-ink-900",

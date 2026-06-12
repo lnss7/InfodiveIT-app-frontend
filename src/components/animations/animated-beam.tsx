@@ -100,22 +100,46 @@ export const AnimatedBeam: React.FC<AnimatedBeamProps> = ({
       updatePath()
     })
 
-    // Observe the container element
+    // Observe container and both target elements to detect size and visibility shifts
     if (containerRef.current) {
       resizeObserver.observe(containerRef.current)
     }
+    if (fromRef.current) {
+      resizeObserver.observe(fromRef.current)
+    }
+    if (toRef.current) {
+      resizeObserver.observe(toRef.current)
+    }
 
-    // Call the updatePath initially to set the initial path
+    // Observe scroll and window resize to handle page-level alignment shifts
+    window.addEventListener("resize", updatePath)
+    window.addEventListener("scroll", updatePath, { passive: true })
+
+    // Call updatePath initially to set the initial path
     updatePath()
 
-    // Clean up the observer on component unmount
+    // Delayed triggers to handle images/fonts loading or CSS transition animations settling
+    const timers = [
+      setTimeout(updatePath, 100),
+      setTimeout(updatePath, 500),
+      setTimeout(updatePath, 1000),
+      setTimeout(updatePath, 2000),
+    ]
+
+    // Clean up observer and event listeners on unmount or ref updates
     return () => {
       resizeObserver.disconnect()
+      window.removeEventListener("resize", updatePath)
+      window.removeEventListener("scroll", updatePath)
+      timers.forEach(clearTimeout)
     }
   }, [
     containerRef,
     fromRef,
     toRef,
+    containerRef.current,
+    fromRef.current,
+    toRef.current,
     curvature,
     startXOffset,
     startYOffset,

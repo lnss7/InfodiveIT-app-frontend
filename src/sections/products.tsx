@@ -13,7 +13,7 @@ import ibmLogo from "@/assets/IBM Logo.svg"
 import veeamLogo from "@/assets/Veeam Logo.svg"
 import dellLogo from "@/assets/Dell Logo.svg"
 import acronisLogo from "@/assets/Acronis Logo.svg"
-import redhatLogo from "@/assets/Red Hat Logo.svg"
+import redhatPretoLogo from "@/assets/Red Hat Preto Logo.svg"
 import microsoftLogo from "@/assets/Microsoft Logo.svg"
 import { Button } from "@/components/ui/button"
 
@@ -71,7 +71,7 @@ const FEATURED: FeaturedProduct[] = [
     nome: "Red Hat OpenShift",
     slug: "red-hat-openshift",
     fabricante: "Red Hat",
-    logo: redhatLogo,
+    logo: redhatPretoLogo,
     logoClass: "h-6",
     categoria: "Cloud",
     descricao: "Plataforma Kubernetes corporativa para nuvem pública, privada e híbrida.",

@@ -129,11 +129,11 @@ export function ProductsListing() {
 
         {/* Marquee de fabricantes */}
         <div className="relative z-10 mt-14 [mask-image:linear-gradient(to_right,transparent,white_10%,white_90%,transparent)]">
-          <Marquee pauseOnHover className="[--duration:40s]">
-            {PRODUCT_FABRICANTES.map((fab) => {
+          <Marquee pauseOnHover duration="60s">
+            {[...PRODUCT_FABRICANTES, ...PRODUCT_FABRICANTES, ...PRODUCT_FABRICANTES, ...PRODUCT_FABRICANTES].map((fab, idx) => {
               const logo = VENDOR_LOGOS[fab]
               return (
-                <div key={fab} className="flex h-10 items-center justify-center px-4">
+                <div key={`${fab}-${idx}`} className="flex h-10 items-center justify-center px-4">
                   {logo ? (
                     <Image
                       src={logo}
@@ -169,7 +169,7 @@ export function ProductsListing() {
               </div>
 
               {/* Tabs de categoria */}
-              <div className="flex overflow-x-auto no-scrollbar gap-1.5 w-full lg:w-auto justify-start lg:justify-center py-1 px-1 select-none">
+              <div className="flex overflow-x-auto no-scrollbar gap-1.5 w-full lg:flex-1 lg:min-w-0 justify-start py-1 px-1 select-none">
                 {PRODUCT_CATEGORIES.map((category) => {
                   const isActive = selectedCategory === category
                   return (

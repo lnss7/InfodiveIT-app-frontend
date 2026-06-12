@@ -3,9 +3,10 @@
 import { createRef, useRef, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowLeft, ArrowRight, ArrowUpRight, Check } from "lucide-react"
+import { ArrowLeft, ArrowRight, ArrowUpRight, Building2, Check, Layers, Tag } from "lucide-react"
 import { type Product, getProductBySlug, getRelatedProducts } from "@/lib/products-data"
 import { VENDOR_LOGOS } from "@/lib/vendor-logos"
+import redhatPretoLogo from "@/assets/Red Hat Preto Logo.svg"
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern"
 import { AnimatedBeam } from "@/components/animations/animated-beam"
 import { Reveal } from "@/components/animations/reveal"
@@ -32,69 +33,116 @@ import { GsapMenu } from "@/components/GsapMenu"
 function ServicesDiagram({ product }: { product: Product }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const centerRef = useRef<HTMLDivElement>(null)
+  const lastProductSlug = useRef(product.slug)
   const serviceRefs = useRef(product.servicos.map(() => createRef<HTMLDivElement>()))
-  const fabLogo = VENDOR_LOGOS[product.fabricante]
+  if (lastProductSlug.current !== product.slug) {
+    lastProductSlug.current = product.slug
+    serviceRefs.current = product.servicos.map(() => createRef<HTMLDivElement>())
+  }
+  const fabLogo = product.fabricante === "Red Hat" ? redhatPretoLogo : VENDOR_LOGOS[product.fabricante]
   const count = product.servicos.length
 
   return (
-    <div
-      ref={containerRef}
-      className="relative mx-auto flex h-[320px] w-full max-w-2xl items-center justify-between px-2 sm:px-8"
-    >
-      {/* Nó central: o produto */}
+    <div className="w-full">
+      {/* 1. Layout Mobile (abaixo de sm) */}
+      <div className="flex flex-col items-center gap-5 p-5 sm:hidden">
+        {/* Nó do produto */}
+        <div className="flex h-16 w-16 items-center justify-center rounded-xl border border-ink-200 bg-white p-2 shadow-sm">
+          {fabLogo ? (
+            <Image
+              src={fabLogo}
+              alt={product.fabricante}
+              className="h-8 w-auto max-w-[48px] object-contain"
+            />
+          ) : (
+            <span className="text-[10px] font-bold text-ink-700">{product.fabricante}</span>
+          )}
+        </div>
+
+        {/* Linha vertical tracejada decorativa */}
+        <div className="h-6 w-0.5 border-l-2 border-dashed border-ink-200" />
+
+        {/* Serviços empilhados */}
+        <div className="w-full flex flex-col gap-3">
+          {product.servicos.map((service) => {
+            const Icon = service.icon
+            return (
+              <div
+                key={service.nome}
+                className="flex items-center gap-3 rounded-xl border border-ink-200 bg-white px-4 py-3 shadow-sm w-full"
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand/5 text-brand shrink-0">
+                  <Icon className="h-4 w-4" strokeWidth={1.75} />
+                </span>
+                <span className="text-sm font-semibold text-ink-800">
+                  {service.nome}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* 2. Layout Desktop (sm e acima) */}
       <div
-        ref={centerRef}
-        className="z-10 flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-ink-200 bg-white p-3 shadow-[0_8px_30px_rgba(20,20,19,0.10)]"
+        ref={containerRef}
+        className="hidden sm:flex relative mx-auto h-[320px] w-full max-w-2xl items-center justify-between px-8 py-4"
       >
-        {fabLogo ? (
-          <Image
-            src={fabLogo}
-            alt={product.fabricante}
-            className="h-6 w-auto max-w-[52px] object-contain"
+        {/* Nó central: o produto */}
+        <div
+          ref={centerRef}
+          className="relative z-10 flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-ink-200 bg-white p-3 shadow-[0_8px_30px_rgba(20,20,19,0.10)]"
+        >
+          {fabLogo ? (
+            <Image
+              src={fabLogo}
+              alt={product.fabricante}
+              className="h-11 w-auto max-w-[64px] object-contain"
+            />
+          ) : (
+            <span className="text-[10px] font-bold text-ink-700">{product.fabricante}</span>
+          )}
+        </div>
+
+        {/* Nós laterais: serviços */}
+        <div className="relative z-10 flex flex-col gap-4">
+          {product.servicos.map((service, i) => {
+            const Icon = service.icon
+            return (
+              <div
+                key={service.nome}
+                ref={serviceRefs.current[i]}
+                className="flex items-center gap-2.5 rounded-xl border border-ink-200 bg-white px-3 py-2 shadow-sm"
+              >
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand/5 text-brand">
+                  <Icon className="h-4 w-4" strokeWidth={1.75} />
+                </span>
+                <span className="whitespace-nowrap text-xs font-semibold text-ink-800 sm:text-sm">
+                  {service.nome}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Feixes animados ligando o produto a cada serviço */}
+        {product.servicos.map((service, i) => (
+          <AnimatedBeam
+            key={service.nome}
+            containerRef={containerRef}
+            fromRef={centerRef}
+            toRef={serviceRefs.current[i]}
+            curvature={(i - (count - 1) / 2) * 45}
+            gradientStartColor="#0E66FF"
+            gradientStopColor="#7aa9ff"
+            pathColor="#D8D8D8"
+            pathWidth={1.5}
+            pathOpacity={0.35}
+            duration={4}
+            delay={i * 0.5}
           />
-        ) : (
-          <span className="text-[10px] font-bold text-ink-700">{product.fabricante}</span>
-        )}
+        ))}
       </div>
-
-      {/* Nós laterais: serviços */}
-      <div className="z-10 flex flex-col gap-4">
-        {product.servicos.map((service, i) => {
-          const Icon = service.icon
-          return (
-            <div
-              key={service.nome}
-              ref={serviceRefs.current[i]}
-              className="flex items-center gap-2.5 rounded-xl border border-ink-200 bg-white px-3 py-2 shadow-sm"
-            >
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand/5 text-brand">
-                <Icon className="h-4 w-4" strokeWidth={1.75} />
-              </span>
-              <span className="whitespace-nowrap text-xs font-semibold text-ink-800 sm:text-sm">
-                {service.nome}
-              </span>
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Feixes animados ligando o produto a cada serviço */}
-      {product.servicos.map((service, i) => (
-        <AnimatedBeam
-          key={service.nome}
-          containerRef={containerRef}
-          fromRef={centerRef}
-          toRef={serviceRefs.current[i]}
-          curvature={(i - (count - 1) / 2) * 45}
-          gradientStartColor="#0E66FF"
-          gradientStopColor="#7aa9ff"
-          pathColor="#D8D8D8"
-          pathWidth={1.5}
-          pathOpacity={0.35}
-          duration={4}
-          delay={i * 0.5}
-        />
-      ))}
     </div>
   )
 }
@@ -126,6 +174,7 @@ export function ProductDetailContent({ slug }: { slug: string }) {
 
   const related = getRelatedProducts(product)
   const fabLogo = VENDOR_LOGOS[product.fabricante]
+  const lightLogo = product.fabricante === "Red Hat" ? redhatPretoLogo : fabLogo
 
   return (
     <div className="relative z-20 w-full min-h-screen bg-white text-ink-900">
@@ -181,33 +230,36 @@ export function ProductDetailContent({ slug }: { slug: string }) {
             {/* Esquerda */}
             <div className="lg:col-span-7">
               <Reveal delay={0.12}>
-                <div className="mb-6 flex items-center gap-4">
-                  <div className="flex h-14 items-center justify-center rounded-2xl border border-white/10 bg-white px-4">
+                <div className="mb-6 flex items-center">
+                  <div className="flex h-14 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.08] backdrop-blur-md px-4 mt-1">
                     {fabLogo ? (
                       <Image
                         src={fabLogo}
                         alt={product.fabricante}
-                        className="h-6 w-auto object-contain"
+                        className="h-8 w-auto object-contain"
                       />
                     ) : (
-                      <span className="text-sm font-bold text-ink-900">
+                      <span className="text-sm font-bold text-white">
                         {product.fabricante}
                       </span>
                     )}
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="brand">{product.categoria}</Badge>
-                    <Badge variant="outline" className="border-white/15 text-ink-300">
-                      {product.subcategoria}
-                    </Badge>
                   </div>
                 </div>
               </Reveal>
 
               <Reveal delay={0.16}>
-                <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white mb-6 leading-tight">
+                <h1 className="text-balance text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white mb-4 leading-tight">
                   {product.nome}
                 </h1>
+              </Reveal>
+
+              <Reveal delay={0.18}>
+                <div className="flex flex-wrap gap-2 mb-6">
+                  <Badge variant="brand">{product.categoria}</Badge>
+                  <Badge variant="outline" className="border-white/15 text-ink-300">
+                    {product.subcategoria}
+                  </Badge>
+                </div>
               </Reveal>
 
               <Reveal delay={0.2}>
@@ -224,16 +276,8 @@ export function ProductDetailContent({ slug }: { slug: string }) {
                     onClick={() => setIsMenuOpen(true)}
                     className="text-sm px-6 py-3.5 font-bold rounded-full text-white cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)]"
                   >
-                    Solicitar proposta
-                    <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
-                  </Button>
-                  <Button
-                    primary="rgba(255,255,255,0.06)"
-                    secondary="rgba(255,255,255,0.16)"
-                    onClick={() => setIsMenuOpen(true)}
-                    className="text-sm px-6 py-3.5 font-semibold rounded-full text-white border border-white/10 cursor-pointer"
-                  >
                     Falar com especialista
+                    <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
                   </Button>
                 </div>
               </Reveal>
@@ -266,97 +310,96 @@ export function ProductDetailContent({ slug }: { slug: string }) {
           <TracingBeam className="px-4">
             <div className="space-y-20">
               {/* Visão geral / Diferenciais / Casos de uso + ficha técnica */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                <div className="lg:col-span-8">
-                  <Tabs defaultValue="overview">
-                    <TabsList className="mb-8">
-                      <TabsTrigger value="overview">Visão geral</TabsTrigger>
-                      <TabsTrigger value="diferenciais">Diferenciais</TabsTrigger>
-                      <TabsTrigger value="casos">Casos de uso</TabsTrigger>
-                    </TabsList>
+              <div className="w-full space-y-10">
+                <Tabs defaultValue="overview">
+                  <TabsList className="mb-8">
+                    <TabsTrigger value="overview">Visão geral</TabsTrigger>
+                    <TabsTrigger value="diferenciais">Diferenciais</TabsTrigger>
+                    <TabsTrigger value="casos">Casos de uso</TabsTrigger>
+                  </TabsList>
 
-                    <TabsContent value="overview">
-                      <p className="text-base text-ink-600 font-light leading-relaxed">
-                        {product.descricaoCompleta}
-                      </p>
-                    </TabsContent>
+                  <TabsContent value="overview">
+                    <p className="text-base text-ink-600 font-light leading-relaxed">
+                      {product.descricaoCompleta}
+                    </p>
+                  </TabsContent>
 
-                    <TabsContent value="diferenciais">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                        {product.diferenciais.map((dif) => (
-                          <div
-                            key={dif.title}
-                            onMouseMove={handleGlowMove}
-                            className="group relative flex flex-col rounded-xl border border-ink-200 bg-white p-5 transition-all duration-300 hover:border-ink-300 hover:shadow-[0_12px_24px_rgba(20,20,19,0.06)]"
-                          >
-                            <GlowBorderOverlay glowColor="#0E66FF" glowSize={200} />
-                            <div className="relative z-10">
-                              <h4 className="text-sm font-bold text-ink-950 mb-1.5">
-                                {dif.title}
-                              </h4>
-                              <p className="text-sm text-ink-500 font-light leading-relaxed">
-                                {dif.description}
-                              </p>
-                            </div>
+                  <TabsContent value="diferenciais">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                      {product.diferenciais.map((dif) => (
+                        <div
+                          key={dif.title}
+                          onMouseMove={handleGlowMove}
+                          className="group relative flex flex-col rounded-xl border border-ink-200 bg-white p-5 transition-all duration-300 hover:border-ink-300 hover:shadow-[0_12px_24px_rgba(20,20,19,0.06)]"
+                        >
+                          <GlowBorderOverlay glowColor="#0E66FF" glowSize={200} />
+                          <div className="relative z-10">
+                            <h4 className="text-sm font-bold text-ink-950 mb-1.5">
+                              {dif.title}
+                            </h4>
+                            <p className="text-sm text-ink-500 font-light leading-relaxed">
+                              {dif.description}
+                            </p>
                           </div>
-                        ))}
-                      </div>
-                    </TabsContent>
+                        </div>
+                      ))}
+                    </div>
+                  </TabsContent>
 
-                    <TabsContent value="casos">
-                      <ul className="space-y-4">
-                        {product.casosDeUso.map((uc) => (
-                          <li
-                            key={uc.title}
-                            className="flex gap-3 rounded-xl border border-ink-200 bg-white p-4"
-                          >
+                  <TabsContent value="casos">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                      {product.casosDeUso.map((uc) => (
+                        <div
+                          key={uc.title}
+                          onMouseMove={handleGlowMove}
+                          className="group relative flex flex-col rounded-xl border border-ink-200 bg-white p-5 transition-all duration-300 hover:border-ink-300 hover:shadow-[0_12px_24px_rgba(20,20,19,0.06)]"
+                        >
+                          <GlowBorderOverlay glowColor="#0E66FF" glowSize={200} />
+                          <div className="relative z-10 flex gap-3">
                             <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand">
                               <Check className="h-3 w-3" strokeWidth={3} />
                             </span>
                             <div>
                               <h4 className="text-sm font-bold text-ink-950">{uc.title}</h4>
-                              <p className="text-sm text-ink-500 font-light leading-relaxed">
+                              <p className="text-sm text-ink-500 font-light leading-relaxed mt-1.5">
                                 {uc.description}
                               </p>
                             </div>
-                          </li>
-                        ))}
-                      </ul>
-                    </TabsContent>
-                  </Tabs>
-                </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </TabsContent>
+                </Tabs>
 
-                {/* Ficha técnica sticky */}
-                <aside className="lg:col-span-4">
-                  <div className="sticky top-28 rounded-2xl border border-ink-200 bg-white p-6 shadow-sm">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-ink-400 mb-4">
+                {/* Ficha técnica em baixo, layout horizontal premium no desktop */}
+                <div className="overflow-hidden rounded-2xl border border-ink-200 bg-white shadow-sm">
+                  <div className="flex items-center gap-2.5 border-b border-ink-200/70 bg-ink-50/60 px-6 py-3.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-brand" />
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-ink-500">
                       Ficha técnica
                     </p>
-                    <dl className="space-y-3 text-sm">
-                      <div className="flex items-center justify-between gap-3">
-                        <dt className="text-ink-500">Fabricante</dt>
-                        <dd className="font-semibold text-ink-950">{product.fabricante}</dd>
-                      </div>
-                      <div className="flex items-center justify-between gap-3 border-t border-ink-100 pt-3">
-                        <dt className="text-ink-500">Categoria</dt>
-                        <dd className="font-semibold text-ink-950">{product.categoria}</dd>
-                      </div>
-                      <div className="flex items-center justify-between gap-3 border-t border-ink-100 pt-3">
-                        <dt className="text-ink-500">Subcategoria</dt>
-                        <dd className="font-semibold text-ink-950">{product.subcategoria}</dd>
-                      </div>
-                    </dl>
-                    <Button
-                      primary="#0E66FF"
-                      secondary="#001DFF"
-                      onClick={() => setIsMenuOpen(true)}
-                      className="mt-6 w-full text-sm py-3 font-bold rounded-xl text-white cursor-pointer justify-center"
-                    >
-                      Solicitar proposta
-                      <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
-                    </Button>
                   </div>
-                </aside>
+                  <dl className="grid grid-cols-1 divide-y divide-ink-200/70 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+                    {[
+                      { label: "Fabricante", value: product.fabricante, icon: Building2 },
+                      { label: "Categoria", value: product.categoria, icon: Layers },
+                      { label: "Subcategoria", value: product.subcategoria, icon: Tag },
+                    ].map(({ label, value, icon: Icon }) => (
+                      <div key={label} className="flex items-center gap-4 px-6 py-5">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/5 text-brand">
+                          <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
+                        </span>
+                        <div className="min-w-0 flex flex-col gap-0.5">
+                          <dt className="text-xs text-ink-500">{label}</dt>
+                          <dd className="truncate text-sm font-semibold text-ink-950 sm:text-base">
+                            {value}
+                          </dd>
+                        </div>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
               </div>
 
               {/* Integra com nossos serviços */}
@@ -382,13 +425,13 @@ export function ProductDetailContent({ slug }: { slug: string }) {
 
               {/* Sobre o fabricante */}
               <section>
-                <div className="rounded-2xl border border-ink-200 bg-white p-8 md:p-10 shadow-sm">
+                <div className="rounded-2xl border border-ink-200 bg-white p-6 sm:p-8 md:p-10 shadow-sm">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 justify-between">
-                    <div className="flex items-center gap-5">
-                      <div className="flex h-14 w-28 items-center justify-center rounded-xl bg-ink-50 border border-ink-200/80 p-3">
-                        {fabLogo ? (
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5">
+                      <div className="flex h-14 w-28 shrink-0 items-center justify-center rounded-xl bg-ink-50 border border-ink-200/80 p-3">
+                        {lightLogo ? (
                           <Image
-                            src={fabLogo}
+                            src={lightLogo}
                             alt={product.fabricante}
                             className="max-h-7 w-auto object-contain"
                           />

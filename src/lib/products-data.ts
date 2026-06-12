@@ -18,7 +18,7 @@ import dellLogo from "@/assets/Dell Logo.svg"
 import ibmLogo from "@/assets/IBM Logo.svg"
 import lenovoLogo from "@/assets/Lenovo Logo.svg"
 import microsoftLogo from "@/assets/Microsoft Logo.svg"
-import redhatLogo from "@/assets/Red Hat Logo.svg"
+import redhatPretoLogo from "@/assets/Red Hat Preto Logo.svg"
 import veeamLogo from "@/assets/Veeam Logo.svg"
 
 export interface ProductDifferential {
@@ -191,7 +191,7 @@ export const PRODUCTS: Product[] = [
     nome: "Red Hat OpenShift",
     fabricante: "Red Hat",
     fabricanteSlug: "red-hat",
-    logo: redhatLogo,
+    logo: redhatPretoLogo,
     logoClass: "h-6",
     categoria: "Cloud",
     categoriaSlug: "cloud",

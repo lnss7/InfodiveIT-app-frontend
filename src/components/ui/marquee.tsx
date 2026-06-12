@@ -8,6 +8,8 @@ interface MarqueeProps extends ComponentPropsWithoutRef<"div"> {
   reverse?: boolean
   /** Pausa a animação no hover */
   pauseOnHover?: boolean
+  /** Duração da animação (ex: "40s" ou "80s") */
+  duration?: string
   children: ReactNode
 }
 
@@ -20,15 +22,24 @@ export function Marquee({
   className,
   reverse = false,
   pauseOnHover = false,
+  duration = "80s",
   children,
+  style,
   ...props
 }: MarqueeProps) {
   return (
     <div
       {...props}
       className={cn("group relative w-full overflow-hidden", className)}
+      style={{
+        ...style,
+        ["--duration" as any]: duration,
+      }}
     >
       <div
+        style={{
+          animationDuration: duration,
+        }}
         className={cn(
           "flex w-max animate-marquee items-center gap-10",
           pauseOnHover && "group-hover:[animation-play-state:paused]",

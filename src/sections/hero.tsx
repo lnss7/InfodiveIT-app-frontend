@@ -36,16 +36,16 @@ const SHOWCASE_SLIDES = [
 ];
 
 const PARTNERS = [
-  { name: "IBM", description: "Líder global em IA e nuvem híbrida segura.", logo: ibmLogo, className: "h-5" },
-  { name: "AWS", description: "Nuvem de escala global com serviços avançados.", logo: awsLogo, className: "h-10" },
-  { name: "Lenovo", description: "Infraestrutura robusta de servidores e alta performance.", logo: lenovoLogo, className: "h-10", keepWhiteOnHover: true },
+  { name: "IBM", description: "Líder global em IA e nuvem híbrida segura.", logo: ibmLogo, className: "h-4 sm:h-5" },
+  { name: "AWS", description: "Nuvem de escala global com serviços avançados.", logo: awsLogo, className: "h-7 sm:h-10" },
+  { name: "Lenovo", description: "Infraestrutura robusta de servidores e alta performance.", logo: lenovoLogo, className: "h-4 sm:h-6", keepWhiteOnHover: true },
   { name: "Dell Technologies", description: "Computação e armazenamento de ponta corporativo.", logo: dellLogo },
-  { name: "Veeam", description: "Proteção moderna de dados e backup inteligente.", logo: veeamLogo, className: "h-4" },
+  { name: "Veeam", description: "Proteção moderna de dados e backup inteligente.", logo: veeamLogo, className: "h-4 sm:h-5" },
   { name: "Acronis", description: "Integração inovadora de cibersegurança e backup.", logo: acronisLogo, keepWhiteOnHover: true },
-  { name: "Red Hat", description: "Soluções open source corporativas e Kubernetes.", logo: redhatLogo, className: "h-6" },
+  { name: "Red Hat", description: "Soluções open source corporativas e Kubernetes.", logo: redhatLogo },
   { name: "Microsoft", description: "A nuvem do Azure para escala e inovação global.", logo: microsoftLogo },
-  { name: "SUSE", description: "Soluções corporativas de Linux e Kubernetes open.", logo: suseLogo, className: "h-12", keepWhiteOnHover: true },
-  { name: "Virtuozzo", description: "Virtualização eficiente e hiperconvergência em nuvem.", logo: virtuozzoLogo, className: "h-4", keepWhiteOnHover: true },
+  { name: "SUSE", description: "Soluções corporativas de Linux e Kubernetes open.", logo: suseLogo, className: "h-7 sm:h-10", keepWhiteOnHover: true },
+  { name: "Virtuozzo", description: "Virtualização eficiente e hiperconvergência em nuvem.", logo: virtuozzoLogo, className: "h-4 sm:h-5", keepWhiteOnHover: true },
   { name: "Apple", description: "Ecossistema tecnológico premium integrado.", logo: appleLogo, keepWhiteOnHover: true },
 ];
 
@@ -203,7 +203,7 @@ export function Hero() {
                         partner.keepWhiteOnHover
                           ? ""
                           : "group-hover:brightness-100 group-hover:invert-0",
-                        partner.className || "h-8"
+                        partner.className || "h-5 sm:h-8"
                       )}
                     />
                   </div>
