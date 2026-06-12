@@ -12,11 +12,18 @@ interface TextRevealProps {
   /** Classe das palavras destacadas. */
   highlightClassName?: string
   /**
-   * Altura da pista de scroll. A revelação completa em ~100vh de rolagem; o
-   * excedente vira "hold" — a frase fica fixa, 100% revelada, antes de soltar.
-   * Útil para um painel subir por cima da frase já revelada.
+   * Altura da pista de scroll. A revelação completa em ~(revealViewports × 100vh)
+   * de rolagem; o excedente vira "hold" — a frase fica fixa, 100% revelada, antes
+   * de soltar. Útil para um painel subir por cima da frase já revelada.
    */
   trackHeight?: string
+  /**
+   * Quantos viewports de scroll a revelação leva para completar. 1 = padrão
+   * (rápido, ~100vh). Valores maiores deixam as palavras acenderem mais devagar.
+   * Lembre de aumentar `trackHeight` junto: ele precisa ser pelo menos
+   * (revealViewports + 1) × 100vh para a frase terminar de revelar antes de soltar.
+   */
+  revealViewports?: number
 }
 
 interface ScrollWordProps {
@@ -64,6 +71,7 @@ export const TextReveal: React.FC<TextRevealProps> = ({
   highlightLines = [],
   highlightClassName = "text-brand",
   trackHeight = "h-[200vh]",
+  revealViewports = 1,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollYProgress, setScrollYProgress] = useState(0)
@@ -73,8 +81,10 @@ export const TextReveal: React.FC<TextRevealProps> = ({
       if (!containerRef.current) return
       const rect = containerRef.current.getBoundingClientRect()
       // progresso 0 quando o topo do container está no topo da viewport;
-      // chega a 1 ao rolar mais uma altura de viewport (container é 200vh).
-      const progress = (rect.top / window.innerHeight) * -1
+      // chega a 1 ao rolar `revealViewports` alturas de viewport. Quanto maior
+      // revealViewports, mais devagar as palavras acendem em relação ao scroll.
+      const progress =
+        (rect.top / (window.innerHeight * revealViewports)) * -1
       setScrollYProgress(progress)
     }
 
@@ -86,7 +96,7 @@ export const TextReveal: React.FC<TextRevealProps> = ({
       window.removeEventListener("scroll", handleScroll)
       window.removeEventListener("resize", handleScroll)
     }
-  }, [])
+  }, [revealViewports])
 
   const highlightSet = useMemo(() => new Set(highlightLines), [highlightLines])
   const lines = useMemo(

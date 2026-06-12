@@ -1,5 +1,6 @@
 'use client'
 
+import React, { useState } from "react";
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
 import { ArrowRight, MessageSquare } from "lucide-react";
 import { TextEffect } from "@/components/animations/text-effect";
@@ -12,14 +13,14 @@ import { cn } from "@/lib/utils";
 import { Reveal } from "@/components/animations/reveal";
 
 // Import partner logo SVGs from assets
-import awsLogo from "@/assets/AWS Logo.svg";
+import awsLogo from "@/assets/AWS Logo.png";
 import acronisLogo from "@/assets/Acronis Logo.svg";
 import appleLogo from "@/assets/Apple Logo.svg";
 import dellLogo from "@/assets/Dell Logo.svg";
 import ibmLogo from "@/assets/IBM Logo.svg";
 import lenovoLogo from "@/assets/Lenovo Logo.svg";
 import microsoftLogo from "@/assets/Microsoft Logo.svg";
-import redhatLogo from "@/assets/Red Hat Logo.svg";
+import redhatLogo from "@/assets/Red Hat Logo.png";
 import suseLogo from "@/assets/Suse Logo.svg";
 import veeamLogo from "@/assets/Veeam Logo.svg";
 import virtuozzoLogo from "@/assets/Virtuozzo Logo.svg";
@@ -52,7 +53,43 @@ const PARTNERS = [
 // Duplicate the array to create a seamless infinite scrolling effect
 const MARQUEE_PARTNERS = [...PARTNERS, ...PARTNERS];
 
+const MOBILE_LOGO_CLASSES: Record<string, string> = {
+  IBM: "h-6",
+  AWS: "h-9",
+  Lenovo: "h-6",
+  "Dell Technologies": "h-8",
+  Veeam: "h-6",
+  Acronis: "h-8",
+  "Red Hat": "h-8",
+  Microsoft: "h-8",
+  SUSE: "h-9",
+  Virtuozzo: "h-6",
+  Apple: "h-8",
+};
+
+
 export function Hero() {
+  const [activePartnerIndex, setActivePartnerIndex] = useState<number | null>(null);
+
+  const handlePartnerClick = (index: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActivePartnerIndex((prev) => (prev === index ? null : index));
+  };
+
+  React.useEffect(() => {
+    if (activePartnerIndex === null) return;
+
+    const handleGlobalClick = () => {
+      setActivePartnerIndex(null);
+    };
+
+    document.addEventListener("click", handleGlobalClick);
+    return () => {
+      document.removeEventListener("click", handleGlobalClick);
+    };
+  }, [activePartnerIndex]);
+
+
   const handleContactClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const contactSection = document.getElementById("contact");
     if (contactSection) {
@@ -174,52 +211,121 @@ export function Hero() {
 
       {/* Animated Infinite Marquee Carousel (logos) */}
       <Reveal delay={0.8} className="relative z-10 w-full max-w-full md:max-w-6xl mx-auto mt-2 overflow-hidden py-2 [mask-image:linear-gradient(to_right,transparent,white_5%,white_95%,transparent)] sm:[mask-image:linear-gradient(to_right,transparent,white_15%,white_85%,transparent)] select-none">
-        <div className="flex w-max animate-marquee gap-6 hover:[animation-play-state:paused] cursor-pointer">
-          {MARQUEE_PARTNERS.map((partner, index) => (
-            <div key={index} className="w-[200px] sm:w-[240px] shrink-0 p-1">
-              <MagicCard
-                className="h-full rounded-lg"
-                gradientColor="rgba(255, 255, 255, 0.05)"
-                gradientFrom="rgba(255, 255, 255, 0.35)"
-                gradientTo="rgba(255, 255, 255, 0.05)"
-                gradientSize={150}
-                gradientOpacity={0.8}
-                style={{
-                  "--color-background": "rgba(20, 20, 19, 0.3)",
-                  "--card-face-background": "rgba(20, 20, 19, 0.55)",
-                  "--color-border": "rgba(255, 255, 255, 0.05)",
-                } as React.CSSProperties}
-              >
-                <CardContent className="p-2.5 pt-4 sm:p-4 flex flex-col items-center justify-between text-center h-full min-h-[120px] sm:min-h-[136px]">
-                  {/* Logo Container */}
-                  <div className="h-7 sm:h-10 flex items-center justify-center mb-2">
-                    <Image
-                      src={partner.logo}
-                      alt={`${partner.name} logo`}
-                      width={120}
-                      height={32}
-                      className={cn(
-                        "w-auto object-contain brightness-0 invert opacity-50 group-hover:opacity-100 transition-all duration-300",
-                        partner.keepWhiteOnHover
-                          ? ""
-                          : "group-hover:brightness-100 group-hover:invert-0",
-                        partner.className || "h-5 sm:h-8"
-                      )}
-                    />
+        <div 
+          className="flex w-max animate-marquee gap-6 hover:[animation-play-state:paused] cursor-pointer"
+          style={{
+            animationPlayState: activePartnerIndex !== null ? 'paused' : 'running'
+          }}
+        >
+          {MARQUEE_PARTNERS.map((partner, index) => {
+            const isActive = activePartnerIndex === index;
+            return (
+              <React.Fragment key={index}>
+                {/* Mobile: Simple, flat card without heavy follow glows */}
+                <div
+                  className="block md:hidden w-[200px] sm:w-[240px] shrink-0 p-1"
+                  onClick={(e) => handlePartnerClick(index, e)}
+                >
+                  <div
+                    className={cn(
+                      "h-full rounded-lg transition-all duration-300 min-h-[120px] sm:min-h-[136px] flex flex-col items-center justify-between text-center p-2.5 pt-4 sm:p-4 border-[0.5px]",
+                      isActive
+                        ? "border-white/40 bg-ink-900/80 shadow-[0_4px_12px_rgba(255,255,255,0.05)]"
+                        : "border-white/5 bg-ink-900/40"
+                    )}
+                  >
+                    {/* Logo Container */}
+                    <div className="h-7 sm:h-10 flex items-center justify-center mb-2">
+                      <Image
+                        src={partner.logo}
+                        alt={`${partner.name} logo`}
+                        width={120}
+                        height={32}
+                        className={cn(
+                          "w-auto object-contain transition-all duration-300",
+                          isActive
+                            ? (partner.keepWhiteOnHover ? "brightness-0 invert opacity-100" : "brightness-100 invert-0 opacity-100")
+                            : "brightness-0 invert opacity-50",
+                          MOBILE_LOGO_CLASSES[partner.name] || "h-8"
+                        )}
+                        unoptimized
+                      />
+                    </div>
+                    {/* Info */}
+                    <div className="flex flex-col justify-center flex-grow">
+                      <h4 className={cn(
+                        "text-xs font-bold tracking-wider uppercase mb-1.5 transition-colors duration-300",
+                        isActive ? "text-brand" : "text-white"
+                      )}>
+                        {partner.name}
+                      </h4>
+                      <p className={cn(
+                        "text-[10px] sm:text-[11px] leading-normal max-w-[160px] sm:max-w-[180px] mx-auto transition-colors duration-300",
+                        isActive ? "text-ink-300" : "text-ink-500"
+                      )}>
+                        {partner.description}
+                      </p>
+                    </div>
                   </div>
-                  {/* Info */}
-                  <div className="flex flex-col justify-center flex-grow">
-                    <h4 className="text-xs font-bold text-white tracking-wider uppercase mb-1.5 group-hover:text-brand transition-colors duration-300">
-                      {partner.name}
-                    </h4>
-                    <p className="text-[10px] sm:text-[11px] text-ink-500 leading-normal max-w-[160px] sm:max-w-[180px] mx-auto group-hover:text-ink-300 transition-colors duration-300">
-                      {partner.description}
-                    </p>
-                  </div>
-                </CardContent>
-              </MagicCard>
-            </div>
-          ))}
+                </div>
+
+                {/* Desktop: Premium MagicCard with dynamic glow borders */}
+                <div
+                  className="hidden md:block w-[200px] sm:w-[240px] shrink-0 p-1"
+                  onClick={(e) => handlePartnerClick(index, e)}
+                >
+                  <MagicCard
+                    className="h-full rounded-lg"
+                    gradientColor="rgba(255, 255, 255, 0.05)"
+                    gradientFrom="rgba(255, 255, 255, 0.35)"
+                    gradientTo="rgba(255, 255, 255, 0.05)"
+                    gradientSize={150}
+                    gradientOpacity={0.8}
+                    style={{
+                      "--color-background": "rgba(20, 20, 19, 0.3)",
+                      "--card-face-background": isActive ? "rgba(20, 20, 19, 0.75)" : "rgba(20, 20, 19, 0.55)",
+                      "--color-border": isActive ? "rgba(255, 255, 255, 0.4)" : "rgba(255, 255, 255, 0.05)",
+                    } as React.CSSProperties}
+                  >
+                    <CardContent className="p-2.5 pt-4 sm:p-4 flex flex-col items-center justify-between text-center h-full min-h-[120px] sm:min-h-[136px]">
+                      {/* Logo Container */}
+                      <div className="h-7 sm:h-10 flex items-center justify-center mb-2">
+                        <Image
+                          src={partner.logo}
+                          alt={`${partner.name} logo`}
+                          width={120}
+                          height={32}
+                          className={cn(
+                            "w-auto object-contain transition-all duration-300",
+                            isActive
+                              ? (partner.keepWhiteOnHover ? "brightness-0 invert opacity-100" : "brightness-100 invert-0 opacity-100")
+                              : "brightness-0 invert opacity-50 group-hover:opacity-100 group-hover:brightness-100 group-hover:invert-0",
+                            partner.className || "h-5 sm:h-8"
+                          )}
+                          unoptimized
+                        />
+                      </div>
+                      {/* Info */}
+                      <div className="flex flex-col justify-center flex-grow">
+                        <h4 className={cn(
+                          "text-xs font-bold tracking-wider uppercase mb-1.5 transition-colors duration-300",
+                          isActive ? "text-brand" : "text-white group-hover:text-brand"
+                        )}>
+                          {partner.name}
+                        </h4>
+                        <p className={cn(
+                          "text-[10px] sm:text-[11px] leading-normal max-w-[160px] sm:max-w-[180px] mx-auto transition-colors duration-300",
+                          isActive ? "text-ink-300" : "text-ink-500 group-hover:text-ink-300"
+                        )}>
+                          {partner.description}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </MagicCard>
+                </div>
+              </React.Fragment>
+            );
+          })}
         </div>
       </Reveal>
 
