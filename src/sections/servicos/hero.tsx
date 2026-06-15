@@ -122,11 +122,11 @@ export function ServicosHero() {
         </Reveal>
 
         <Reveal delay={0.85}>
-          <div className="mt-10 flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-white/40">
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-xs uppercase tracking-[0.2em] text-white/40 sm:flex-nowrap sm:gap-x-3">
             <span>Planejamos</span>
-            <span className="h-px w-8 bg-white/20" aria-hidden />
+            <span className="h-px w-4 bg-white/20 sm:w-8" aria-hidden />
             <span>Implantamos</span>
-            <span className="h-px w-8 bg-white/20" aria-hidden />
+            <span className="h-px w-4 bg-white/20 sm:w-8" aria-hidden />
             <span>Sustentamos</span>
           </div>
         </Reveal>
