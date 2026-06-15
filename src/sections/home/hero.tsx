@@ -176,7 +176,7 @@ export function Hero() {
               <Button
                 primary="#0E66FF"
                 secondary="#001DFF"
-                className="w-full sm:w-auto text-sm font-bold py-3.5 sm:px-6 sm:py-3 flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)] whitespace-nowrap"
+                className="w-full sm:w-auto text-sm font-bold py-3.5 sm:px-6 sm:py-3 flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)] rounded-full whitespace-nowrap"
               >
                 Explorar soluções
                 <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
@@ -191,7 +191,7 @@ export function Hero() {
               <Button
                 primary="rgba(255, 255, 255, 0.06)"
                 secondary="rgba(255, 255, 255, 0.16)"
-                className="border border-white/10 w-full sm:w-auto text-sm font-bold py-3.5 sm:px-6 sm:py-3 flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
+                className="border border-white/10 w-full sm:w-auto text-sm font-bold py-3.5 sm:px-6 sm:py-3 flex items-center justify-center gap-2 cursor-pointer rounded-full whitespace-nowrap"
               >
                 <MessageSquare className="h-4 w-4 text-ink-300" strokeWidth={2} />
                 Fale conosco

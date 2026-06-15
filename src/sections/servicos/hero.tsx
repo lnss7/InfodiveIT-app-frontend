@@ -4,11 +4,12 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowDown, MessageSquare } from "lucide-react";
+import { ArrowDown, MessageSquare, ArrowLeft } from "lucide-react";
 import type Lenis from "@studio-freight/lenis";
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
 import { Reveal } from "@/components/animations/reveal";
 import { TextEffect } from "@/components/animations/text-effect";
+import { Button } from "@/components/ui/button";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -55,7 +56,7 @@ export function ServicosHero() {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden border-b border-white/5 bg-[#050507] pb-24 pt-32 text-white sm:pt-40 md:pb-32"
+      className="relative overflow-hidden border-b border-white/5 bg-[#050507] pb-24 pt-24 text-white sm:pt-40 md:pb-32"
     >
       {/* Grid decorativo interativo ao fundo (mesma linguagem do hero de /sobre) */}
       <div className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-hidden">
@@ -73,6 +74,18 @@ export function ServicosHero() {
         ref={contentRef}
         className="container-default relative z-10 mx-auto flex max-w-4xl flex-col items-center px-4 text-center"
       >
+        <div className="w-full flex justify-start mb-4 sm:mb-6 mt-[-8px] sm:mt-0">
+          <Reveal>
+            <Link
+              href="/"
+              className="inline-flex h-9 w-9 sm:h-10 sm:w-auto items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.08] p-0 sm:px-4 sm:py-2 text-xs font-semibold uppercase tracking-wider text-white/80 backdrop-blur-md transition-all hover:border-white/20 hover:bg-white/[0.15] hover:text-white hover:scale-[1.02] shadow-[0_4px_12px_rgba(0,0,0,0.25)]"
+            >
+              <ArrowLeft className="h-4 w-4 shrink-0" />
+              <span className="hidden sm:inline">Voltar</span>
+            </Link>
+          </Reveal>
+        </div>
+
         <Reveal>
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-[#7aa9ff]">
             Serviços
@@ -102,21 +115,29 @@ export function ServicosHero() {
         </Reveal>
 
         <Reveal delay={0.7}>
-          <div className="mt-10 flex w-full flex-col items-center justify-center gap-3 sm:flex-row">
-            <button
-              type="button"
+          <div className="mt-10 flex w-full flex-col items-center justify-center gap-3 sm:flex-row px-4">
+            <Button
+              primary="#0E66FF"
+              secondary="#001DFF"
               onClick={scrollToCiclo}
-              className="btn-primary w-full sm:w-auto"
+              className="w-full sm:w-auto text-sm font-bold py-3.5 sm:px-6 sm:py-3 flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)] rounded-full whitespace-nowrap"
             >
               Conheça nossos serviços
               <ArrowDown className="h-4 w-4" />
-            </button>
+            </Button>
             <Link
               href="/#contact"
-              className="btn w-full border border-white/15 bg-white/5 !text-white hover:border-white/40 sm:w-auto"
+              className="focus:outline-none w-full sm:w-auto"
+              tabIndex={-1}
             >
-              <MessageSquare className="h-4 w-4 text-ink-300" strokeWidth={2} />
-              Fale com um especialista
+              <Button
+                primary="rgba(255, 255, 255, 0.06)"
+                secondary="rgba(255, 255, 255, 0.16)"
+                className="border border-white/10 w-full sm:w-auto text-sm font-bold py-3.5 sm:px-6 sm:py-3 flex items-center justify-center gap-2 cursor-pointer rounded-full whitespace-nowrap"
+              >
+                <MessageSquare className="h-4 w-4 text-ink-300" strokeWidth={2} />
+                Fale com um especialista
+              </Button>
             </Link>
           </div>
         </Reveal>

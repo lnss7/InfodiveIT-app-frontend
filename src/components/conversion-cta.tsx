@@ -3,12 +3,14 @@
 import { motion } from "framer-motion"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 interface ConversionCTAProps {
   title: string
   subtitle: string
   ctaLabel?: string
-  onCtaClick: () => void
+  href?: string
+  onCtaClick?: () => void
 }
 
 /**
@@ -19,6 +21,7 @@ export function ConversionCTA({
   title,
   subtitle,
   ctaLabel = "Falar com especialista",
+  href,
   onCtaClick,
 }: ConversionCTAProps) {
   return (
@@ -82,15 +85,28 @@ export function ConversionCTA({
         <p className="text-[#BFBFBF] text-sm sm:text-base font-light leading-relaxed max-w-2xl mx-auto mb-8 text-pretty">
           {subtitle}
         </p>
-        <Button
-          primary="#0E66FF"
-          secondary="#001DFF"
-          onClick={onCtaClick}
-          className="text-sm px-8 py-4 font-bold rounded-full text-white cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)]"
-        >
-          {ctaLabel}
-          <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
-        </Button>
+        {href ? (
+          <Link href={href} className="focus:outline-none" tabIndex={-1}>
+            <Button
+              primary="#0E66FF"
+              secondary="#001DFF"
+              className="text-sm px-8 py-4 font-bold rounded-full text-white cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)]"
+            >
+              {ctaLabel}
+              <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+            </Button>
+          </Link>
+        ) : (
+          <Button
+            primary="#0E66FF"
+            secondary="#001DFF"
+            onClick={onCtaClick}
+            className="text-sm px-8 py-4 font-bold rounded-full text-white cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)]"
+          >
+            {ctaLabel}
+            <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+          </Button>
+        )}
       </div>
     </div>
   )

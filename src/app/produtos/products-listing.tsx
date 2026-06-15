@@ -71,7 +71,7 @@ export function ProductsListing() {
   return (
     <div className="relative z-20 w-full min-h-screen bg-white text-ink-900">
       {/* 1. Hero escuro */}
-      <div className="relative bg-[#050507] text-white pt-28 sm:pt-36 pb-20 overflow-hidden border-b border-white/5">
+      <div className="relative bg-[#050507] text-white pt-20 sm:pt-36 pb-20 overflow-hidden border-b border-white/5">
         <div className="absolute inset-0 h-full w-full overflow-hidden pointer-events-none z-0">
           <InteractiveGridPattern
             width={48}
@@ -84,14 +84,14 @@ export function ProductsListing() {
         </div>
 
         <div className="container-default relative z-10 mx-auto flex flex-col px-4">
-          <div className="flex justify-start mb-6">
+          <div className="flex justify-start mb-4 sm:mb-6 mt-[-8px] sm:mt-0">
             <Reveal>
               <Link
                 href="/"
-                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white/70 hover:border-white/25 hover:bg-white/10 hover:text-white hover:scale-[1.02] transition-all"
+                className="inline-flex h-9 w-9 sm:h-10 sm:w-auto items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.08] p-0 sm:px-4 sm:py-2 text-xs font-semibold uppercase tracking-wider text-white/80 backdrop-blur-md transition-all hover:border-white/20 hover:bg-white/[0.15] hover:text-white hover:scale-[1.02] shadow-[0_4px_12px_rgba(0,0,0,0.25)]"
               >
-                <ArrowLeft className="h-4 w-4" />
-                <span>Voltar</span>
+                <ArrowLeft className="h-4 w-4 shrink-0" />
+                <span className="hidden sm:inline">Voltar</span>
               </Link>
             </Reveal>
           </div>

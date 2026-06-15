@@ -43,7 +43,7 @@ export function SobreHero() {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden border-b border-white/5 bg-[#050507] pb-24 pt-32 text-white sm:pt-40 md:pb-32"
+      className="relative overflow-hidden border-b border-white/5 bg-[#050507] pb-24 pt-24 text-white sm:pt-40 md:pb-32"
     >
       {/* Grid decorativo interativo ao fundo (mesma linguagem do hero de /solucoes) */}
       <div className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-hidden">
@@ -61,14 +61,14 @@ export function SobreHero() {
         ref={contentRef}
         className="container-default relative z-10 mx-auto flex flex-col px-4"
       >
-        <div className="flex justify-start mb-6">
+        <div className="flex justify-start mb-4 sm:mb-6 mt-[-8px] sm:mt-0">
           <Reveal>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white/70 hover:border-white/25 hover:bg-white/10 hover:text-white hover:scale-[1.02] transition-all"
+              className="inline-flex h-9 w-9 sm:h-10 sm:w-auto items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.08] p-0 sm:px-4 sm:py-2 text-xs font-semibold uppercase tracking-wider text-white/80 backdrop-blur-md transition-all hover:border-white/20 hover:bg-white/[0.15] hover:text-white hover:scale-[1.02] shadow-[0_4px_12px_rgba(0,0,0,0.25)]"
             >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Voltar</span>
+              <ArrowLeft className="h-4 w-4 shrink-0" />
+              <span className="hidden sm:inline">Voltar</span>
             </Link>
           </Reveal>
         </div>

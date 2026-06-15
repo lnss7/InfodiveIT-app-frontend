@@ -10,7 +10,7 @@ import {
   Send,
   ThumbsUp,
 } from "lucide-react";
-import faviconImg from "@/assets/logo/Logo Infodive 2.png";
+import faviconImg from "@/assets/logo/Logos Infodive Navbar.png";
 import instagramImg from "@/assets/footer/instagram.png";
 import linkedinImg from "@/assets/footer/linkedin.png";
 import { Reveal } from "@/components/animations/reveal";

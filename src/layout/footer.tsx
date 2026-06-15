@@ -79,7 +79,7 @@ export function Footer() {
                 <Image
                   src={logoImg}
                   alt="Infodive Logo"
-                  className="h-[38px] w-auto object-contain filter drop-shadow-[0_0_8px_rgba(255,255,255,0.15)]"
+                  className="h-[38px] w-auto object-contain ml-[-10px] filter drop-shadow-[0_0_8px_rgba(255,255,255,0.15)]"
                   priority
                 />
               <p className="text-white/60 text-sm max-w-sm leading-relaxed">
