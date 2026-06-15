@@ -108,7 +108,7 @@ export function FAQ() {
                     className={`border-b py-6 transition-all duration-300 ${
                       isOpen 
                         ? "border-l-2 border-red-700 border-b-transparent pl-4 -ml-4" 
-                        : "border-ink-200/40 border-l-2 border-transparent pl-4 -ml-4"
+                        : "border-ink-200/40 border-l-2 border-l-transparent pl-4 -ml-4"
                     }`}
                     onMouseEnter={() => handleMouseEnter(index)}
                     onMouseLeave={() => handleMouseLeave(index)}

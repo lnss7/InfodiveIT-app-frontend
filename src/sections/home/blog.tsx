@@ -56,7 +56,7 @@ const MOCK_CONTEUDOS: ContentItem[] = [
     descricao: "Entenda os bastidores e os diferenciais que tornam as parcerias de tecnologia tão impactantes nas operações críticas.",
     publicadoEm: "29 maio 2026",
     tempoLeitura: "7 min read",
-    slug: "por-que-skyone-e-incrivel",
+    slug: "por-que-infodive-e-incrivel",
     categoria: "IA",
     imagem: presentationImg,
   },

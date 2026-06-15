@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { ArrowRight, Search, ArrowUpRight } from "lucide-react";
+import { ArrowRight, Search, ArrowUpRight, ArrowLeft } from "lucide-react";
 import { SOLUTIONS, SOLUTION_ICONS } from "@/lib/solutions-data";
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
 import { Reveal } from "@/components/animations/reveal";
@@ -71,12 +71,25 @@ export function SolutionsListing() {
         </div>
 
         {/* Header Hero Content */}
-        <div className="container-default relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto px-4">
-          <Reveal>
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#7aa9ff] mb-4">
-              Nosso Portfólio
-            </p>
-          </Reveal>
+        <div className="container-default relative z-10 mx-auto flex flex-col px-4">
+          <div className="flex justify-start mb-6">
+            <Reveal>
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white/70 hover:border-white/25 hover:bg-white/10 hover:text-white hover:scale-[1.02] transition-all"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span>Voltar</span>
+              </Link>
+            </Reveal>
+          </div>
+
+          <div className="flex max-w-4xl flex-col items-center mx-auto text-center w-full">
+            <Reveal>
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#7aa9ff] mb-4">
+                Nosso Portfólio
+              </p>
+            </Reveal>
           
           <Reveal delay={0.1}>
             <h1 className="text-balance text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
@@ -95,6 +108,7 @@ export function SolutionsListing() {
               Desenhamos e gerenciamos infraestruturas elásticas, segurança de dados ativa e plataformas cognitivas para que sua empresa nunca pare.
             </p>
           </Reveal>
+        </div>
         </div>
       </div>
 

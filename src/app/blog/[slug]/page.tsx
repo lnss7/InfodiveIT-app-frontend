@@ -1,0 +1,263 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ArrowLeft, CalendarDays, Clock, Play, User } from "lucide-react";
+import {
+  ARTIGOS,
+  type ArtigoBloco,
+  getArtigoBySlug,
+  getArtigosRelacionados,
+  TIPO_CONFIG,
+} from "@/lib/blog-data";
+import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
+import { Reveal } from "@/components/animations/reveal";
+import { ArtigoCard } from "@/sections/blog/article-card";
+import { BlogCta } from "@/sections/blog/cta";
+import { Footer } from "@/layout/footer";
+
+interface PageProps {
+  params: { slug: string };
+}
+
+export function generateStaticParams() {
+  return ARTIGOS.map((artigo) => ({ slug: artigo.slug }));
+}
+
+export function generateMetadata({ params }: PageProps): Metadata {
+  const artigo = getArtigoBySlug(params.slug);
+
+  if (!artigo) {
+    return { title: "Conteúdo não encontrado | Infodive" };
+  }
+
+  return {
+    title: `${artigo.titulo} | Infodive IT`,
+    description: artigo.descricao,
+    openGraph: {
+      title: `${artigo.titulo} | Infodive IT`,
+      description: artigo.descricao,
+      type: "article",
+    },
+  };
+}
+
+/** Renderiza um bloco do corpo do conteúdo. */
+function Bloco({ bloco }: { bloco: ArtigoBloco }) {
+  switch (bloco.tipo) {
+    case "subtitulo":
+      return (
+        <h2 className="mt-12 text-2xl font-semibold tracking-tight text-ink-950">
+          {bloco.texto}
+        </h2>
+      );
+    case "lista":
+      return (
+        <ul className="mt-6 space-y-3">
+          {bloco.itens.map((item) => (
+            <li key={item} className="flex gap-3 text-ink-900">
+              <span
+                className="mt-2.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand"
+                aria-hidden
+              />
+              <span className="leading-relaxed">{item}</span>
+            </li>
+          ))}
+        </ul>
+      );
+    case "citacao":
+      return (
+        <blockquote className="my-10 border-l-2 border-brand pl-6 text-xl font-medium leading-relaxed text-ink-950">
+          {bloco.texto}
+        </blockquote>
+      );
+    default:
+      return (
+        <p className="mt-6 text-pretty leading-relaxed text-ink-900">
+          {bloco.texto}
+        </p>
+      );
+  }
+}
+
+export default function ArtigoDetailPage({ params }: PageProps) {
+  const artigo = getArtigoBySlug(params.slug);
+
+  if (!artigo) {
+    notFound();
+  }
+
+  const config = TIPO_CONFIG[artigo.tipo];
+  const Icon = config.icon;
+  const relacionados = getArtigosRelacionados(artigo.slug);
+
+  return (
+    <>
+      <main className="relative z-20 bg-white">
+        {/* 1. Hero dark */}
+        <header className="relative overflow-hidden border-b border-white/5 bg-[#050507] pb-12 pt-28 text-white sm:pt-36">
+          <div className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-hidden">
+            <InteractiveGridPattern
+              width={48}
+              height={48}
+              squares={[50, 16]}
+              className="absolute inset-0 h-full w-full stroke-white/[0.04] [mask-image:radial-gradient(ellipse_at_top,white_25%,transparent_80%)] opacity-40"
+              squaresClassName="hover:fill-brand/10 transition-all duration-150"
+            />
+            <div className="pointer-events-none absolute left-1/2 top-0 h-[420px] w-[520px] -translate-x-1/2 rounded-full bg-brand/10 blur-[140px]" />
+          </div>
+
+          <div className="container-default relative z-10">
+            <div className="mx-auto max-w-3xl">
+              {/* Breadcrumb + voltar */}
+              <Reveal>
+                <nav className="mb-6 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-ink-500">
+                  <Link href="/blog" className="transition-colors hover:text-brand">
+                    Conteúdos
+                  </Link>
+                  <span>/</span>
+                  <span className="text-white/70">{artigo.categoria}</span>
+                </nav>
+              </Reveal>
+
+              <Reveal delay={0.06}>
+                <Link
+                  href="/blog"
+                  className="group inline-flex items-center gap-2 text-sm text-ink-300 transition-colors hover:text-white"
+                >
+                  <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                  Voltar para conteúdos
+                </Link>
+              </Reveal>
+
+              {/* Badge tipo */}
+              <Reveal delay={0.1}>
+                <span
+                  className="mt-8 inline-flex items-center rounded px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide"
+                  style={{ backgroundColor: config.bg, color: config.color }}
+                >
+                  {config.label}
+                </span>
+              </Reveal>
+
+              {/* Título */}
+              <Reveal delay={0.14}>
+                <h1 className="mt-5 text-balance text-3xl font-extrabold leading-[1.15] tracking-tight text-white sm:text-4xl md:text-5xl">
+                  {artigo.titulo}
+                </h1>
+              </Reveal>
+
+              <Reveal delay={0.2}>
+                <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-ink-300 sm:text-lg">
+                  {artigo.descricao}
+                </p>
+              </Reveal>
+
+              {/* Meta */}
+              <Reveal delay={0.26}>
+                <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-ink-500">
+                  <span className="font-medium uppercase tracking-wide text-[#7aa9ff]">
+                    {artigo.categoria} • {artigo.fabricante}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <User className="h-3.5 w-3.5" aria-hidden />
+                    {artigo.autor}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <CalendarDays className="h-3.5 w-3.5" aria-hidden />
+                    {artigo.data}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Clock className="h-3.5 w-3.5" aria-hidden />
+                    {artigo.tempoLeitura}
+                  </span>
+                </div>
+              </Reveal>
+            </div>
+          </div>
+        </header>
+
+        {/* 2. Cover visual — banda de transição do dark para o claro */}
+        <div className="bg-[#050507] pb-16">
+          <div className="container-default">
+            <Reveal className="mx-auto max-w-4xl">
+              <div
+                className="relative flex h-[220px] items-center justify-center overflow-hidden rounded-2xl border border-white/10 sm:h-[300px]"
+                style={{ backgroundColor: artigo.imagemBg }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] to-transparent" />
+                <Icon
+                  className="h-24 w-24 text-white/[0.08]"
+                  strokeWidth={1}
+                  aria-hidden
+                />
+                {artigo.tipo === "video" && (
+                  <span className="absolute flex h-16 w-16 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/20 backdrop-blur-sm">
+                    <Play className="ml-1 h-7 w-7 fill-white text-white" aria-hidden />
+                  </span>
+                )}
+              </div>
+            </Reveal>
+          </div>
+        </div>
+
+        {/* 3. Corpo do conteúdo */}
+        <article className="bg-white py-16 md:py-20">
+          <div className="container-default">
+            <Reveal className="mx-auto max-w-3xl text-[17px]">
+              <div>
+                {artigo.conteudo.map((bloco, index) => (
+                  <Bloco key={index} bloco={bloco} />
+                ))}
+              </div>
+
+              {/* Rodapé do artigo */}
+              <div className="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-ink-200/70 pt-6">
+                <p className="text-sm text-ink-500">
+                  Publicado por{" "}
+                  <span className="font-medium text-ink-950">{artigo.autor}</span>{" "}
+                  · {artigo.data}
+                </p>
+                <Link
+                  href="/blog"
+                  className="group inline-flex items-center gap-2 text-sm font-medium text-brand transition-colors hover:text-brand-deep"
+                >
+                  <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+                  Todos os conteúdos
+                </Link>
+              </div>
+            </Reveal>
+          </div>
+        </article>
+
+        {/* 4. Leia também */}
+        {relacionados.length > 0 && (
+          <section className="border-t border-ink-200/60 bg-ink-50/60 py-16 md:py-20">
+            <div className="container-default">
+              <Reveal>
+                <p className="eyebrow">Leia também</p>
+              </Reveal>
+              <Reveal delay={0.1}>
+                <h2 className="text-balance">Outros conteúdos da Infodive.</h2>
+              </Reveal>
+
+              <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {relacionados.map((relacionado, index) => (
+                  <Reveal
+                    key={relacionado.slug}
+                    delay={(index % 3) * 0.08}
+                    className="h-full"
+                  >
+                    <ArtigoCard artigo={relacionado} />
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        <BlogCta />
+      </main>
+      <Footer />
+    </>
+  );
+}

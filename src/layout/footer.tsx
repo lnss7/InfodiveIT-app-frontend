@@ -6,7 +6,7 @@ import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ShieldCheck, Cpu } from "lucide-react";
-import logoImg from "@/assets/logo/Logo infodive.webp";
+import logoImg from "@/assets/logo/Logo Infodive 3.png";
 import facebookImg from "@/assets/footer/facebook.png";
 import facebookColorImg from "@/assets/footer/facebook-colorfull.png";
 import instagramImg from "@/assets/footer/instagram.png";
@@ -75,18 +75,13 @@ export function Footer() {
       <div className="relative z-10 w-full mx-auto max-w-[1600px] px-6 md:px-10 pt-20 pb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-16 border-b border-white/10">
             {/* Logo and About Section */}
-            <div className="md:col-span-2 lg:col-span-4 flex flex-col gap-6">
-              <Link
-                href="/"
-                className="inline-block transition-transform hover:scale-95 duration-300"
-              >
+            <div className="md:col-span-2 lg:col-span-4 flex flex-col items-start gap-6">
                 <Image
                   src={logoImg}
                   alt="Infodive Logo"
-                  className="h-[32px] w-auto object-contain"
+                  className="h-[38px] w-auto object-contain filter drop-shadow-[0_0_8px_rgba(255,255,255,0.15)]"
                   priority
                 />
-              </Link>
               <p className="text-white/60 text-sm max-w-sm leading-relaxed">
                 Consultoria e infraestrutura de TI avançada para empresas em
                 expansão. Projetando a segurança, estabilidade e inteligência do
