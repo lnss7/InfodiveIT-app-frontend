@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { ProductsListing } from "./products-listing"
 import { Footer } from "@/layout/footer"
+import { Suspense } from "react"
 
 export const metadata: Metadata = {
   title: "Catálogo de Produtos de TI Corporativa",
@@ -34,7 +35,13 @@ export default function ProductsPage() {
   return (
     <>
       <main id="main-content">
-        <ProductsListing />
+        <Suspense fallback={
+          <div className="min-h-screen bg-[#050507] text-white flex items-center justify-center">
+            <div className="w-8 h-8 border-4 border-[#0E66FF] border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        }>
+          <ProductsListing />
+        </Suspense>
       </main>
       <Footer />
     </>

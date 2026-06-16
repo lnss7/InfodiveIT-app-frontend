@@ -19,7 +19,12 @@ const SCROLL_THRESHOLD = 8;
 
 export function Navbar() {
   const pathname = usePathname();
-  const isWhitePage = pathname === "/termos-de-uso" || pathname === "/politica-de-privacidade";
+  const currentPath = pathname || "/";
+  const darkHeroPrefixes = ["/", "/sobre", "/servicos", "/produtos", "/solucoes", "/blog", "/conteudos"];
+  const isDarkHeroPage = darkHeroPrefixes.some((prefix) =>
+    prefix === "/" ? currentPath === "/" : currentPath.startsWith(prefix)
+  );
+  const isWhitePage = !isDarkHeroPage;
   const { scrollTo } = useSmoothScroll();
   const handleContactClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (window.location.pathname === "/" && scrollTo("contact")) {

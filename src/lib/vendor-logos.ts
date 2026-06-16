@@ -24,3 +24,18 @@ export const VENDOR_LOGOS: Record<string, StaticImageData> = {
   Veeam: veeamLogo,
   Virtuozzo: virtuozzoLogo,
 };
+
+export const VENDOR_URLS: Record<string, string> = {
+  AWS: "https://aws.amazon.com",
+  Acronis: "https://www.acronis.com",
+  Apple: "https://www.apple.com",
+  "Dell Technologies": "https://www.dell.com",
+  IBM: "https://www.ibm.com",
+  Lenovo: "https://www.lenovo.com",
+  Microsoft: "https://www.microsoft.com",
+  "Red Hat": "https://www.redhat.com",
+  SUSE: "https://www.suse.com",
+  Veeam: "https://www.veeam.com",
+  Virtuozzo: "https://www.virtuozzo.com",
+};
+

@@ -5,7 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, ArrowRight, ArrowUpRight, Building2, Check, Layers, Tag } from "lucide-react"
 import { type Product, getProductBySlug, getRelatedProducts } from "@/lib/products-data"
-import { VENDOR_LOGOS } from "@/lib/vendor-logos"
+import { VENDOR_LOGOS, VENDOR_URLS } from "@/lib/vendor-logos"
 import redhatPretoLogo from "@/assets/Red Hat Preto Logo.svg"
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern"
 import { AnimatedBeam } from "@/components/animations/animated-beam"
@@ -449,18 +449,20 @@ export function ProductDetailContent({ slug }: { slug: string }) {
                           {product.fabricante}
                         </h3>
                         <p className="text-sm text-ink-500 font-light leading-relaxed max-w-md">
-                          Parceiro homologado Infodive. Explore todo o portfólio
-                          {" "}{product.fabricante} disponível no nosso catálogo.
+                          Parceiro homologado Infodive. Visite o site oficial para
+                          conhecer mais sobre as soluções {product.fabricante}.
                         </p>
                       </div>
                     </div>
-                    <Link
-                      href={`/fabricantes/${product.fabricanteSlug}`}
+                    <a
+                      href={VENDOR_URLS[product.fabricante] || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-brand hover:text-brand-deep transition-colors"
                     >
                       Ver fabricante
                       <ArrowUpRight className="h-4 w-4" strokeWidth={2.5} />
-                    </Link>
+                    </a>
                   </div>
                 </div>
               </section>

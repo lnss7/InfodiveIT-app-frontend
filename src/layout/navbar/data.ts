@@ -103,16 +103,16 @@ export const categorias: NavCategoria[] = [
 ]
 
 export const fabricantesDestaque: NavFabricante[] = [
-  { nome: 'IBM', href: '/fabricantes/ibm' },
-  { nome: 'Lenovo', href: '/fabricantes/lenovo' },
-  { nome: 'Dell', href: '/fabricantes/dell' },
-  { nome: 'HPE', href: '/fabricantes/hpe' },
-  { nome: 'Veeam', href: '/fabricantes/veeam' },
-  { nome: 'Acronis', href: '/fabricantes/acronis' },
-  { nome: 'VMware', href: '/fabricantes/vmware' },
-  { nome: 'Red Hat', href: '/fabricantes/red-hat' },
-  { nome: 'Microsoft', href: '/fabricantes/microsoft' },
-  { nome: 'AWS', href: '/fabricantes/aws' },
+  { nome: 'IBM', href: '/produtos?fabricante=IBM' },
+  { nome: 'Lenovo', href: '/produtos?fabricante=Lenovo' },
+  { nome: 'Dell', href: '/produtos?fabricante=Dell' },
+  { nome: 'HPE', href: '/produtos?fabricante=HPE' },
+  { nome: 'Veeam', href: '/produtos?fabricante=Veeam' },
+  { nome: 'Acronis', href: '/produtos?fabricante=Acronis' },
+  { nome: 'VMware', href: '/produtos?fabricante=VMware' },
+  { nome: 'Red Hat', href: '/produtos?fabricante=Red Hat' },
+  { nome: 'Microsoft', href: '/produtos?fabricante=Microsoft' },
+  { nome: 'AWS', href: '/produtos?fabricante=AWS' },
 ]
 
 export const ultimoConteudoDestaque: NavConteudo = {
@@ -137,14 +137,14 @@ export type NavProdutoComDescricao = {
 }
 
 export const fabricantesProdutos: NavFabricanteComDescricao[] = [
-  { nome: 'IBM', descricao: 'Servidores, storage e segurança', href: '/fabricantes/ibm' },
-  { nome: 'Lenovo', descricao: 'Endpoints e infraestrutura', href: '/fabricantes/lenovo' },
-  { nome: 'Dell', descricao: 'Servidores e armazenamento', href: '/fabricantes/dell' },
-  { nome: 'HPE', descricao: 'Infraestrutura enterprise', href: '/fabricantes/hpe' },
-  { nome: 'Microsoft', descricao: 'Cloud, segurança e endpoints', href: '/fabricantes/microsoft' },
-  { nome: 'AWS', descricao: 'Nuvem pública e serviços gerenciados', href: '/fabricantes/aws' },
-  { nome: 'Veeam', descricao: 'Proteção e recuperação de dados', href: '/fabricantes/veeam' },
-  { nome: 'Acronis', descricao: 'Backup e cibersegurança', href: '/fabricantes/acronis' },
+  { nome: 'IBM', descricao: 'Servidores, storage e segurança', href: '/produtos?fabricante=IBM' },
+  { nome: 'Lenovo', descricao: 'Endpoints e infraestrutura', href: '/produtos?fabricante=Lenovo' },
+  { nome: 'Dell', descricao: 'Servidores e armazenamento', href: '/produtos?fabricante=Dell' },
+  { nome: 'HPE', descricao: 'Infraestrutura enterprise', href: '/produtos?fabricante=HPE' },
+  { nome: 'Microsoft', descricao: 'Cloud, segurança e endpoints', href: '/produtos?fabricante=Microsoft' },
+  { nome: 'AWS', descricao: 'Nuvem pública e serviços gerenciados', href: '/produtos?fabricante=AWS' },
+  { nome: 'Veeam', descricao: 'Proteção e recuperação de dados', href: '/produtos?fabricante=Veeam' },
+  { nome: 'Acronis', descricao: 'Backup e cibersegurança', href: '/produtos?fabricante=Acronis' },
 ]
 
 export const produtosIbm: NavProdutoComDescricao[] = [

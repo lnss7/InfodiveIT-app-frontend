@@ -5,6 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Search, ArrowLeft } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
+import { useSearchParams } from "next/navigation"
 
 import {
   PRODUCTS,
@@ -33,9 +34,12 @@ const FABRICANTE_OPTIONS = [
 ]
 
 export function ProductsListing() {
+  const searchParams = useSearchParams()
+  const urlFabricante = searchParams.get("fabricante")
+
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("Todos")
-  const [selectedFabricante, setSelectedFabricante] = useState("Todos")
+  const [selectedFabricante, setSelectedFabricante] = useState(urlFabricante || "Todos")
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const isDefaultView =
