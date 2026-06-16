@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { NumberTicker } from "./number-ticker";
+import { NumberTicker } from "@/components/ui/number-ticker";
 
 const meta = {
   title: "UI/NumberTicker",

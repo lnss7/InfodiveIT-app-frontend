@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Server, ShieldCheck, Cloud } from "lucide-react";
-import { BentoGrid, BentoCard } from "./bento-grid";
+import { BentoGrid, BentoCard } from "@/components/ui/bento-grid";
 
 const meta: Meta<typeof BentoGrid> = {
   title: "UI/BentoGrid",

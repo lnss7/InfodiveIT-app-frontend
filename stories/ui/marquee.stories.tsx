@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Marquee } from "./marquee";
+import { Marquee } from "@/components/ui/marquee";
 
 const meta: Meta<typeof Marquee> = {
   title: "UI/Marquee",

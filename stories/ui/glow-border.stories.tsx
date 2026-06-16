@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { handleGlowMove, GlowBorderOverlay } from "./glow-border";
+import { handleGlowMove, GlowBorderOverlay } from "@/components/ui/glow-border";
 
 const meta = {
   title: "UI/GlowBorder",

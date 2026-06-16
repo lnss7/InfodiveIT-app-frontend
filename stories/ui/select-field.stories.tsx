@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { useState } from "react";
-import { SelectField, type SelectOption } from "./select-field";
+import { SelectField, type SelectOption } from "@/components/ui/select-field";
 
 const options: SelectOption[] = [
   { value: "ibm", label: "IBM" },
