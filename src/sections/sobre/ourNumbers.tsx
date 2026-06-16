@@ -4,9 +4,9 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowDown } from "lucide-react";
-import type Lenis from "@studio-freight/lenis";
 import { NumberTicker } from "@/components/ui/number-ticker";
 import { Reveal } from "@/components/animations/reveal";
+import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -58,6 +58,7 @@ function StatCard({ stat, delay }: { stat: Stat; delay: number }) {
  * colunas transladando em velocidades diferentes ao scroll.
  */
 export function SobreNumeros() {
+  const { scrollTo } = useSmoothScroll();
   const sectionRef = useRef<HTMLElement>(null);
   const colARef = useRef<HTMLDivElement>(null);
   const colBRef = useRef<HTMLDivElement>(null);
@@ -77,6 +78,10 @@ export function SobreNumeros() {
         invalidateOnRefresh: true,
       };
 
+      // As duas colunas deslizam em ritmos diferentes para criar profundidade:
+      // a coluna B parte mais abaixo (y:120 vs 40) e percorre mais (amplitude
+      // maior), então parece estar numa camada mais distante que a A. `ease:none`
+      // mantém o movimento 100% atrelado ao scroll (sem aceleração própria).
       gsap.fromTo(
         colARef.current,
         { y: 40 },
@@ -92,16 +97,7 @@ export function SobreNumeros() {
     return () => mm.revert();
   }, []);
 
-  const scrollToHistoria = () => {
-    const target = document.getElementById("historia");
-    if (!target) return;
-    const lenis = (window as Window & { lenis?: Lenis }).lenis;
-    if (lenis) {
-      lenis.scrollTo(target, { duration: 1.4 });
-    } else {
-      target.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  const scrollToHistoria = () => scrollTo("historia", { duration: 1.4 });
 
   return (
     <section

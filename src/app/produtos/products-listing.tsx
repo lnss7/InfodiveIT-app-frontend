@@ -98,7 +98,7 @@ export function ProductsListing() {
 
           <div className="flex max-w-4xl flex-col items-center mx-auto text-center w-full">
             <Reveal>
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#7aa9ff] mb-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-accent mb-4">
                 Catálogo
               </p>
             </Reveal>

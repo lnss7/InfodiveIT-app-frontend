@@ -60,6 +60,31 @@ function isOrbMode(props: MagicCardProps): props is MagicCardOrbProps {
   return props.mode === "orb";
 }
 
+/**
+ * MagicCard (estilo Magic UI) — card com borda/brilho que reage ao cursor. Tem
+ * dois modos exclusivos definidos por `mode`:
+ *   - `'gradient'` (default): um halo radial segue o mouse por dentro do card.
+ *     Aceita `gradientColor`, `gradientOpacity`, `gradientFrom`, `gradientTo`.
+ *   - `'orb'`: uma esfera de luz desfocada segue o mouse. Aceita `glowFrom`,
+ *     `glowTo`, `glowAngle`, `glowSize`, `glowBlur`, `glowOpacity`.
+ *
+ * As props de um modo são proibidas no outro (união discriminada por `mode`).
+ *
+ * @param mode - `'gradient'` ou `'orb'`. Define quais props de brilho são válidas.
+ * @param gradientSize - Raio (px) do halo no modo gradient. Default: `200`.
+ * @param className - Classes Tailwind adicionais (borda/raio herdados via `rounded-[inherit]`).
+ * @param children - Conteúdo do card.
+ *
+ * @example
+ * // Modo gradient (default)
+ * <MagicCard className="rounded-lg" gradientColor="rgba(255,255,255,0.05)">
+ *   <CardContent>...</CardContent>
+ * </MagicCard>
+ *
+ * @example
+ * // Modo orb
+ * <MagicCard mode="orb" glowFrom="#0E66FF" glowTo="#001DFF">...</MagicCard>
+ */
 export function MagicCard(props: MagicCardProps) {
   const {
     children,
@@ -184,9 +209,11 @@ export function MagicCard(props: MagicCardProps) {
         `,
       }}
     >
-      <div 
+      <div
         className="absolute inset-px z-20 rounded-[inherit] backdrop-blur-sm"
-        style={{ background: "var(--card-face-background, rgba(20, 20, 19, 0.45))" }}
+        style={{
+          background: "var(--card-face-background, rgba(20, 20, 19, 0.45))",
+        }}
       />
 
       {mode === "gradient" && (
@@ -231,6 +258,8 @@ export function MagicCard(props: MagicCardProps) {
     </motion.div>
   );
 }
-function useTheme(): { theme: any; systemTheme: any } {
+type Theme = "light" | "dark" | "system";
+
+function useTheme(): { theme: Theme; systemTheme: "light" | "dark" } {
   return { theme: "dark", systemTheme: "dark" };
 }

@@ -10,6 +10,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 import { Reveal } from "@/components/animations/reveal";
 
 // Import partner logo SVGs from assets
@@ -69,6 +70,7 @@ const MOBILE_LOGO_CLASSES: Record<string, string> = {
 
 
 export function Hero() {
+  const { scrollTo } = useSmoothScroll();
   const [activePartnerIndex, setActivePartnerIndex] = useState<number | null>(null);
 
   const handlePartnerClick = (index: number, e: React.MouseEvent) => {
@@ -91,28 +93,12 @@ export function Hero() {
 
 
   const handleContactClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    const contactSection = document.getElementById("contact");
-    if (contactSection) {
-      e.preventDefault();
-      if ((window as any).lenis) {
-        (window as any).lenis.scrollTo(contactSection, { duration: 1.2 });
-      } else {
-        contactSection.scrollIntoView({ behavior: "smooth" });
-      }
-    }
+    if (scrollTo("contact")) e.preventDefault();
   };
 
   const handleSolutionsClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (window.location.pathname === "/") {
-      const solutionsSection = document.getElementById("solutions");
-      if (solutionsSection) {
-        e.preventDefault();
-        if ((window as any).lenis) {
-          (window as any).lenis.scrollTo(solutionsSection, { duration: 1.2 });
-        } else {
-          solutionsSection.scrollIntoView({ behavior: "smooth" });
-        }
-      }
+    if (window.location.pathname === "/" && scrollTo("solutions")) {
+      e.preventDefault();
     }
   };
   return (
@@ -174,9 +160,8 @@ export function Hero() {
                   tabIndex={-1}
             >
               <Button
-                primary="#0E66FF"
-                secondary="#001DFF"
-                className="w-full sm:w-auto text-sm font-bold py-3.5 sm:px-6 sm:py-3 flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)] rounded-full whitespace-nowrap"
+                variant="primary"
+                className="w-full sm:w-auto text-sm font-bold py-3.5 sm:px-6 sm:py-3 flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)] whitespace-nowrap"
               >
                 Explorar soluções
                 <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
@@ -189,9 +174,8 @@ export function Hero() {
               tabIndex={-1}
             >
               <Button
-                primary="rgba(255, 255, 255, 0.06)"
-                secondary="rgba(255, 255, 255, 0.16)"
-                className="border border-white/10 w-full sm:w-auto text-sm font-bold py-3.5 sm:px-6 sm:py-3 flex items-center justify-center gap-2 cursor-pointer rounded-full whitespace-nowrap"
+                variant="secondary"
+                className="border border-white/10 w-full sm:w-auto text-sm font-bold py-3.5 sm:px-6 sm:py-3 flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
               >
                 <MessageSquare className="h-4 w-4 text-ink-300" strokeWidth={2} />
                 Fale conosco

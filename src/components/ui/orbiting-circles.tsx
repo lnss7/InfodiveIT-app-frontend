@@ -5,6 +5,25 @@ import { cn } from "@/lib/utils"
 // no anel; o keyframe `orbit` (tailwind.config) gira em torno do centro do container.
 // IMPORTANTE: o container pai precisa ser `relative flex items-center justify-center`
 // para os itens (absolute, sem inset) iniciarem centralizados.
+/**
+ * Anel de ícones que orbitam um centro (estilo Magic UI).
+ *
+ * @param reverse - Inverte o sentido da órbita. Default: `false`.
+ * @param duration - Duração de uma volta (s), dividida por `speed`. Default: `20`.
+ * @param radius - Raio (px) do anel. Default: `120`.
+ * @param path - Desenha o círculo-guia do anel. Default: `true`.
+ * @param iconSize - Tamanho (px) de cada item. Default: `36`.
+ * @param speed - Multiplicador de velocidade. Default: `1`.
+ * @param pathColor - Cor do círculo-guia. Default: `"rgba(20,20,19,0.08)"`.
+ * @param children - Itens que orbitam (distribuídos igualmente no anel).
+ *
+ * @example
+ * <div className="relative flex items-center justify-center size-72">
+ *   <OrbitingCircles radius={120}>
+ *     <IconA /><IconB /><IconC />
+ *   </OrbitingCircles>
+ * </div>
+ */
 export interface OrbitingCirclesProps
   extends React.HTMLAttributes<HTMLDivElement> {
   className?: string

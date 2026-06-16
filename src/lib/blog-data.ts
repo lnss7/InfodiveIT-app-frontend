@@ -579,11 +579,29 @@ export const ARTIGOS: Artigo[] = [
   },
 ];
 
+/**
+ * Busca um artigo/conteúdo do blog pelo slug.
+ *
+ * @param slug - Slug do artigo.
+ * @returns O artigo correspondente, ou `undefined` se não existir.
+ *
+ * @example
+ * const artigo = getArtigoBySlug("ibm-guardium-dados-sensiveis-ambientes-hibridos");
+ */
 export function getArtigoBySlug(slug: string): Artigo | undefined {
   return ARTIGOS.find((artigo) => artigo.slug === slug);
 }
 
-/** Outros conteúdos para a seção "leia também" — exclui o atual. */
+/**
+ * Lista outros conteúdos para a seção "leia também", excluindo o artigo atual.
+ *
+ * @param slug - Slug do artigo atual (será excluído do resultado).
+ * @param limite - Máximo de itens retornados. Default: `3`.
+ * @returns Lista de artigos relacionados (até `limite`).
+ *
+ * @example
+ * const relacionados = getArtigosRelacionados(artigo.slug, 3);
+ */
 export function getArtigosRelacionados(slug: string, limite = 3): Artigo[] {
   return ARTIGOS.filter((artigo) => artigo.slug !== slug).slice(0, limite);
 }

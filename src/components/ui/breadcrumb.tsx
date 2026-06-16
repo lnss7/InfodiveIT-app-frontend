@@ -2,7 +2,27 @@ import * as React from "react"
 import { ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-/** Breadcrumb (estilo shadcn, sem Radix). */
+/**
+ * Breadcrumb (estilo shadcn, sem Radix) — trilha de navegação composta por
+ * subcomponentes: `BreadcrumbList`, `BreadcrumbItem`, `BreadcrumbLink`,
+ * `BreadcrumbPage` (página atual, não-clicável) e `BreadcrumbSeparator`.
+ *
+ * @param className - Classes Tailwind adicionais.
+ * @param props - Demais atributos de um `<nav>`.
+ *
+ * @example
+ * <Breadcrumb>
+ *   <BreadcrumbList>
+ *     <BreadcrumbItem>
+ *       <BreadcrumbLink href="/">Home</BreadcrumbLink>
+ *     </BreadcrumbItem>
+ *     <BreadcrumbSeparator />
+ *     <BreadcrumbItem>
+ *       <BreadcrumbPage>Produtos</BreadcrumbPage>
+ *     </BreadcrumbItem>
+ *   </BreadcrumbList>
+ * </Breadcrumb>
+ */
 export function Breadcrumb({ className, ...props }: React.ComponentProps<"nav">) {
   return <nav aria-label="breadcrumb" className={className} {...props} />
 }

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { AnimatePresence, motion, type Variants } from 'framer-motion'
 import { ArrowRight, ArrowUpRight, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useSmoothScroll } from '@/hooks/use-smooth-scroll'
 import {
   categorias,
   fabricantesDestaque,
@@ -49,23 +50,16 @@ const socials = [
 ]
 
 export function MobileMenu({ open, onClose }: MobileMenuProps) {
+  const { scrollTo } = useSmoothScroll()
   const [solucoesOpen, setSolucoesOpen] = useState(false)
   const [produtosOpen, setProdutosOpen] = useState(false)
 
   const handleContactClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (window.location.pathname === "/") {
-      const contactSection = document.getElementById("contact");
-      if (contactSection) {
-        e.preventDefault();
-        onClose();
-        setTimeout(() => {
-          if ((window as any).lenis) {
-            (window as any).lenis.scrollTo(contactSection, { duration: 1.2 });
-          } else {
-            contactSection.scrollIntoView({ behavior: "smooth" });
-          }
-        }, 200);
-      }
+    if (window.location.pathname === "/" && document.getElementById("contact")) {
+      e.preventDefault();
+      onClose();
+      // Espera a animação de saída do menu (~200ms) antes de rolar até o contato.
+      setTimeout(() => scrollTo("contact"), 200);
     } else {
       onClose();
     }

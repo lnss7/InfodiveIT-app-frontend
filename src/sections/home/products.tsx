@@ -207,8 +207,7 @@ export function Products() {
         <Reveal delay={0.06} className="mt-12 flex justify-center">
           <Link href="/produtos" className="focus:outline-none w-full sm:w-auto flex justify-center" tabIndex={-1}>
             <Button
-              primary="#0E66FF"
-              secondary="#001DFF"
+              variant="primary"
               className="w-full sm:w-auto text-sm font-bold py-3.5 sm:px-6 sm:py-3 flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)]"
             >
               Ver todos os produtos

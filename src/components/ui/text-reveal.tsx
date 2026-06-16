@@ -65,6 +65,26 @@ const ScrollWord: React.FC<ScrollWordProps> = ({
   )
 }
 
+/**
+ * Frase que se revela palavra por palavra conforme o usuário rola (estilo
+ * Magic UI). Cada palavra acende sua opacidade ligada ao progresso de scroll
+ * dentro de uma pista (`trackHeight`) com a frase em `sticky`.
+ *
+ * @param text - Texto a revelar. Use `\n` para forçar quebra de linha.
+ * @param highlightLines - Índices das linhas (separadas por `\n`) que recebem a
+ *   cor de destaque. Default: `[]`.
+ * @param highlightClassName - Classe das palavras destacadas. Default: `"text-brand"`.
+ * @param trackHeight - Altura da pista de scroll. Default: `"h-[200vh]"`.
+ * @param revealViewports - Quantos viewports de scroll a revelação leva para
+ *   completar. Default: `1`.
+ * @param className - Classes Tailwind adicionais no container.
+ *
+ * @example
+ * <TextReveal
+ *   text={"Tecnologia de\nmissão crítica"}
+ *   highlightLines={[1]}
+ * />
+ */
 export const TextReveal: React.FC<TextRevealProps> = ({
   text,
   className,

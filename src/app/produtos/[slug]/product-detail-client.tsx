@@ -271,10 +271,9 @@ export function ProductDetailContent({ slug }: { slug: string }) {
               <Reveal delay={0.24}>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button
-                    primary="#0E66FF"
-                    secondary="#001DFF"
+                    variant="primary"
                     onClick={() => setIsMenuOpen(true)}
-                    className="text-sm px-6 py-3.5 font-bold rounded-full text-white cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)]"
+                    className="text-sm px-6 py-3.5 font-bold text-white cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)]"
                   >
                     Falar com especialista
                     <ArrowRight className="h-4 w-4" strokeWidth={2.5} />

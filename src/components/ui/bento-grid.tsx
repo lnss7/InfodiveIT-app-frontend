@@ -17,6 +17,20 @@ interface BentoCardProps extends ComponentPropsWithoutRef<"div"> {
   cta: string
 }
 
+/**
+ * Grade de bento (estilo Magic UI). Container em grid de 3 colunas com linhas de
+ * altura automática; os filhos `BentoCard` controlam o quanto ocupam via
+ * `className` (ex.: `col-span-2`).
+ *
+ * @param className - Classes Tailwind adicionais (mescladas com `cn`).
+ * @param children - Cards do grid (tipicamente `BentoCard`).
+ *
+ * @example
+ * <BentoGrid>
+ *   <BentoCard name="..." className="col-span-2" {...} />
+ *   <BentoCard name="..." className="col-span-1" {...} />
+ * </BentoGrid>
+ */
 const BentoGrid = ({ children, className, ...props }: BentoGridProps) => {
   return (
     <div
@@ -31,6 +45,29 @@ const BentoGrid = ({ children, className, ...props }: BentoGridProps) => {
   )
 }
 
+/**
+ * Card individual do `BentoGrid`. Mostra um ícone, título e descrição; ao passar
+ * o mouse, o conteúdo sobe e revela o CTA no rodapé.
+ *
+ * @param name - Título do card (também usado como `key`).
+ * @param className - Classes Tailwind, incluindo o span de colunas (ex.: `col-span-2`).
+ * @param background - Nó React renderizado ao fundo (imagem, gradiente, padrão).
+ * @param Icon - Componente de ícone (ex.: ícone do `lucide-react`).
+ * @param description - Texto descritivo do card.
+ * @param href - Destino do link de CTA.
+ * @param cta - Rótulo do link de CTA (ex.: "Saiba mais").
+ *
+ * @example
+ * <BentoCard
+ *   name="Infraestrutura"
+ *   className="col-span-2"
+ *   background={<GradientBg />}
+ *   Icon={Server}
+ *   description="Servidores e redes resilientes."
+ *   href="/solucoes/infraestrutura"
+ *   cta="Saiba mais"
+ * />
+ */
 const BentoCard = ({
   name,
   className,

@@ -20,6 +20,9 @@
     --teal: #46BEA3;
     --indigo: #5754FF;
 
+    /* Feedback */
+    --danger: #E5484D;
+
     /* Neutrals */
     --ink-950: #141413;
     --ink-900: #1A1919;
@@ -655,11 +658,11 @@
 /* ── Estado de erro de validação ── */
 /* !important para vencer as regras de hover/foco azul acima */
 .gsap-menu-theme .nav-top .field-error {
-  border-color: #E5484D !important;
+  border-color: var(--danger) !important;
 }
 .gsap-menu-theme .nav-top .field-error:hover,
 .gsap-menu-theme .nav-top .field-error:focus {
-  border-color: #E5484D !important;
+  border-color: var(--danger) !important;
   box-shadow: 0 0 0 4px rgba(229, 72, 77, 0.12) !important;
 }
 .gsap-menu-theme .nav-top input[type="checkbox"].field-error {

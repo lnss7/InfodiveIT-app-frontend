@@ -51,7 +51,7 @@ export function BlogHero() {
             as="span"
             delay={0.15}
             duration={0.9}
-            highlightWords={["melhores."]}
+            highlightWords={["melhores"]}
             highlightClassName="text-transparent [-webkit-text-stroke:1.8px_#0E66FF]"
           >
             Conhecimento técnico para decisões melhores.

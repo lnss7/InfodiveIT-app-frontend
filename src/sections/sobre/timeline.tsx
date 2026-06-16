@@ -117,10 +117,13 @@ export function SobreTimeline() {
         scrollTrigger: {
           trigger: pin,
           start: "top top",
+          // Fixa a seção e converte rolagem vertical em deslocamento horizontal:
+          // o "comprimento" do pin é exatamente a largura excedente do track, então
+          // a timeline termina quando o último marco encosta na borda direita.
           end: () => `+=${getDistance()}`,
           pin: true,
-          scrub: 1,
-          anticipatePin: 1,
+          scrub: 1, // 1s de defasagem entre scroll e animação — suaviza sem soltar
+          anticipatePin: 1, // evita o "pulo" de 1 frame ao fixar a seção
           invalidateOnRefresh: true,
         },
       });

@@ -5,15 +5,16 @@ import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowDown, MessageSquare, ArrowLeft } from "lucide-react";
-import type Lenis from "@studio-freight/lenis";
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
 import { Reveal } from "@/components/animations/reveal";
 import { TextEffect } from "@/components/animations/text-effect";
 import { Button } from "@/components/ui/button";
+import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export function ServicosHero() {
+  const { scrollTo } = useSmoothScroll();
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -42,16 +43,7 @@ export function ServicosHero() {
     return () => mm.revert();
   }, []);
 
-  const scrollToCiclo = () => {
-    const target = document.getElementById("ciclo");
-    if (!target) return;
-    const lenis = (window as Window & { lenis?: Lenis }).lenis;
-    if (lenis) {
-      lenis.scrollTo(target, { duration: 1.2 });
-    } else {
-      target.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  const scrollToCiclo = () => scrollTo("ciclo");
 
   return (
     <section
@@ -117,10 +109,9 @@ export function ServicosHero() {
         <Reveal delay={0.7}>
           <div className="mt-10 flex w-full flex-col items-center justify-center gap-3 sm:flex-row px-4">
             <Button
-              primary="#0E66FF"
-              secondary="#001DFF"
+              variant="primary"
               onClick={scrollToCiclo}
-              className="w-full sm:w-auto text-sm font-bold py-3.5 sm:px-6 sm:py-3 flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)] rounded-full whitespace-nowrap"
+              className="w-full sm:w-auto text-sm font-bold py-3.5 sm:px-6 sm:py-3 flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)] whitespace-nowrap"
             >
               Conheça nossos serviços
               <ArrowDown className="h-4 w-4" />
@@ -131,9 +122,8 @@ export function ServicosHero() {
               tabIndex={-1}
             >
               <Button
-                primary="rgba(255, 255, 255, 0.06)"
-                secondary="rgba(255, 255, 255, 0.16)"
-                className="border border-white/10 w-full sm:w-auto text-sm font-bold py-3.5 sm:px-6 sm:py-3 flex items-center justify-center gap-2 cursor-pointer rounded-full whitespace-nowrap"
+                variant="secondary"
+                className="border border-white/10 w-full sm:w-auto text-sm font-bold py-3.5 sm:px-6 sm:py-3 flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
               >
                 <MessageSquare className="h-4 w-4 text-ink-300" strokeWidth={2} />
                 Fale com um especialista

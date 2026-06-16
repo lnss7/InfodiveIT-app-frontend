@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -11,22 +12,18 @@ import { MenuToggle } from "./menu-toggle";
 import { SolucoesDropdown } from "./dropdown-solucoes";
 import { ProdutosDropdown } from "./dropdown-produtos";
 import { Button } from "@/components/ui/button";
+import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 import { navLinks } from "./data";
 
 const SCROLL_THRESHOLD = 8;
 
 export function Navbar() {
+  const pathname = usePathname();
+  const isWhitePage = pathname === "/termos-de-uso" || pathname === "/politica-de-privacidade";
+  const { scrollTo } = useSmoothScroll();
   const handleContactClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (window.location.pathname === "/") {
-      const contactSection = document.getElementById("contact");
-      if (contactSection) {
-        e.preventDefault();
-        if ((window as any).lenis) {
-          (window as any).lenis.scrollTo(contactSection, { duration: 1.2 });
-        } else {
-          contactSection.scrollIntoView({ behavior: "smooth" });
-        }
-      }
+    if (window.location.pathname === "/" && scrollTo("contact")) {
+      e.preventDefault();
     }
   };
   const [scrolled, setScrolled] = useState(false);
@@ -98,9 +95,10 @@ export function Navbar() {
     return () => window.removeEventListener("keydown", onKey);
   }, [closeDropdown]);
 
-  // Quando o menu mobile está aberto, o conteúdo da navbar (logo + botão) fica
-  // sobre o painel branco em tela cheia → força o estado "sólido" (logo escura).
-  const solid = scrolled || mobileOpen;
+  // Quando o menu mobile está aberto ou estamos em página branca ou scroll passou o threshold,
+  // força o estado "sólido" (logo escura, links escuros).
+  const isSolidNavbar = scrolled || isWhitePage;
+  const solid = isSolidNavbar || mobileOpen;
   const showHeader = visible || mobileOpen;
 
   return (
@@ -116,7 +114,7 @@ export function Navbar() {
             className={cn(
               "pointer-events-auto relative",
               "rounded-2xl transition-[background-color,box-shadow,border-color] duration-300",
-              scrolled
+              isSolidNavbar
                 ? "bg-white/85 border border-ink-200 backdrop-blur-xl backdrop-saturate-150 shadow-[0_10px_30px_-12px_rgba(20,20,19,0.12),0_2px_6px_-2px_rgba(20,20,19,0.04)]"
                 : "bg-transparent border border-transparent shadow-none",
             )}
@@ -128,7 +126,7 @@ export function Navbar() {
                 aria-label="Navegação principal"
                 className={cn(
                   'hidden lg:flex items-center gap-1 transition-all duration-300 rounded-full border',
-                  scrolled
+                  isSolidNavbar
                     ? 'px-0 py-0 bg-transparent border-transparent shadow-none'
                     : 'bg-white/[0.06] border-white/10 px-5 py-1.5 backdrop-blur-md shadow-lg',
                 )}
@@ -158,7 +156,7 @@ export function Navbar() {
                             "inline-flex items-center gap-1 rounded-md px-3 py-1.5",
                             "text-sm font-medium transition-all duration-300",
                             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/30",
-                            scrolled
+                            isSolidNavbar
                               ? isOpen
                                 ? "bg-ink-50 text-ink-950"
                                 : "text-ink-900 hover:bg-ink-50 hover:text-ink-950"
@@ -171,7 +169,7 @@ export function Navbar() {
                           <ChevronDown
                             className={cn(
                               "h-3.5 w-3.5 transition-transform duration-300",
-                              scrolled ? "text-ink-500" : "text-white/60",
+                              isSolidNavbar ? "text-ink-500" : "text-white/60",
                               isOpen && "rotate-180",
                             )}
                             strokeWidth={2}
@@ -189,7 +187,7 @@ export function Navbar() {
                         "inline-flex items-center rounded-md px-3 py-1.5",
                         "text-sm font-medium transition-all duration-300",
                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/30",
-                        scrolled
+                        isSolidNavbar
                           ? "text-ink-900 hover:bg-ink-50 hover:text-ink-950"
                           : "text-white/80 hover:bg-white/10 hover:text-white",
                       )}
@@ -208,11 +206,11 @@ export function Navbar() {
                   tabIndex={-1}
                 >
                   <Button
-                    primary={scrolled ? "#0F0F0E" : "#0E66FF"}
-                    secondary={scrolled ? "#1E1E1C" : "#001DFF"}
+                    variant={isSolidNavbar ? "dark" : "primary"}
+                    size="sm"
                     className={cn(
-                      "px-5 py-2 text-sm font-medium gap-1.5 rounded-full transition-colors",
-                      scrolled
+                      "px-5 py-2 text-sm font-medium gap-1.5 transition-colors",
+                      isSolidNavbar
                         ? ""
                         : "border border-brand/20 shadow-[0_4px_14px_rgba(14,102,255,0.25)]"
                     )}

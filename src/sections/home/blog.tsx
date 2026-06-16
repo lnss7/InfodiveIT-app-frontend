@@ -1,37 +1,50 @@
-"use client"
+"use client";
 
-import React, { useEffect, useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { motion } from "framer-motion"
-import { api } from "@/lib/api"
-import { Button } from "@/components/ui/button"
-import { Reveal } from "@/components/animations/reveal"
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { api } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { Reveal } from "@/components/animations/reveal";
 
 // Imagens geradas correspondendo ao estilo e temas do screenshot
-import peopleImg from "@/assets/blog/people.png"
-import cloudImg from "@/assets/blog/cloud.png"
-import presentationImg from "@/assets/blog/presentation.png"
+import peopleImg from "@/assets/blog/people.png";
+import cloudImg from "@/assets/blog/cloud.png";
+import presentationImg from "@/assets/blog/presentation.png";
 
 type ContentItem = {
-  id: string
-  titulo: string
-  slug: string
-  tipo: "ARTIGO" | "VIDEO" | "POST_SOCIAL"
-  descricao?: string
-  publicadoEm?: string
-  tempoLeitura: string
-  categoria: string
-  imagem: any
-}
+  id: string;
+  titulo: string;
+  slug: string;
+  tipo: "ARTIGO" | "VIDEO" | "POST_SOCIAL";
+  descricao?: string;
+  publicadoEm?: string;
+  tempoLeitura: string;
+  categoria: string;
+  imagem: any;
+};
+
+type ApiContentItem = {
+  id: string;
+  titulo: string;
+  slug: string;
+  tipo: "ARTIGO" | "VIDEO" | "POST_SOCIAL";
+  descricao?: string;
+  publicadoEm?: string;
+  conteudo?: string;
+  categoriaSlug?: string;
+};
 
 // Fallback estático correspondendo fielmente ao screenshot
 const MOCK_CONTEUDOS: ContentItem[] = [
   {
     id: "1",
-    titulo: "Inteligência artificial nas empresas: produtividade real ou apenas uma tendência passageira?",
+    titulo:
+      "Inteligência artificial nas empresas: produtividade real ou apenas uma tendência passageira?",
     tipo: "ARTIGO",
-    descricao: "Descubra como a inteligência artificial está revolucionando a tomada de decisão corporativa.",
+    descricao:
+      "Descubra como a inteligência artificial está revolucionando a tomada de decisão corporativa.",
     publicadoEm: "01 jun 2026",
     tempoLeitura: "5 min read",
     slug: "inteligencia-artificial-nas-empresas",
@@ -40,9 +53,11 @@ const MOCK_CONTEUDOS: ContentItem[] = [
   },
   {
     id: "2",
-    titulo: "Por que a computação em nuvem é essencial para a inteligência artificial?",
+    titulo:
+      "Por que a computação em nuvem é essencial para a inteligência artificial?",
     tipo: "ARTIGO",
-    descricao: "Entenda a sinergia essencial entre o processamento em nuvem e a sustentação de modelos de inteligência artificial.",
+    descricao:
+      "Entenda a sinergia essencial entre o processamento em nuvem e a sustentação de modelos de inteligência artificial.",
     publicadoEm: "01 jun 2026",
     tempoLeitura: "6 min read",
     slug: "por-que-computacao-em-nuvem-essencial-para-ia",
@@ -51,75 +66,92 @@ const MOCK_CONTEUDOS: ContentItem[] = [
   },
   {
     id: "3",
-    titulo: "Por que a Infodive é incrível? A resposta de quem faz a tecnologia acontecer...",
+    titulo:
+      "Por que a Infodive é incrível? A resposta de quem faz a tecnologia acontecer...",
     tipo: "ARTIGO",
-    descricao: "Entenda os bastidores e os diferenciais que tornam as parcerias de tecnologia tão impactantes nas operações críticas.",
+    descricao:
+      "Entenda os bastidores e os diferenciais que tornam as parcerias de tecnologia tão impactantes nas operações críticas.",
     publicadoEm: "29 maio 2026",
     tempoLeitura: "7 min read",
     slug: "por-que-infodive-e-incrivel",
     categoria: "IA",
     imagem: presentationImg,
   },
-]
+];
 
-const defaultImages = [peopleImg, cloudImg, presentationImg]
-const defaultCategories = ["IA", "NUVEM", "IA"]
+const defaultImages = [peopleImg, cloudImg, presentationImg];
+const defaultCategories = ["IA", "NUVEM", "IA"];
 
 export function Blog() {
-  const [items, setItems] = useState<ContentItem[]>([])
+  const [items, setItems] = useState<ContentItem[]>([]);
 
   useEffect(() => {
-    let active = true
+    let active = true;
 
-    api.conteudos({ size: 3 })
+    api
+      .conteudos({ size: 3 })
       .then((res) => {
         if (active) {
           if (res && res.content && res.content.length > 0) {
-            const formatted = res.content.slice(0, 3).map((item: any, idx: number) => ({
-              id: item.id,
-              titulo: item.titulo,
-              slug: item.slug,
-              tipo: item.tipo,
-              descricao: item.descricao || "",
-              publicadoEm: item.publicadoEm 
-                ? new Date(item.publicadoEm).toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })
-                : "01 jun 2026",
-              tempoLeitura: `${Math.max(3, Math.round((item.conteudo?.split(" ").length || 200) / 200))} min read`,
-              categoria: item.categoriaSlug ? item.categoriaSlug.toUpperCase() : defaultCategories[idx % 3],
-              imagem: defaultImages[idx % 3],
-            }))
-            setItems(formatted)
+            const formatted = res.content
+              .slice(0, 3)
+              .map((item: ApiContentItem, idx: number) => ({
+                id: item.id,
+                titulo: item.titulo,
+                slug: item.slug,
+                tipo: item.tipo,
+                descricao: item.descricao || "",
+                publicadoEm: item.publicadoEm
+                  ? new Date(item.publicadoEm).toLocaleDateString("pt-BR", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })
+                  : "01 jun 2026",
+                tempoLeitura: `${Math.max(3, Math.round((item.conteudo?.split(" ").length || 200) / 200))} min read`,
+                categoria: item.categoriaSlug
+                  ? item.categoriaSlug.toUpperCase()
+                  : defaultCategories[idx % 3],
+                imagem: defaultImages[idx % 3],
+              }));
+            setItems(formatted);
           } else {
-            setItems(MOCK_CONTEUDOS)
+            setItems(MOCK_CONTEUDOS);
           }
         }
       })
       .catch(() => {
         if (active) {
-          setItems(MOCK_CONTEUDOS)
+          setItems(MOCK_CONTEUDOS);
         }
-      })
+      });
 
     return () => {
-      active = false
-    }
-  }, [])
+      active = false;
+    };
+  }, []);
 
   return (
-    <section id="blog" className="relative bg-white py-20 md:py-28 border-t border-ink-200/60">
+    <section
+      id="blog"
+      className="relative bg-white py-20 md:py-28 border-t border-ink-200/60"
+    >
       <div className="container-default">
-        
         {/* Cabeçalho do Blog */}
         <Reveal className="mb-10 flex items-center justify-between gap-4">
           <h2 className="text-3xl sm:text-4xl font-bold text-ink-950 tracking-tight">
             Blog
           </h2>
 
-          <Link href="/conteudos" className="focus:outline-none shrink-0" tabIndex={-1}>
+          <Link
+            href="/conteudos"
+            className="focus:outline-none shrink-0"
+            tabIndex={-1}
+          >
             <Button
-              primary="rgba(0, 0, 0, 0.02)"
-              secondary="rgba(0, 0, 0, 0.05)"
-              className="border border-ink-200 text-xs px-5 py-2.5 rounded-full font-semibold text-ink-900 bg-white hover:bg-ink-50 transition-all active:scale-95"
+              variant="ghost"
+              size="sm"
+              className="border border-ink-200 text-xs px-5 py-2.5 font-semibold text-ink-900 bg-white hover:bg-ink-50 transition-all active:scale-95"
             >
               Todos os artigos
             </Button>
@@ -134,7 +166,11 @@ export function Blog() {
               initial={{ opacity: 0, y: 15, filter: "blur(8px)" }}
               whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: index * 0.1, ease: [0.25, 1, 0.5, 1] }}
+              transition={{
+                duration: 0.6,
+                delay: index * 0.1,
+                ease: [0.25, 1, 0.5, 1],
+              }}
               className="group flex flex-col p-6 transition-colors duration-300 hover:bg-ink-50/50"
             >
               {/* Imagem do Card com Proporção do Screenshot */}
@@ -155,7 +191,10 @@ export function Blog() {
 
               {/* Título do Artigo */}
               <h3 className="mt-2.5 text-base sm:text-lg font-bold text-ink-950 leading-snug group-hover:text-brand transition-colors duration-300">
-                <Link href={`/conteudos/${item.slug}`} className="focus:outline-none">
+                <Link
+                  href={`/conteudos/${item.slug}`}
+                  className="focus:outline-none"
+                >
                   {item.titulo}
                 </Link>
               </h3>
@@ -167,10 +206,9 @@ export function Blog() {
             </motion.article>
           ))}
         </div>
-
       </div>
     </section>
-  )
+  );
 }
 
-export default Blog
+export default Blog;

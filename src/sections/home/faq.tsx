@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Reveal } from "@/components/animations/reveal"
+import { useSmoothScroll } from "@/hooks/use-smooth-scroll"
 
 type FAQItem = {
   question: string
@@ -33,6 +34,7 @@ const FAQ_ITEMS: FAQItem[] = [
 ]
 
 export function FAQ() {
+  const { scrollTo } = useSmoothScroll()
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
   const toggle = (index: number) => {
@@ -51,16 +53,10 @@ export function FAQ() {
     }
   }
 
+  // Rola suavemente até a seção de contato (Lenis com fallback nativo,
+  // centralizado em useSmoothScroll).
   const handleContactClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    const contactSection = document.getElementById("contact");
-    if (contactSection) {
-      e.preventDefault();
-      if ((window as any).lenis) {
-        (window as any).lenis.scrollTo(contactSection, { duration: 1.2 });
-      } else {
-        contactSection.scrollIntoView({ behavior: "smooth" });
-      }
-    }
+    if (scrollTo("contact")) e.preventDefault();
   };
 
   return (

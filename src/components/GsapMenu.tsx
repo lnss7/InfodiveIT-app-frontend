@@ -27,7 +27,7 @@ type FieldErrors = Partial<Record<keyof z.infer<typeof contactSchema>, string>>;
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
   return (
-    <p className="mt-1.5 flex items-center gap-1.5 text-xs text-[#E5484D]">
+    <p className="mt-1.5 flex items-center gap-1.5 text-xs text-danger">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3.5 h-3.5 shrink-0">
         <circle cx="12" cy="12" r="10" />
         <line x1="12" y1="8" x2="12" y2="12" />
@@ -361,7 +361,7 @@ export function GsapMenu({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="nav-item">
                     <label className="block text-xs font-medium text-gray-700 mb-2">
-                      Nome <span className="text-[#E5484D]">*</span>
+                      Nome <span className="text-danger">*</span>
                     </label>
                     <input
                       type="text"
@@ -380,7 +380,7 @@ export function GsapMenu({
                   </div>
                   <div className="nav-item">
                     <label className="block text-xs font-medium text-gray-700 mb-2">
-                      Sobrenome <span className="text-[#E5484D]">*</span>
+                      Sobrenome <span className="text-danger">*</span>
                     </label>
                     <input
                       type="text"
@@ -403,7 +403,7 @@ export function GsapMenu({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="nav-item">
                     <label className="block text-xs font-medium text-gray-700 mb-2">
-                      E-mail <span className="text-[#E5484D]">*</span>
+                      E-mail <span className="text-danger">*</span>
                     </label>
                     <input
                       type="email"
@@ -422,7 +422,7 @@ export function GsapMenu({
                   </div>
                   <div className="nav-item">
                     <label className="block text-xs font-medium text-gray-700 mb-2">
-                      Celular <span className="text-[#E5484D]">*</span>
+                      Celular <span className="text-danger">*</span>
                     </label>
                     <input
                       type="tel"
@@ -445,7 +445,7 @@ export function GsapMenu({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="nav-item">
                     <label className="block text-xs font-medium text-gray-700 mb-2">
-                      Empresa <span className="text-[#E5484D]">*</span>
+                      Empresa <span className="text-danger">*</span>
                     </label>
                     <input
                       type="text"
@@ -516,7 +516,7 @@ export function GsapMenu({
                 {/* Quais são as necessidades da sua empresa? */}
                 <div className="nav-item">
                   <label className="block text-sm font-semibold text-gray-800 mb-2">
-                    Quais são as necessidades da sua empresa? <span className="text-[#E5484D]">*</span>
+                    Quais são as necessidades da sua empresa? <span className="text-danger">*</span>
                   </label>
                   <textarea
                     required

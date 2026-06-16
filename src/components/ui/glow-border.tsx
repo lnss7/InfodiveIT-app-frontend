@@ -4,9 +4,18 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 /**
- * Handler reutilizável: grava a posição do cursor (relativa ao elemento) em CSS vars
- * no próprio elemento do evento. Usa `e.currentTarget`, então um único handler serve
- * para N elementos (cards, botões…) sem precisar de ref por item — e sem re-render.
+ * Handler reutilizável: grava a posição do cursor (relativa ao elemento) em CSS
+ * vars (`--glow-x` / `--glow-y`) no próprio elemento do evento. Usa
+ * `e.currentTarget`, então um único handler serve para N elementos (cards,
+ * botões…) sem precisar de ref por item — e sem re-render.
+ *
+ * @param e - Evento de mouse; `currentTarget` é o elemento que recebe as CSS vars.
+ *
+ * @example
+ * <div className="group relative" onMouseMove={handleGlowMove}>
+ *   <GlowBorderOverlay />
+ *   ...
+ * </div>
  */
 export function handleGlowMove(e: React.MouseEvent<HTMLElement>) {
   const el = e.currentTarget
@@ -16,9 +25,18 @@ export function handleGlowMove(e: React.MouseEvent<HTMLElement>) {
 }
 
 /**
- * Anel de brilho que acende na BORDA, na posição do cursor (segue o mouse no hover).
- * Gradiente radial mascarado só no anel da borda — sem preenchimento/miolo.
+ * Anel de brilho que acende na BORDA, na posição do cursor (segue o mouse no
+ * hover). Gradiente radial mascarado só no anel da borda — sem preenchimento/miolo.
  * O elemento PAI precisa ter `group relative` e `onMouseMove={handleGlowMove}`.
+ *
+ * @param glowColor - Cor do brilho. Default: `"#0E66FF"`.
+ * @param glowSize - Raio (px) do gradiente radial. Default: `90`.
+ * @param className - Classes Tailwind adicionais no `<span>` do anel.
+ *
+ * @example
+ * <article className="group relative" onMouseMove={handleGlowMove}>
+ *   <GlowBorderOverlay glowColor="#0E66FF" glowSize={240} />
+ * </article>
  */
 export function GlowBorderOverlay({
   glowColor = "#0E66FF",
@@ -55,7 +73,16 @@ interface GlowBorderProps
 }
 
 /**
- * Botão com a borda glow seguindo o cursor (atalho que já embute o overlay + handler).
+ * Botão com a borda glow seguindo o cursor (atalho que já embute o overlay +
+ * handler — não precisa adicionar `onMouseMove` manualmente).
+ *
+ * @param glowColor - Cor do brilho da borda. Default herdado do overlay.
+ * @param glowSize - Raio (px) do brilho. Default herdado do overlay.
+ * @param className - Classes Tailwind adicionais no `<button>`.
+ * @param children - Conteúdo do botão.
+ *
+ * @example
+ * <GlowBorder glowColor="#0E66FF">Ver mais</GlowBorder>
  */
 export function GlowBorder({
   className,

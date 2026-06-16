@@ -7,7 +7,16 @@ import { cn } from "@/lib/utils"
 /**
  * Tracing Beam (Aceternity UI): um fio vertical à esquerda do conteúdo cujo
  * gradiente "preenche" conforme o usuário rola. Mede a altura do conteúdo via
- * ResizeObserver (robusto a conteúdo dinâmico, como troca de abas).
+ * ResizeObserver (robusto a conteúdo dinâmico, como troca de abas). O fio é
+ * desktop-only (`hidden md:block`).
+ *
+ * @param children - Conteúdo ao lado do qual o fio é traçado.
+ * @param className - Classes Tailwind adicionais no wrapper.
+ *
+ * @example
+ * <TracingBeam>
+ *   <article>...conteúdo longo do artigo...</article>
+ * </TracingBeam>
  */
 export function TracingBeam({
   children,

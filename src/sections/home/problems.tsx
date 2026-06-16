@@ -67,12 +67,12 @@ export function Problems() {
             {/* Coluna Esquerda: Título Editorial Pinned (Sticky) */}
             <div className="lg:col-span-5">
               <Reveal className="lg:sticky lg:top-28">
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#7aa9ff]">
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-accent">
                   Problemas que resolvemos
                 </span>
                 <h2 className="mt-3 text-3xl font-bold leading-[1.15] tracking-tight text-white sm:text-4xl">
                   Desafios complexos de TI. <br />
-                  <span className="text-[#7aa9ff]">Soluções simples e definitivas.</span>
+                  <span className="text-brand-accent">Soluções simples e definitivas.</span>
                 </h2>
                 <p className="mt-6 max-w-md font-sans text-sm font-light leading-relaxed text-ink-300 sm:text-base">
                   A tecnologia deve impulsionar o seu negócio, não paralisá-lo. Mapeamos os principais gargalos operacionais do mercado e desenvolvemos arquiteturas sob medida para superá-los.
@@ -80,7 +80,7 @@ export function Problems() {
 
                 {/* Badge Informativa Estática */}
                 <div className="mt-8 hidden max-w-sm items-center gap-4 rounded-xl border border-white/10 bg-white/[0.03] p-4 lg:flex">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand/15 text-[#7aa9ff]">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand/15 text-brand-accent">
                     <Activity className="h-5 w-5" />
                   </div>
                   <div>
@@ -107,30 +107,30 @@ export function Problems() {
                 >
                   <div className="flex items-start gap-4">
                     {/* Número Editorial */}
-                    <span className="mt-1 shrink-0 select-none font-mono text-xs font-bold text-[#7aa9ff]/70 sm:text-sm">
+                    <span className="mt-1 shrink-0 select-none font-mono text-xs font-bold text-brand-accent/70 sm:text-sm">
                       {`0${index + 1}.`}
                     </span>
 
                     <div className="flex-grow">
                       {/* Título & Seta */}
                       <div className="flex items-center justify-between gap-4">
-                        <h3 className="text-base font-bold leading-snug text-white transition-colors duration-300 group-hover:text-[#7aa9ff] sm:text-lg">
+                        <h3 className="text-base font-bold leading-snug text-white transition-colors duration-300 group-hover:text-brand-accent sm:text-lg">
                           {item.title}
                         </h3>
                         <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/10 transition-all duration-300 group-hover:bg-brand/20">
-                          <ArrowRight className="h-4 w-4 text-ink-300 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-[#7aa9ff]" />
+                          <ArrowRight className="h-4 w-4 text-ink-300 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-brand-accent" />
                         </div>
                       </div>
 
                       {/* Descrição */}
-                      <p className="mt-2 font-sans text-xs font-light leading-relaxed text-[#7aa9ff] sm:text-sm">
+                      <p className="mt-2 font-sans text-xs font-light leading-relaxed text-brand-accent sm:text-sm">
                         {item.description}
                       </p>
 
                       {/* Solução recomendada que expande no hover */}
                       <div className="max-h-0 overflow-hidden opacity-0 transition-all duration-300 ease-in-out group-hover:max-h-16 group-hover:opacity-100">
                         <div className="mt-4 inline-flex items-center gap-2 rounded border border-brand/20 bg-brand/15 px-2.5 py-1">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#7aa9ff]">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-brand-accent">
                             Solução indicada:
                           </span>
                           <span className="text-[11px] font-bold text-white">

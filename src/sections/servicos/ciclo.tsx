@@ -114,10 +114,13 @@ export function ServicosCiclo() {
         scrollTrigger: {
           trigger: pin,
           start: "top top",
+          // Fixa a seção e traduz scroll vertical em avanço horizontal da jornada;
+          // o comprimento do pin é a largura excedente do track (último nó encosta
+          // na borda direita ao fim).
           end: () => `+=${getDistance()}`,
           pin: true,
-          scrub: 1,
-          anticipatePin: 1,
+          scrub: 1, // 1s de defasagem entre scroll e animação — suaviza sem soltar
+          anticipatePin: 1, // evita o "pulo" de 1 frame ao fixar a seção
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             const idx = Math.min(

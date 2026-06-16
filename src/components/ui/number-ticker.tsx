@@ -13,6 +13,22 @@ interface NumberTickerProps extends ComponentPropsWithoutRef<"span"> {
   decimalPlaces?: number
 }
 
+/**
+ * Contador animado: ao entrar na viewport, faz a contagem (spring) de `startValue`
+ * até `value`. Formata o número em pt-BR. Usado nos stats de hero/seções.
+ *
+ * @param value - Valor final ao qual o contador converge.
+ * @param startValue - Valor inicial exibido antes de animar. Default: `0`.
+ * @param direction - Sentido da contagem: `'up'` (sobe até `value`) ou `'down'`
+ *   (desce de `value` até `startValue`). Default: `'up'`.
+ * @param delay - Atraso (em segundos) antes de iniciar a contagem. Default: `0`.
+ * @param decimalPlaces - Casas decimais exibidas. Default: `0`.
+ * @param className - Classes Tailwind adicionais no `<span>`.
+ *
+ * @example
+ * <NumberTicker value={2003} />        // anima de 0 a 2003
+ * <NumberTicker value={99.9} decimalPlaces={1} /> // "99,9"
+ */
 export function NumberTicker({
   value,
   startValue = 0,

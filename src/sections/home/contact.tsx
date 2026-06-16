@@ -46,7 +46,7 @@ export function Contact() {
             <h2 className="text-white text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight leading-[1.15] text-balance">
               Pronto para evoluir a <span className="text-[#9DB8FF]">TI da sua empresa</span>?
             </h2>
-            <p className="text-[#BFBFBF] text-base md:text-lg max-w-2xl font-light leading-relaxed text-pretty">
+            <p className="text-ink-300 text-base md:text-lg max-w-2xl font-light leading-relaxed text-pretty">
               Conecte-se com nossos consultores seniores. Estamos prontos para projetar e implementar soluções de infraestrutura e nuvem sob medida para o seu negócio.
             </p>
 
@@ -58,7 +58,7 @@ export function Contact() {
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold text-white">E-mail</h4>
-                  <a href="mailto:contato@infodive.com.br" className="text-xs text-[#BFBFBF] hover:text-[#0E66FF] transition-colors mt-0.5 block">
+                  <a href="mailto:contato@infodive.com.br" className="text-xs text-ink-300 hover:text-brand transition-colors mt-0.5 block">
                     contato@infodive.com.br
                   </a>
                 </div>
@@ -70,7 +70,7 @@ export function Contact() {
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold text-white">Telefone</h4>
-                  <a href="tel:+551140030000" className="text-xs text-[#BFBFBF] hover:text-[#0E66FF] transition-colors mt-0.5 block">
+                  <a href="tel:+551140030000" className="text-xs text-ink-300 hover:text-brand transition-colors mt-0.5 block">
                     +55 (51) 3330-0444
                   </a>
                 </div>
@@ -82,7 +82,7 @@ export function Contact() {
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold text-white">Localização</h4>
-                  <span className="text-xs text-[#BFBFBF] mt-0.5 block leading-relaxed">
+                  <span className="text-xs text-ink-300 mt-0.5 block leading-relaxed">
                     Av. Cristovão Colombo, 3000 - Sala 704 | Floresta, Porto Alegre - RS
                   </span>
                 </div>
@@ -94,7 +94,7 @@ export function Contact() {
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold text-white">Disponibilidade</h4>
-                  <span className="text-xs text-[#BFBFBF] mt-0.5 block leading-relaxed">
+                  <span className="text-xs text-ink-300 mt-0.5 block leading-relaxed">
                     Comercial: Seg a Sex, 9h às 18h<br />Suporte Crítico NOC: 24/7
                   </span>
                 </div>
@@ -143,8 +143,7 @@ export function Contact() {
             {/* CTA pinned to the bottom */}
             <div className="relative mt-auto">
               <Button
-                primary="#0E66FF"
-                secondary="#001DFF"
+                variant="primary"
                 onClick={() => setIsMenuOpen(true)}
                 className="w-full text-sm font-bold py-3.5 flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)]"
               >

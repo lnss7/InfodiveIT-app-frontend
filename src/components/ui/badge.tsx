@@ -14,7 +14,20 @@ interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: BadgeVariant
 }
 
-/** Badge (estilo shadcn) — selo de categoria/subcategoria. */
+/**
+ * Badge (estilo shadcn) — selo curto de categoria/subcategoria.
+ *
+ * @param variant - Aparência do selo. Default: `'default'`.
+ *   - `'default'`: fundo brand sólido, texto branco.
+ *   - `'brand'`: fundo brand translúcido, texto brand. Para selos sobre branco.
+ *   - `'secondary'`: cinza neutro (ink-50/ink-600).
+ *   - `'outline'`: apenas borda, sem fundo.
+ * @param className - Classes Tailwind adicionais (mescladas com `cn`).
+ * @param props - Demais atributos HTML de um `<span>`.
+ *
+ * @example
+ * <Badge variant="brand">Segurança</Badge>
+ */
 export function Badge({ className, variant = "default", ...props }: BadgeProps) {
   return (
     <span

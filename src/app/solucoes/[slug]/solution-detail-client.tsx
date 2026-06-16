@@ -3,13 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, ShieldCheck } from "lucide-react";
-import { motion } from "framer-motion";
+import { ArrowLeft, ShieldCheck } from "lucide-react";
 import { type Solution, SOLUTION_ICONS } from "@/lib/solutions-data";
 import { VENDOR_LOGOS } from "@/lib/vendor-logos";
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
 import { Reveal } from "@/components/animations/reveal";
-import { Button } from "@/components/ui/button";
 import { GlowBorderOverlay, handleGlowMove } from "@/components/ui/glow-border";
 import { BorderBeam } from "@/components/ui/border-beam";
 import { GsapMenu } from "@/components/GsapMenu";
@@ -102,7 +100,12 @@ export function SolutionDetailContent({
             <div className="lg:col-span-5 w-full flex items-center justify-center">
               <Reveal delay={0.28} className="w-full">
                 <div className="relative mx-auto aspect-[4/3] w-full max-w-[440px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.02] flex items-center justify-center">
-                  <BorderBeam size={120} duration={8} colorFrom="#0E66FF" colorTo="#7aa9ff" />
+                  <BorderBeam
+                    size={120}
+                    duration={8}
+                    colorFrom="#0E66FF"
+                    colorTo="#7aa9ff"
+                  />
                   {/* Quando a API fornecer a imagem, renderizar:
                       <Image src={solution.imageUrl} alt={solution.title} fill className="object-cover" /> */}
                 </div>
@@ -163,9 +166,9 @@ export function SolutionDetailContent({
                       Parcerias e Fabricantes Homologados
                     </h3>
                     <p className="text-sm text-ink-500 font-light leading-relaxed">
-                      Trabalhamos com os líderes globais de hardware e software para
-                      desenhar projetos corporativos que garantem suporte direto de
-                      fábrica e conformidade.
+                      Trabalhamos com os líderes globais de hardware e software
+                      para desenhar projetos corporativos que garantem suporte
+                      direto de fábrica e conformidade.
                     </p>
                   </div>
 

@@ -150,7 +150,7 @@ export function BlogSocial() {
         {/* Header */}
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
-            <p className="text-xs font-medium uppercase tracking-widest text-[#7aa9ff]">
+            <p className="text-xs font-medium uppercase tracking-widest text-brand-accent">
               Nas redes sociais
             </p>
             <h2 className="mt-3 text-balance text-white">
@@ -169,7 +169,12 @@ export function BlogSocial() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-medium !text-white transition-colors hover:border-white/40"
             >
-              <Image src={instagramImg} alt="" aria-hidden className="h-4 w-4 object-contain" />
+              <Image
+                src={instagramImg}
+                alt=""
+                aria-hidden
+                className="h-4 w-4 object-contain"
+              />
               Instagram
               <ArrowUpRight className="h-4 w-4 text-ink-300" aria-hidden />
             </a>
@@ -179,7 +184,12 @@ export function BlogSocial() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-medium !text-white transition-colors hover:border-white/40"
             >
-              <Image src={linkedinImg} alt="" aria-hidden className="h-4 w-4 object-contain" />
+              <Image
+                src={linkedinImg}
+                alt=""
+                aria-hidden
+                className="h-4 w-4 object-contain"
+              />
               LinkedIn
               <ArrowUpRight className="h-4 w-4 text-ink-300" aria-hidden />
             </a>

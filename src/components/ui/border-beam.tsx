@@ -24,6 +24,19 @@ interface BorderBeamProps {
 /**
  * BorderBeam (Magic UI) — um feixe de gradiente que percorre a borda do elemento
  * pai (que deve ser `relative` e ter `rounded-[...]`). Usa `offset-path` + framer.
+ *
+ * @param size - Comprimento (px) do feixe. Default: `50`.
+ * @param duration - Duração de uma volta completa (s). Default: `6`.
+ * @param colorFrom - Cor inicial do gradiente. Default: `"#0E66FF"`.
+ * @param colorTo - Cor final do gradiente. Default: `"#7aa9ff"`.
+ * @param reverse - Inverte o sentido do percurso. Default: `false`.
+ * @param borderWidth - Espessura (px) da borda animada. Default: `1.5`.
+ * @param className - Classes Tailwind adicionais no feixe.
+ *
+ * @example
+ * <div className="relative rounded-xl border">
+ *   <BorderBeam duration={8} colorFrom="#0E66FF" colorTo="#001DFF" />
+ * </div>
  */
 export function BorderBeam({
   className,

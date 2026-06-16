@@ -24,7 +24,28 @@ interface TabsProps {
   children: React.ReactNode
 }
 
-/** Tabs (estilo shadcn, sem Radix) — controlado ou não-controlado. */
+/**
+ * Tabs (estilo shadcn, sem Radix). Composto por `TabsList`, `TabsTrigger` e
+ * `TabsContent`. Funciona controlado (via `value` + `onValueChange`) ou
+ * não-controlado (via `defaultValue`). Os subcomponentes precisam estar dentro
+ * de `<Tabs>`, que provê o contexto.
+ *
+ * @param defaultValue - Aba ativa inicial no modo não-controlado.
+ * @param value - Aba ativa no modo controlado (sobrepõe o estado interno).
+ * @param onValueChange - Callback com o `value` da aba ao trocar.
+ * @param className - Classes Tailwind do wrapper.
+ * @param children - `TabsList` + `TabsContent`.
+ *
+ * @example
+ * <Tabs defaultValue="visao">
+ *   <TabsList>
+ *     <TabsTrigger value="visao">Visão geral</TabsTrigger>
+ *     <TabsTrigger value="specs">Especificações</TabsTrigger>
+ *   </TabsList>
+ *   <TabsContent value="visao">...</TabsContent>
+ *   <TabsContent value="specs">...</TabsContent>
+ * </Tabs>
+ */
 export function Tabs({
   defaultValue = "",
   value: controlled,

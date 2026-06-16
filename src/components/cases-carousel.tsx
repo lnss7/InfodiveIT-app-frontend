@@ -1,113 +1,125 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react"
-import Image from "next/image"
-import { ArrowLeft, ArrowRight } from "lucide-react"
-import { AnimatePresence, motion } from "framer-motion"
-import { cn } from "@/lib/utils"
+import { useState, useEffect, useRef } from "react";
+import Image, { type StaticImageData } from "next/image";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 // Imagens geradas e salvas na pasta de assets
-import financeImg from "@/assets/cases/finance.png"
-import retailImg from "@/assets/cases/retail.png"
-import industryImg from "@/assets/cases/industry.png"
+import financeImg from "@/assets/cases/finance.png";
+import retailImg from "@/assets/cases/retail.png";
+import industryImg from "@/assets/cases/industry.png";
 
 type Case = {
-  segmento: string
-  cliente: string
-  titulo: string
-  desafio: string
-  resultado: string
-  metrica: string
-  autor: string
-  cargo: string
-  depoimento: string
-  imagem: any
-}
+  segmento: string;
+  cliente: string;
+  titulo: string;
+  desafio: string;
+  resultado: string;
+  metrica: string;
+  autor: string;
+  cargo: string;
+  depoimento: string;
+  imagem: StaticImageData;
+};
 
 const CASES: Case[] = [
   {
     segmento: "Setor Financeiro",
     cliente: "Banco Regional",
-    titulo: "Migração crítica de datacenter legado para nuvem redundante de alta performance",
-    desafio: "Datacenter on-premise defasado, com problemas constantes de hardware e quedas frequentes que interrompiam as operações bancárias.",
-    resultado: "Migração total para arquitetura multicloud redundante gerenciada pela Infodive, com alta disponibilidade nativa.",
+    titulo:
+      "Migração crítica de datacenter legado para nuvem redundante de alta performance",
+    desafio:
+      "Datacenter on-premise defasado, com problemas constantes de hardware e quedas frequentes que interrompiam as operações bancárias.",
+    resultado:
+      "Migração total para arquitetura multicloud redundante gerenciada pela Infodive, com alta disponibilidade nativa.",
     metrica: "99.98% Uptime",
     autor: "Ricardo Almeida",
     cargo: "Head de Infraestrutura de TI",
-    depoimento: "A Infodive planejou e executou a migração crítica sem qualquer impacto para nossos clientes. A estabilidade operacional hoje é absoluta e as quedas foram zeradas.",
+    depoimento:
+      "A Infodive planejou e executou a migração crítica sem qualquer impacto para nossos clientes. A estabilidade operacional hoje é absoluta e as quedas foram zeradas.",
     imagem: financeImg,
   },
   {
     segmento: "Varejo e E-commerce",
     cliente: "Rede Cosmos",
-    titulo: "Segurança de dados e backups imutáveis automáticos contra ameaças virtuais",
-    desafio: "Processos manuais de backup lentos e vulneráveis, expondo dados vitais de faturamento e vendas diárias a riscos graves de perda.",
-    resultado: "Implementação de rotina de proteção de dados imutável em nuvem com restauração automatizada instantânea sob demanda.",
+    titulo:
+      "Segurança de dados e backups imutáveis automáticos contra ameaças virtuais",
+    desafio:
+      "Processos manuais de backup lentos e vulneráveis, expondo dados vitais de faturamento e vendas diárias a riscos graves de perda.",
+    resultado:
+      "Implementação de rotina de proteção de dados imutável em nuvem com restauração automatizada instantânea sob demanda.",
     metrica: "< 10 min RTO",
     autor: "Mariana Souza",
     cargo: "Diretora de Tecnologia",
-    depoimento: "Mitigamos 100% o risco de perda de dados. O processo de restauração é tão rápido e transparente que nem sequer afeta nossas frentes de caixa nas lojas.",
+    depoimento:
+      "Mitigamos 100% o risco de perda de dados. O processo de restauração é tão rápido e transparente que nem sequer afeta nossas frentes de caixa nas lojas.",
     imagem: retailImg,
   },
   {
     segmento: "Indústria Pesada",
     cliente: "Vesta Manufatura",
-    titulo: "Modernização de infraestrutura híbrida com ganhos expressivos em velocidade",
-    desafio: "Servidores locais obsoletos limitando a capacidade de processamento do sistema ERP na linha de montagem e gerando gargalos.",
-    resultado: "Renovação completa do cluster de processamento local conectado com servidores híbridos escaláveis e de alta densidade.",
+    titulo:
+      "Modernização de infraestrutura híbrida com ganhos expressivos em velocidade",
+    desafio:
+      "Servidores locais obsoletos limitando a capacidade de processamento do sistema ERP na linha de montagem e gerando gargalos.",
+    resultado:
+      "Renovação completa do cluster de processamento local conectado com servidores híbridos escaláveis e de alta densidade.",
     metrica: "+40% Performance",
     autor: "Carlos Henrique",
     cargo: "Gerente de Planta Industrial",
-    depoimento: "Ganhamos eficiência imediata na linha de montagem. O processamento das ordens de produção ficou incrivelmente ágil, destravando a produção diária.",
+    depoimento:
+      "Ganhamos eficiência imediata na linha de montagem. O processamento das ordens de produção ficou incrivelmente ágil, destravando a produção diária.",
     imagem: industryImg,
   },
-]
+];
 
 export function CasesCarousel() {
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [isHovered, setIsHovered] = useState(false)
-  const autoplayTimer = useRef<NodeJS.Timeout | null>(null)
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const autoplayTimer = useRef<NodeJS.Timeout | null>(null);
 
   const handleNext = () => {
-    setActiveIndex((prev) => (prev + 1) % CASES.length)
-  }
+    setActiveIndex((prev) => (prev + 1) % CASES.length);
+  };
 
   const handlePrev = () => {
-    setActiveIndex((prev) => (prev - 1 + CASES.length) % CASES.length)
-  }
+    setActiveIndex((prev) => (prev - 1 + CASES.length) % CASES.length);
+  };
 
   // Autoplay loop de 15 segundos, pausa no hover do mouse
   useEffect(() => {
     if (isHovered) {
       if (autoplayTimer.current) {
-        clearInterval(autoplayTimer.current)
+        clearInterval(autoplayTimer.current);
       }
-      return
+      return;
     }
 
     autoplayTimer.current = setInterval(() => {
-      handleNext()
-    }, 15000)
+      handleNext();
+    }, 15000);
 
     return () => {
       if (autoplayTimer.current) {
-        clearInterval(autoplayTimer.current)
+        clearInterval(autoplayTimer.current);
       }
-    }
-  }, [isHovered, activeIndex])
+    };
+  }, [isHovered, activeIndex]);
 
   return (
     <>
       <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#7aa9ff]">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-accent">
             Cases de sucesso
           </p>
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
             Tecnologia aplicada a resultados de negócios
           </h2>
         </div>
-        
+
         {/* Controles do Carrossel */}
         <div className="flex items-center gap-3">
           <button
@@ -130,7 +142,7 @@ export function CasesCarousel() {
       </div>
 
       {/* Estrutura Split View do Showcase */}
-      <div 
+      <div
         className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -169,8 +181,12 @@ export function CasesCarousel() {
               transition={{ delay: 0.15, duration: 0.3 }}
               className="absolute bottom-6 right-6 z-20 rounded-xl border border-white/10 bg-black/60 backdrop-blur-md px-5 py-3 shadow-[0_12px_24px_rgba(0,0,0,0.5)]"
             >
-              <p className="text-[10px] uppercase font-bold text-ink-300 tracking-[0.15em] mb-1">Métrica Chave</p>
-              <p className="text-xl font-black text-[#7aa9ff] tracking-tight">{CASES[activeIndex].metrica}</p>
+              <p className="text-[10px] uppercase font-bold text-ink-300 tracking-[0.15em] mb-1">
+                Métrica Chave
+              </p>
+              <p className="text-xl font-black text-brand-accent tracking-tight">
+                {CASES[activeIndex].metrica}
+              </p>
             </motion.div>
           </AnimatePresence>
         </div>
@@ -186,7 +202,7 @@ export function CasesCarousel() {
               transition={{ duration: 0.35, ease: "easeOut" }}
             >
               {/* Categoria / Segmento */}
-              <span className="inline-flex rounded-full bg-brand/15 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#7aa9ff]">
+              <span className="inline-flex rounded-full bg-brand/15 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-brand-accent">
                 {CASES[activeIndex].segmento}
               </span>
 
@@ -201,13 +217,17 @@ export function CasesCarousel() {
               {/* Desafio vs Resultado */}
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6 border-t border-white/10 pt-6">
                 <div>
-                  <h4 className="text-xs uppercase font-bold text-ink-500 tracking-[0.1em]">O Desafio</h4>
+                  <h4 className="text-xs uppercase font-bold text-ink-500 tracking-[0.1em]">
+                    O Desafio
+                  </h4>
                   <p className="mt-2 text-sm text-ink-300 leading-relaxed font-sans font-light">
                     {CASES[activeIndex].desafio}
                   </p>
                 </div>
                 <div>
-                  <h4 className="text-xs uppercase font-bold text-[#7aa9ff] tracking-[0.1em]">A Solução</h4>
+                  <h4 className="text-xs uppercase font-bold text-brand-accent tracking-[0.1em]">
+                    A Solução
+                  </h4>
                   <p className="mt-2 text-sm text-ink-200 leading-relaxed font-sans font-light">
                     {CASES[activeIndex].resultado}
                   </p>
@@ -217,21 +237,30 @@ export function CasesCarousel() {
               {/* Testemunhal e Autor */}
               <div className="mt-8 rounded-xl border border-white/5 bg-white/[0.02] p-6 relative overflow-hidden">
                 {/* Aspas decorativas */}
-                <span className="absolute -top-4 left-3 text-7xl text-[#7aa9ff]/10 font-serif select-none pointer-events-none">“</span>
-                
+                <span className="absolute -top-4 left-3 text-7xl text-brand-accent/10 font-serif select-none pointer-events-none">
+                  "
+                </span>
+
                 <p className="text-sm italic text-ink-200 leading-relaxed relative z-10 pl-2">
                   {CASES[activeIndex].depoimento}
                 </p>
-                
+
                 {/* Bloco do Autor */}
                 <div className="mt-5 flex items-center gap-3 border-t border-white/5 pt-4">
                   {/* Avatar redondo com gradiente e iniciais */}
                   <div className="h-9 w-9 rounded-full bg-gradient-to-br from-brand to-brand-deep flex items-center justify-center text-xs font-bold text-white shadow-md select-none shrink-0">
-                    {CASES[activeIndex].autor.split(" ").map(n => n[0]).join("")}
+                    {CASES[activeIndex].autor
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-xs font-bold text-white leading-none">{CASES[activeIndex].autor}</span>
-                    <span className="text-[10px] text-ink-500 mt-1">{CASES[activeIndex].cargo}</span>
+                    <span className="text-xs font-bold text-white leading-none">
+                      {CASES[activeIndex].autor}
+                    </span>
+                    <span className="text-[10px] text-ink-500 mt-1">
+                      {CASES[activeIndex].cargo}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -247,17 +276,21 @@ export function CasesCarousel() {
                 className="flex flex-col text-left group focus:outline-none"
               >
                 <div className="w-12 sm:w-16 h-1 rounded-full overflow-hidden bg-white/10 relative">
-                  <div 
+                  <div
                     className={cn(
-                      "absolute inset-y-0 left-0 bg-[#7aa9ff] transition-all duration-300",
-                      activeIndex === idx ? "w-full" : "w-0 group-hover:w-1/3"
+                      "absolute inset-y-0 left-0 bg-brand-accent transition-all duration-300",
+                      activeIndex === idx ? "w-full" : "w-0 group-hover:w-1/3",
                     )}
                   />
                 </div>
-                <span className={cn(
-                  "mt-2 text-[9px] sm:text-[10px] font-bold tracking-[0.1em] uppercase transition-colors duration-300",
-                  activeIndex === idx ? "text-white" : "text-ink-500 group-hover:text-ink-300"
-                    )}>
+                <span
+                  className={cn(
+                    "mt-2 text-[9px] sm:text-[10px] font-bold tracking-[0.1em] uppercase transition-colors duration-300",
+                    activeIndex === idx
+                      ? "text-white"
+                      : "text-ink-500 group-hover:text-ink-300",
+                  )}
+                >
                   {c.cliente.split(" ")[0]}
                 </span>
               </button>
@@ -266,7 +299,7 @@ export function CasesCarousel() {
         </div>
       </div>
     </>
-  )
+  );
 }
 
-export default CasesCarousel
+export default CasesCarousel;

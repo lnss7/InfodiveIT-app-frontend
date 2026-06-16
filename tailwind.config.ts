@@ -13,11 +13,14 @@ const config: Config = {
           deep: '#001DFF',
           mid: '#0E5CFF',
           light: '#1469FD',
+          accent: '#7aa9ff',
           tint: '#E4EAFF',
         },
         // Accents
         teal: '#46BEA3',
         indigo: '#5754FF',
+        // Feedback
+        danger: '#E5484D', // erros de formulário, asteriscos de campo obrigatório
         // Neutrals (overrides do gray padrão)
         ink: {
           950: '#141413', // headings, dark sections

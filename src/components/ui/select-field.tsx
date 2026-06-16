@@ -19,6 +19,29 @@ interface SelectFieldProps {
   className?: string
 }
 
+/**
+ * Select acessível e customizado (sem `<select>` nativo). O painel de opções é
+ * renderizado via portal em `document.body` e posicionado de forma fixa abaixo do
+ * gatilho, reposicionando-se em scroll/resize — pensado para formulários que rolam
+ * dentro de um card.
+ *
+ * @param value - Valor selecionado (componente controlado).
+ * @param onChange - Callback chamado com o `value` da opção escolhida.
+ * @param options - Lista de opções no formato `{ value, label }`.
+ * @param placeholder - Texto exibido quando não há valor. Default: `"Selecione"`.
+ * @param disabled - Desabilita a abertura e aplica estilo de desabilitado.
+ * @param invalid - Aplica o estilo de erro e marca `aria-invalid`.
+ * @param ariaLabel - Rótulo acessível do gatilho (quando não há `<label>` visível).
+ * @param className - Classes Tailwind adicionais no wrapper.
+ *
+ * @example
+ * <SelectField
+ *   value={fabricante}
+ *   onChange={setFabricante}
+ *   options={[{ value: "ibm", label: "IBM" }]}
+ *   placeholder="Fabricante"
+ * />
+ */
 export function SelectField({
   value,
   onChange,
@@ -105,7 +128,7 @@ export function SelectField({
           open
             ? "border-[#0E66FF] ring-2 ring-[#0E66FF]/15"
             : invalid
-              ? "border-[#E5484D] ring-0 hover:border-[#E5484D] hover:shadow-[0_0_0_4px_rgba(229,72,77,0.10)] focus:ring-[#E5484D]/15"
+              ? "border-danger ring-0 hover:border-danger hover:shadow-[0_0_0_4px_rgba(229,72,77,0.10)] focus:ring-danger/15"
               : "border-gray-200 hover:border-[#0E66FF]/55 hover:shadow-[0_0_0_4px_rgba(14,102,255,0.06)] focus:ring-[#0E66FF]/15"
         )}
       >

@@ -91,11 +91,11 @@ export function Footer() {
               {/* Badge/Certifications simulation */}
               <div className="flex gap-4 items-center text-white/50 text-xs">
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
-                  <ShieldCheck className="h-4 w-4 text-[#46BEA3]" />
+                  <ShieldCheck className="h-4 w-4 text-teal" />
                   <span>NOC 24/7 Ativo</span>
                 </div>
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
-                  <Cpu className="h-4 w-4 text-[#0E66FF]" />
+                  <Cpu className="h-4 w-4 text-brand" />
                   <span>Cloud Integrada</span>
                 </div>
               </div>
