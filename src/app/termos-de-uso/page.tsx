@@ -86,7 +86,7 @@ export default function TermosDeUsoPage() {
                   4. Isenção de Responsabilidade
                 </h2>
                 <p className="mt-6 text-pretty leading-relaxed text-ink-900">
-                  Os materiais no site da Infodive IT são fornecidos "como estão". A Infodive IT não oferece garantias, expressas ou implícitas, e por este meio isenta e nega todas as outras garantias, incluindo, sem limitação, garantias implícitas ou condições de comercialização, adequação a um fim específico ou não violação de propriedade intelectual.
+                  Os materiais no site da Infodive IT são fornecidos &quot;como estão&quot;. A Infodive IT não oferece garantias, expressas ou implícitas, e por este meio isenta e nega todas as outras garantias, incluindo, sem limitação, garantias implícitas ou condições de comercialização, adequação a um fim específico ou não violação de propriedade intelectual.
                 </p>
 
                 <h2 className="mt-12 text-2xl font-semibold tracking-tight text-ink-950">

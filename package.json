@@ -72,6 +72,7 @@
   },
   "eslintConfig": {
     "extends": [
+      "next",
       "plugin:storybook/recommended"
     ]
   }

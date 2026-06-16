@@ -238,7 +238,7 @@ export function CasesCarousel() {
               <div className="mt-8 rounded-xl border border-white/5 bg-white/[0.02] p-6 relative overflow-hidden">
                 {/* Aspas decorativas */}
                 <span className="absolute -top-4 left-3 text-7xl text-brand-accent/10 font-serif select-none pointer-events-none">
-                  "
+                  &ldquo;
                 </span>
 
                 <p className="text-sm italic text-ink-200 leading-relaxed relative z-10 pl-2">
