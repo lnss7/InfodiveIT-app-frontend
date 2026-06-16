@@ -26,7 +26,11 @@ import suseLogo from "@/assets/Suse Logo.svg";
 import veeamLogo from "@/assets/Veeam Logo.svg";
 import virtuozzoLogo from "@/assets/Virtuozzo Logo.svg";
 import { MagicCard } from "@/components/ui/magic-card";
-import { DashboardCarousel } from "@/components/dashboard-carousel";
+import dynamic from "next/dynamic";
+
+const DashboardCarousel = dynamic(() => import("@/components/dashboard-carousel").then((mod) => mod.DashboardCarousel), {
+  ssr: false,
+});
 import tela1 from "@/assets/telasCarrosselHero/tela-1.webp";
 import tela2 from "@/assets/telasCarrosselHero/tela-2.webp";
 import tela3 from "@/assets/telasCarrosselHero/tela-3.webp";

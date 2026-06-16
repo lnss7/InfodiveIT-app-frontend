@@ -27,13 +27,33 @@ export function generateMetadata({ params }: PageProps): Metadata {
     };
   }
 
+  const seoTitle = `${solution.title} — Soluções de TI | Infodive IT`;
+  const seoDesc = solution.description || solution.subtitle;
+
   return {
-    title: `${solution.title} | Infodive IT`,
-    description: solution.subtitle,
+    title: seoTitle,
+    description: seoDesc,
+    alternates: {
+      canonical: `https://infodive.com.br/solucoes/${params.slug}`,
+    },
+    keywords: [
+      solution.title,
+      solution.subtitle,
+      'Soluções corporativas',
+      'Integração de TI',
+      'Infodive',
+    ],
     openGraph: {
-      title: `${solution.title} | Infodive IT`,
-      description: solution.subtitle,
+      title: seoTitle,
+      description: seoDesc,
+      url: `https://infodive.com.br/solucoes/${params.slug}`,
       type: "website",
+      siteName: "Infodive IT",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: seoTitle,
+      description: seoDesc,
     },
   };
 }
@@ -45,9 +65,30 @@ export default function SolutionDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  const serviceJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: solution.title,
+    provider: {
+      '@type': 'Organization',
+      name: 'Infodive IT',
+      url: 'https://infodive.com.br',
+      logo: 'https://infodive.com.br/icon.png',
+    },
+    description: solution.description || solution.subtitle,
+    areaServed: 'BR',
+    category: 'TI / Tecnologia de Missão Crítica',
+  };
+
   return (
     <>
-      <SolutionDetailContent solution={solution} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
+      />
+      <main id="main-content">
+        <SolutionDetailContent solution={solution} />
+      </main>
       <Footer />
     </>
   );

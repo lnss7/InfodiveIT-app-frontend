@@ -3,8 +3,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/animations/reveal";
-import { GsapMenu } from "@/components/GsapMenu";
+import dynamic from "next/dynamic";
 import { Mail, Phone, MapPin, Clock, MessageSquare, Check, ArrowRight } from "lucide-react";
+
+const GsapMenu = dynamic(() => import("@/components/GsapMenu").then((mod) => mod.GsapMenu), {
+  ssr: false,
+});
 
 export function Contact() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

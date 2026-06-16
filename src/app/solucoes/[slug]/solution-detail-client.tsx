@@ -10,8 +10,12 @@ import { InteractiveGridPattern } from "@/components/animations/interactive-grid
 import { Reveal } from "@/components/animations/reveal";
 import { GlowBorderOverlay, handleGlowMove } from "@/components/ui/glow-border";
 import { BorderBeam } from "@/components/ui/border-beam";
-import { GsapMenu } from "@/components/GsapMenu";
+import dynamic from "next/dynamic";
 import { ConversionCTA } from "@/components/conversion-cta";
+
+const GsapMenu = dynamic(() => import("@/components/GsapMenu").then((mod) => mod.GsapMenu), {
+  ssr: false,
+});
 
 interface SolutionDetailContentProps {
   solution: Solution;

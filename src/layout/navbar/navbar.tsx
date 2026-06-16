@@ -137,6 +137,7 @@ export function Navbar() {
 
                   if (isDropdown) {
                     const dropdownKey = link.dropdown!;
+                    const menuId = `${dropdownKey}-menu`;
                     return (
                       <div
                         key={link.label}
@@ -147,6 +148,7 @@ export function Navbar() {
                           type="button"
                           aria-expanded={isOpen}
                           aria-haspopup="menu"
+                          aria-controls={menuId}
                           onClick={() =>
                             dropdown === dropdownKey
                               ? closeDropdown()
@@ -183,6 +185,7 @@ export function Navbar() {
                     <Link
                       key={link.label}
                       href={link.href}
+                      aria-current={pathname === link.href ? "page" : undefined}
                       className={cn(
                         "inline-flex items-center rounded-md px-3 py-1.5",
                         "text-sm font-medium transition-all duration-300",
@@ -231,6 +234,7 @@ export function Navbar() {
             <AnimatePresence>
               {dropdown === "solucoes" && (
                 <div
+                  id="solucoes-menu"
                   onMouseEnter={() => openDropdown("solucoes")}
                   onMouseLeave={scheduleClose}
                 >
@@ -239,6 +243,7 @@ export function Navbar() {
               )}
               {dropdown === "produtos" && (
                 <div
+                  id="produtos-menu"
                   onMouseEnter={() => openDropdown("produtos")}
                   onMouseLeave={scheduleClose}
                 >

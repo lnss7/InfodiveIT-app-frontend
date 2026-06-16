@@ -71,6 +71,7 @@ function ColumnCategorias({ onItemClick }: { onItemClick?: () => void }) {
               <Link
                 href={cat.href}
                 onClick={onItemClick}
+                role="menuitem"
                 className={cn(
                   'group flex items-start gap-3 rounded-md p-2.5 -mx-2.5',
                   'transition-colors hover:bg-ink-50',
@@ -106,64 +107,69 @@ function ColumnDestaque({ onItemClick }: { onItemClick?: () => void }) {
   return (
     <div className="col-span-12 md:col-span-6">
       <ColumnTitle>Em destaque</ColumnTitle>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Card 1 */}
+        <li>
+          <Link
+            href={ultimoConteudoDestaque.href}
+            onClick={onItemClick}
+            role="menuitem"
+            className="group block rounded-lg border border-ink-200 overflow-hidden transition-colors hover:border-ink-500 h-full"
+          >
+            <div className="aspect-[4/3] w-full bg-gradient-to-br from-ink-950 via-ink-900 to-brand-deep relative">
+              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_30%_20%,white,transparent_50%)]" />
+              {ultimoConteudoDestaque.tag && (
+                <span className="absolute left-3 top-3 inline-flex items-center rounded bg-white/95 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-ink-950">
+                  {ultimoConteudoDestaque.tag}
+                </span>
+              )}
+            </div>
+            <div className="p-3.5">
+              <p className="text-sm font-medium text-ink-950 leading-snug group-hover:text-brand transition-colors">
+                {ultimoConteudoDestaque.titulo}
+              </p>
+              <p className="mt-1.5 text-xs text-ink-500 leading-snug line-clamp-3">
+                {ultimoConteudoDestaque.descricao}
+              </p>
+              <span className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-ink-950 group-hover:text-brand transition-colors">
+                Ler mais
+                <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" strokeWidth={2} />
+              </span>
+            </div>
+          </Link>
+        </li>
 
-      {/* Card 1 */}
-      <Link
-        href={ultimoConteudoDestaque.href}
-        onClick={onItemClick}
-        className="group block rounded-lg border border-ink-200 overflow-hidden transition-colors hover:border-ink-500"
-      >
-        <div className="aspect-[4/3] w-full bg-gradient-to-br from-ink-950 via-ink-900 to-brand-deep relative">
-          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_30%_20%,white,transparent_50%)]" />
-          {ultimoConteudoDestaque.tag && (
-            <span className="absolute left-3 top-3 inline-flex items-center rounded bg-white/95 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-ink-950">
-              {ultimoConteudoDestaque.tag}
-            </span>
-          )}
-        </div>
-        <div className="p-3.5">
-          <p className="text-sm font-medium text-ink-950 leading-snug group-hover:text-brand transition-colors">
-            {ultimoConteudoDestaque.titulo}
-          </p>
-          <p className="mt-1.5 text-xs text-ink-500 leading-snug line-clamp-3">
-            {ultimoConteudoDestaque.descricao}
-          </p>
-          <span className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-ink-950 group-hover:text-brand transition-colors">
-            Ler mais
-            <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" strokeWidth={2} />
-          </span>
-        </div>
-      </Link>
-
-      {/* Card 2 */}
-      <Link
-        href={ultimoConteudoDestaque.href}
-        onClick={onItemClick}
-        className="group block rounded-lg border border-ink-200 overflow-hidden transition-colors hover:border-ink-500"
-      >
-        <div className="aspect-[4/3] w-full bg-gradient-to-br from-ink-950 via-ink-900 to-brand-deep relative">
-          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_30%_20%,white,transparent_50%)]" />
-          {ultimoConteudoDestaque.tag && (
-            <span className="absolute left-3 top-3 inline-flex items-center rounded bg-white/95 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-ink-950">
-              {ultimoConteudoDestaque.tag}
-            </span>
-          )}
-        </div>
-        <div className="p-3.5">
-          <p className="text-sm font-medium text-ink-950 leading-snug group-hover:text-brand transition-colors">
-            {ultimoConteudoDestaque.titulo}
-          </p>
-          <p className="mt-1.5 text-xs text-ink-500 leading-snug line-clamp-3">
-            {ultimoConteudoDestaque.descricao}
-          </p>
-          <span className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-ink-950 group-hover:text-brand transition-colors">
-            Ler mais
-            <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" strokeWidth={2} />
-          </span>
-        </div>
-      </Link>
-      </div>
+        {/* Card 2 */}
+        <li>
+          <Link
+            href={ultimoConteudoDestaque.href}
+            onClick={onItemClick}
+            role="menuitem"
+            className="group block rounded-lg border border-ink-200 overflow-hidden transition-colors hover:border-ink-500 h-full"
+          >
+            <div className="aspect-[4/3] w-full bg-gradient-to-br from-ink-950 via-ink-900 to-brand-deep relative">
+              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_30%_20%,white,transparent_50%)]" />
+              {ultimoConteudoDestaque.tag && (
+                <span className="absolute left-3 top-3 inline-flex items-center rounded bg-white/95 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-ink-950">
+                  {ultimoConteudoDestaque.tag}
+                </span>
+              )}
+            </div>
+            <div className="p-3.5">
+              <p className="text-sm font-medium text-ink-950 leading-snug group-hover:text-brand transition-colors">
+                {ultimoConteudoDestaque.titulo}
+              </p>
+              <p className="mt-1.5 text-xs text-ink-500 leading-snug line-clamp-3">
+                {ultimoConteudoDestaque.descricao}
+              </p>
+              <span className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-ink-950 group-hover:text-brand transition-colors">
+                Ler mais
+                <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" strokeWidth={2} />
+              </span>
+            </div>
+          </Link>
+        </li>
+      </ul>
     </div>
   )
 }

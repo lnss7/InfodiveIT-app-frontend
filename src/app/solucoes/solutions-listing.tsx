@@ -8,9 +8,13 @@ import { InteractiveGridPattern } from "@/components/animations/interactive-grid
 import { Reveal } from "@/components/animations/reveal";
 import { Button } from "@/components/ui/button";
 import { GlowBorderOverlay, handleGlowMove } from "@/components/ui/glow-border";
-import { GsapMenu } from "@/components/GsapMenu";
 import { motion } from "framer-motion";
 import { ConversionCTA } from "@/components/conversion-cta";
+import dynamic from "next/dynamic";
+
+const GsapMenu = dynamic(() => import("@/components/GsapMenu").then((mod) => mod.GsapMenu), {
+  ssr: false,
+});
 
 const CATEGORIES = [
   "Todas",

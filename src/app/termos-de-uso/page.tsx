@@ -5,12 +5,21 @@ import { Reveal } from "@/components/animations/reveal";
 export const metadata: Metadata = {
   title: "Termos de Uso | Infodive IT",
   description: "Termos e condições de uso do portal e dos serviços da Infodive IT.",
+  alternates: {
+    canonical: "https://infodive.com.br/termos-de-uso",
+  },
+  openGraph: {
+    title: "Termos de Uso | Infodive IT",
+    description: "Termos e condições de uso do portal e dos serviços da Infodive IT.",
+    url: "https://infodive.com.br/termos-de-uso",
+    type: "website",
+  },
 };
 
 export default function TermosDeUsoPage() {
   return (
     <>
-      <main className="relative z-20 min-h-screen bg-white text-ink-900 pt-28 md:pt-36 pb-20">
+      <main id="main-content" className="relative z-20 min-h-screen bg-white text-ink-900 pt-28 md:pt-36 pb-20">
         <div className="container-default">
           <div className="mx-auto max-w-3xl">
             {/* Cabeçalho simples com detalhe azul */}

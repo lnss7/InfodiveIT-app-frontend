@@ -20,8 +20,12 @@ import { BorderBeam } from "@/components/ui/border-beam"
 import { SelectField } from "@/components/ui/select-field"
 import { ProductCard } from "@/components/product-card"
 import { ConversionCTA } from "@/components/conversion-cta"
-import { GsapMenu } from "@/components/GsapMenu"
+import dynamic from "next/dynamic"
 import { VENDOR_LOGOS } from "@/lib/vendor-logos"
+
+const GsapMenu = dynamic(() => import("@/components/GsapMenu").then((mod) => mod.GsapMenu), {
+  ssr: false,
+})
 
 const FABRICANTE_OPTIONS = [
   { value: "Todos", label: "Todos os fabricantes" },

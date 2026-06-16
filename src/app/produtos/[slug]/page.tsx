@@ -21,13 +21,34 @@ export function generateMetadata({ params }: PageProps): Metadata {
     return { title: "Produto não encontrado | Infodive" }
   }
 
+  const seoTitle = `${product.nome} — ${product.fabricante} | Infodive IT`
+  const seoDesc = product.descricaoCurta
+
   return {
-    title: `${product.nome} — ${product.fabricante} | Infodive IT`,
-    description: product.descricaoCurta,
+    title: seoTitle,
+    description: seoDesc,
+    alternates: {
+      canonical: `https://infodive.com.br/produtos/${params.slug}`,
+    },
+    keywords: [
+      product.nome,
+      product.fabricante,
+      product.categoria,
+      product.subcategoria,
+      'Produtos de TI',
+      'Infodive',
+    ],
     openGraph: {
-      title: `${product.nome} | Infodive IT`,
-      description: product.descricaoCurta,
+      title: seoTitle,
+      description: seoDesc,
+      url: `https://infodive.com.br/produtos/${params.slug}`,
       type: "website",
+      siteName: "Infodive IT",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: seoTitle,
+      description: seoDesc,
     },
   }
 }
@@ -39,9 +60,37 @@ export default function ProductDetailPage({ params }: PageProps) {
     notFound()
   }
 
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.nome,
+    description: product.descricaoCurta,
+    brand: {
+      '@type': 'Brand',
+      name: product.fabricante,
+    },
+    category: product.categoria,
+    offers: {
+      '@type': 'AggregateOffer',
+      priceCurrency: 'BRL',
+      offerCount: '1',
+      seller: {
+        '@type': 'Organization',
+        name: 'Infodive IT',
+        url: 'https://infodive.com.br',
+      },
+    },
+  }
+
   return (
     <>
-      <ProductDetailContent slug={product.slug} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <main id="main-content">
+        <ProductDetailContent slug={product.slug} />
+      </main>
       <Footer />
     </>
   )

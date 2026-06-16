@@ -19,6 +19,9 @@ export function SmoothScroll() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
 
+    // Evita inicializar o Lenis em telas mobile/tablet, onde o scroll nativo já é otimizado e suave
+    if (window.matchMedia("(max-width: 768px)").matches) return
+
     const lenis = new Lenis({
       duration: 1.1,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),

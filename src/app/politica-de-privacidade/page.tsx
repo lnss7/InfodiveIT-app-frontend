@@ -5,12 +5,21 @@ import { Reveal } from "@/components/animations/reveal";
 export const metadata: Metadata = {
   title: "Política de Privacidade | Infodive IT",
   description: "Política de privacidade e proteção de dados pessoais da Infodive IT.",
+  alternates: {
+    canonical: "https://infodive.com.br/politica-de-privacidade",
+  },
+  openGraph: {
+    title: "Política de Privacidade | Infodive IT",
+    description: "Política de privacidade e proteção de dados pessoais da Infodive IT.",
+    url: "https://infodive.com.br/politica-de-privacidade",
+    type: "website",
+  },
 };
 
 export default function PoliticaPrivacidadePage() {
   return (
     <>
-      <main className="relative z-20 min-h-screen bg-white text-ink-900 pt-28 md:pt-36 pb-20">
+      <main id="main-content" className="relative z-20 min-h-screen bg-white text-ink-900 pt-28 md:pt-36 pb-20">
         <div className="container-default">
           <div className="mx-auto max-w-3xl">
             {/* Cabeçalho simples com detalhe azul */}

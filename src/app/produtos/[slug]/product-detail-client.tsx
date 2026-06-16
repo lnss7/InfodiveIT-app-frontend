@@ -27,7 +27,11 @@ import {
 import useEmblaCarousel from "embla-carousel-react"
 import { ProductCard } from "@/components/product-card"
 import { ConversionCTA } from "@/components/conversion-cta"
-import { GsapMenu } from "@/components/GsapMenu"
+import dynamic from "next/dynamic"
+
+const GsapMenu = dynamic(() => import("@/components/GsapMenu").then((mod) => mod.GsapMenu), {
+  ssr: false,
+})
 
 /** Diagrama "integra com nossos serviços" (AnimatedBeam). */
 function ServicesDiagram({ product }: { product: Product }) {

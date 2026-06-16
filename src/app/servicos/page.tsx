@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: "Serviços — Da estratégia à operação contínua",
   description:
     "Consultoria, assessment, projeto, implantação, migração, sustentação, operação assistida e monitoramento. A Infodive planeja, implanta e mantém a tecnologia funcionando no seu ambiente.",
+  alternates: {
+    canonical: "https://infodive.com.br/servicos",
+  },
   keywords: [
     "Serviços de TI",
     "Consultoria de TI",
@@ -20,12 +23,18 @@ export const metadata: Metadata = {
     "Monitoramento",
     "Infodive",
   ],
+  openGraph: {
+    title: "Serviços — Da estratégia à operação contínua | Infodive IT",
+    description: "Consultoria, assessment, projeto, implantação, migração, sustentação, operação assistida e monitoramento. A Infodive planeja, implanta e mantém a tecnologia funcionando no seu ambiente.",
+    url: "https://infodive.com.br/servicos",
+    type: "website",
+  },
 };
 
 export default function ServicosPage() {
   return (
     <>
-      <main className="relative z-20 bg-white">
+      <main id="main-content" className="relative z-20 bg-white">
         <ServicosHero />
         <ServicosManifesto />
         <ServicosCiclo />

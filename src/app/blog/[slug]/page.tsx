@@ -30,15 +30,48 @@ export function generateMetadata({ params }: PageProps): Metadata {
     return { title: "Conteúdo não encontrado | Infodive" };
   }
 
+  const seoTitle = `${artigo.titulo} | Infodive IT`
+  const seoDesc = artigo.descricao
+
   return {
-    title: `${artigo.titulo} | Infodive IT`,
-    description: artigo.descricao,
+    title: seoTitle,
+    description: seoDesc,
+    alternates: {
+      canonical: `https://infodive.com.br/blog/${params.slug}`,
+    },
+    keywords: [
+      artigo.categoria,
+      artigo.fabricante,
+      'Artigo técnico',
+      'Infodive',
+      artigo.titulo,
+    ],
     openGraph: {
-      title: `${artigo.titulo} | Infodive IT`,
-      description: artigo.descricao,
+      title: seoTitle,
+      description: seoDesc,
+      url: `https://infodive.com.br/blog/${params.slug}`,
       type: "article",
+      siteName: "Infodive IT",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: seoTitle,
+      description: seoDesc,
     },
   };
+}
+
+function parseArticleDate(dateStr: string): string {
+  const parts = dateStr.split(' ');
+  if (parts.length < 3) return new Date().toISOString().split('T')[0];
+  const day = parts[0].padStart(2, '0');
+  const months: Record<string, string> = {
+    Jan: '01', Fev: '02', Mar: '03', Abr: '04', Mai: '05', Jun: '06',
+    Jul: '07', Ago: '08', Set: '09', Out: '10', Nov: '11', Dez: '12'
+  };
+  const month = months[parts[1]] || '01';
+  const year = parts[2];
+  return `${year}-${month}-${day}`;
 }
 
 /** Renderiza um bloco do corpo do conteúdo. */
@@ -90,9 +123,36 @@ export default function ArtigoDetailPage({ params }: PageProps) {
   const Icon = config.icon;
   const relacionados = getArtigosRelacionados(artigo.slug);
 
+  const isoDate = parseArticleDate(artigo.data);
+  const blogJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: artigo.titulo,
+    description: artigo.descricao,
+    datePublished: isoDate,
+    dateModified: isoDate,
+    author: {
+      '@type': 'Organization',
+      name: 'Infodive IT',
+      url: 'https://infodive.com.br',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Infodive IT',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://infodive.com.br/icon.png',
+      },
+    },
+  };
+
   return (
     <>
-      <main className="relative z-20 bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
+      />
+      <main id="main-content" className="relative z-20 bg-white">
         {/* 1. Hero dark */}
         <header className="relative overflow-hidden border-b border-white/5 bg-[#050507] pb-12 pt-28 text-white sm:pt-36">
           <div className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-hidden">
