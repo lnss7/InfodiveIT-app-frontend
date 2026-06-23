@@ -1,41 +1,38 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Reveal } from "@/components/animations/reveal"
 import { useSmoothScroll } from "@/hooks/use-smooth-scroll"
+import { api } from "@/lib/api"
 
 type FAQItem = {
   question: string
   answer: string
 }
 
-const FAQ_ITEMS: FAQItem[] = [
-  {
-    question: "Que tipos de suporte a Infodive oferece?",
-    answer: "Oferecemos suporte completo com atendimento NOC 24/7/365 para incidentes críticos, além de suporte comercial e consultivo estruturado em níveis de atendimento (N1, N2 e N3) com acordos de SLA rígidos para garantir a continuidade da sua operação."
-  },
-  {
-    question: "A Infodive atua com migração e sustentação em nuvem (Cloud)?",
-    answer: "Sim. Auxiliamos empresas no planejamento estratégico, migração segura (seja por decolagem direta ou refatoração de código) e sustentação contínua de infraestruturas em nuvem pública (AWS e Azure), privada e ambientes híbridos."
-  },
-  {
-    question: "Quais são os prazos de resposta (SLA) para chamados críticos?",
-    answer: "Para incidentes de gravidade crítica (Nível 1), nosso SLA padrão de resposta inicial é de até 15 minutos, monitorado e gerido de ponta a ponta pelo nosso time de NOC especializado."
-  },
-  {
-    question: "Como funciona a parceria com fabricantes como IBM, Dell, Lenovo e Microsoft?",
-    answer: "Somos parceiros homologados e certificados das principais marcas de tecnologia globais. Isso nos permite desenhar projetos unificados com hardware oficial, licenciamento correto, suporte de fábrica direto e condições comerciais altamente competitivas."
-  },
-  {
-    question: "Os projetos e serviços da Infodive estão em conformidade com a LGPD?",
-    answer: "Sim, todos os nossos serviços gerenciados, políticas de backup e projetos de segurança de dados seguem estritamente as diretrizes da LGPD (Lei Geral de Proteção de Dados), garantindo total privacidade e conformidade jurídica para o seu negócio."
-  }
+const FAQ_FALLBACK: FAQItem[] = [
+  { question: "Que tipos de suporte a Infodive oferece?", answer: "Oferecemos suporte completo com atendimento NOC 24/7/365 para incidentes críticos, além de suporte comercial e consultivo estruturado em níveis de atendimento (N1, N2 e N3) com acordos de SLA rígidos para garantir a continuidade da sua operação." },
+  { question: "A Infodive atua com migração e sustentação em nuvem (Cloud)?", answer: "Sim. Auxiliamos empresas no planejamento estratégico, migração segura (seja por decolagem direta ou refatoração de código) e sustentação contínua de infraestruturas em nuvem pública (AWS e Azure), privada e ambientes híbridos." },
+  { question: "Quais são os prazos de resposta (SLA) para chamados críticos?", answer: "Para incidentes de gravidade crítica (Nível 1), nosso SLA padrão de resposta inicial é de até 15 minutos, monitorado e gerido de ponta a ponta pelo nosso time de NOC especializado." },
+  { question: "Como funciona a parceria com fabricantes como IBM, Dell, Lenovo e Microsoft?", answer: "Somos parceiros homologados e certificados das principais marcas de tecnologia globais. Isso nos permite desenhar projetos unificados com hardware oficial, licenciamento correto, suporte de fábrica direto e condições comerciais altamente competitivas." },
+  { question: "Os projetos e serviços da Infodive estão em conformidade com a LGPD?", answer: "Sim, todos os nossos serviços gerenciados, políticas de backup e projetos de segurança de dados seguem estritamente as diretrizes da LGPD (Lei Geral de Proteção de Dados), garantindo total privacidade e conformidade jurídica para o seu negócio." },
 ]
 
 export function FAQ() {
   const { scrollTo } = useSmoothScroll()
+  const [items, setItems] = useState<FAQItem[]>(FAQ_FALLBACK)
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
+
+  useEffect(() => {
+    api.faq()
+      .then((data) => {
+        if (data.length > 0) {
+          setItems(data.map((d) => ({ question: d.pergunta, answer: d.resposta })))
+        }
+      })
+      .catch(() => { /* mantém fallback */ })
+  }, [])
 
   const toggle = (index: number) => {
     setActiveIndex(activeIndex === index ? null : index)
@@ -94,7 +91,7 @@ export function FAQ() {
 
           {/* Right Column (Accordion List) */}
           <div className="lg:col-span-7 flex flex-col">
-            {FAQ_ITEMS.map((item, index) => {
+            {items.map((item, index) => {
               const isOpen = activeIndex === index
               const formattedIndex = String(index + 1).padStart(2, "0")
 

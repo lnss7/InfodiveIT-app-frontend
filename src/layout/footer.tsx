@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { api } from "@/lib/api";
 import Image from "next/image";
 import Link from "next/link";
 import { gsap } from "gsap";
@@ -19,6 +20,22 @@ gsap.registerPlugin(ScrollTrigger);
 export function Footer() {
   const containerRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLElement>(null);
+
+  const [urlLinkedin, setUrlLinkedin] = useState("https://www.linkedin.com/company/infodiveit/posts/?feedView=all");
+  const [urlInstagram, setUrlInstagram] = useState("https://www.instagram.com/infodiveit/");
+  const [urlFacebook, setUrlFacebook] = useState("https://www.facebook.com/InfodiveIt");
+  const [descricaoEmpresa, setDescricaoEmpresa] = useState<string | null>(null);
+
+  useEffect(() => {
+    api.configFooter()
+      .then((data) => {
+        if (data.urlLinkedin) setUrlLinkedin(data.urlLinkedin);
+        if (data.urlInstagram) setUrlInstagram(data.urlInstagram);
+        if (data.urlFacebook) setUrlFacebook(data.urlFacebook);
+        if (data.descricaoEmpresa) setDescricaoEmpresa(data.descricaoEmpresa);
+      })
+      .catch(() => { /* mantém fallback */ });
+  }, []);
 
   // Reveal por parallax — APENAS no desktop (lg+).
   // No mobile o iOS bloqueia a animação atrelada ao scroll, e o footer ficava "travado"
@@ -83,9 +100,7 @@ export function Footer() {
                   priority
                 />
               <p className="text-white/60 text-sm max-w-sm leading-relaxed">
-                Consultoria e infraestrutura de TI avançada para empresas em
-                expansão. Projetando a segurança, estabilidade e inteligência do
-                seu amanhã.
+                {descricaoEmpresa || "Consultoria e infraestrutura de TI avançada para empresas em expansão. Projetando a segurança, estabilidade e inteligência do seu amanhã."}
               </p>
 
               {/* Badge/Certifications simulation */}
@@ -248,7 +263,7 @@ export function Footer() {
             {/* Social Media links */}
             <div className="flex gap-5">
               <a
-                href="https://www.linkedin.com/company/infodiveit/posts/?feedView=all"
+                href={urlLinkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="relative group block h-5 w-5"
@@ -266,7 +281,7 @@ export function Footer() {
                 />
               </a>
               <a
-                href="https://www.instagram.com/infodiveit/"
+                href={urlInstagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="relative group block h-5 w-5"
@@ -284,7 +299,7 @@ export function Footer() {
                 />
               </a>
               <a
-                href="https://www.facebook.com/InfodiveIt"
+                href={urlFacebook}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="relative group block h-5 w-5"

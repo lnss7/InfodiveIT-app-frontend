@@ -1,11 +1,9 @@
-"use client"
-
-import React from "react"
 import Link from "next/link"
 import { ArrowRight, Activity } from "lucide-react"
 import { TextReveal } from "@/components/ui/text-reveal"
 import { Reveal } from "@/components/animations/reveal"
 import { cn } from "@/lib/utils"
+import { api } from "@/lib/api"
 
 type ChallengeItem = {
   title: string
@@ -14,40 +12,22 @@ type ChallengeItem = {
   href: string
 }
 
-const CHALLENGES: ChallengeItem[] = [
-  {
-    title: "Instabilidade e quedas constantes nos sistemas",
-    description: "Sistemas indisponíveis durante picos de demanda ou operações sazonais geram prejuízos diretos, desgaste com clientes e arranham a reputação da sua marca.",
-    solution: "Alta Disponibilidade & Cloud Elástica",
-    href: "/solucoes",
-  },
-  {
-    title: "Backups lentos e vulnerabilidade a ataques cibernéticos",
-    description: "Políticas manuais de cópias de dados falham quando mais se precisa. Sua empresa está realmente protegida contra ameaças modernas como ransomware?",
-    solution: "Backup Imutável & Cibersegurança Ativa",
-    href: "/solucoes",
-  },
-  {
-    title: "Servidores obsoletos gargalando a operação",
-    description: "Hardware antigo e sistemas legados limitam a velocidade do seu ERP, gerando atrasos crônicos no faturamento, na entrega e na linha de produção.",
-    solution: "Modernização de Hardware & Servidores Dedicados",
-    href: "/solucoes",
-  },
-  {
-    title: "Dificuldade na integração e adoção prática de IA",
-    description: "Embora a IA seja vital para a competitividade, a falta de expertise técnica e infraestrutura especializada impede que projetos de inteligência saiam do papel.",
-    solution: "IA Aplicada a Negócios & Modelagem de Dados",
-    href: "/solucoes",
-  },
-  {
-    title: "Complexidade e custos inflados com nuvem híbrida",
-    description: "Manter dados confidenciais localmente enquanto se aproveita a flexibilidade da nuvem gera desafios de compliance, latência e custos de nuvem imprevisíveis.",
-    solution: "Gestão Híbrida & Otimização FinOps",
-    href: "/solucoes",
-  },
+const CHALLENGES_FALLBACK: ChallengeItem[] = [
+  { title: "Instabilidade e quedas constantes nos sistemas", description: "Sistemas indisponíveis durante picos de demanda ou operações sazonais geram prejuízos diretos, desgaste com clientes e arranham a reputação da sua marca.", solution: "Alta Disponibilidade & Cloud Elástica", href: "/solucoes" },
+  { title: "Backups lentos e vulnerabilidade a ataques cibernéticos", description: "Políticas manuais de cópias de dados falham quando mais se precisa. Sua empresa está realmente protegida contra ameaças modernas como ransomware?", solution: "Backup Imutável & Cibersegurança Ativa", href: "/solucoes" },
+  { title: "Servidores obsoletos gargalando a operação", description: "Hardware antigo e sistemas legados limitam a velocidade do seu ERP, gerando atrasos crônicos no faturamento, na entrega e na linha de produção.", solution: "Modernização de Hardware & Servidores Dedicados", href: "/solucoes" },
+  { title: "Dificuldade na integração e adoção prática de IA", description: "Embora a IA seja vital para a competitividade, a falta de expertise técnica e infraestrutura especializada impede que projetos de inteligência saiam do papel.", solution: "IA Aplicada a Negócios & Modelagem de Dados", href: "/solucoes" },
+  { title: "Complexidade e custos inflados com nuvem híbrida", description: "Manter dados confidenciais localmente enquanto se aproveita a flexibilidade da nuvem gera desafios de compliance, latência e custos de nuvem imprevisíveis.", solution: "Gestão Híbrida & Otimização FinOps", href: "/solucoes" },
 ]
 
-export function Problems() {
+export async function Problems() {
+  const challenges: ChallengeItem[] = await api.homeProblemas()
+    .then((data) =>
+      data.length > 0
+        ? data.map((d) => ({ title: d.titulo, description: d.descricao, solution: d.solucaoIndicada || "", href: d.href || "/solucoes" }))
+        : CHALLENGES_FALLBACK
+    )
+    .catch(() => CHALLENGES_FALLBACK)
   return (
     <section id="problemas" className="relative bg-white">
       {/* Texto revelado conforme o scroll. trackHeight maior = a frase fica fixa
@@ -95,14 +75,14 @@ export function Problems() {
 
             {/* Coluna Direita: Lista de Desafios Interativos */}
             <div className="divide-y divide-white/10 lg:col-span-7">
-              {CHALLENGES.map((item, index) => (
+              {challenges.map((item, index) => (
                 <Reveal as="div" key={index} delay={index * 0.07}>
                 <Link
                   href={item.href}
                   className={cn(
                     "group block py-7 transition-colors duration-300",
                     index === 0 && "pt-0",
-                    index === CHALLENGES.length - 1 && "pb-0"
+                    index === challenges.length - 1 && "pb-0"
                   )}
                 >
                   <div className="flex items-start gap-4">

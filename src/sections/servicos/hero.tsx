@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -10,6 +10,7 @@ import { Reveal } from "@/components/animations/reveal";
 import { TextEffect } from "@/components/animations/text-effect";
 import { Button } from "@/components/ui/button";
 import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
+import { api } from "@/lib/api";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,6 +18,22 @@ export function ServicosHero() {
   const { scrollTo } = useSmoothScroll();
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  const [eyebrow, setEyebrow] = useState("Serviços");
+  const [headline, setHeadline] = useState("Tecnologia é só o começo. Resultado vem da execução.");
+  const [subtitulo, setSubtitulo] = useState("A Infodive não entrega apenas a tecnologia — planejamos, implantamos, migramos e sustentamos o ambiente que mantém sua empresa no ar.");
+  const [highlightWords, setHighlightWords] = useState(["execução"]);
+
+  useEffect(() => {
+    api.paginaHero("servicos")
+      .then((data) => {
+        if (data.eyebrow) setEyebrow(data.eyebrow);
+        if (data.headline) setHeadline(data.headline);
+        if (data.subtitulo) setSubtitulo(data.subtitulo);
+        if (data.tagline) setHighlightWords([data.tagline]);
+      })
+      .catch(() => { /* mantém fallback */ });
+  }, []);
 
   // Parallax de saída — o conteúdo desce mais devagar que o scroll e esmaece,
   // criando profundidade na transição para o manifesto. Apenas no desktop:
@@ -80,7 +97,7 @@ export function ServicosHero() {
 
         <Reveal>
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-[#7aa9ff]">
-            Serviços
+            {eyebrow}
           </p>
         </Reveal>
 
@@ -91,18 +108,16 @@ export function ServicosHero() {
             as="span"
             delay={0.15}
             duration={0.9}
-            highlightWords={["execução"]}
+            highlightWords={highlightWords}
             highlightClassName="text-transparent [-webkit-text-stroke:1.8px_#0E66FF]"
           >
-            Tecnologia é só o começo. Resultado vem da execução.
+            {headline}
           </TextEffect>
         </h1>
 
         <Reveal delay={0.5}>
           <p className="max-w-2xl text-balance text-base leading-relaxed text-ink-300 sm:text-lg">
-            A Infodive não entrega apenas a tecnologia — planejamos,
-            implantamos, migramos e sustentamos o ambiente que mantém sua
-            empresa no ar.
+            {subtitulo}
           </p>
         </Reveal>
 

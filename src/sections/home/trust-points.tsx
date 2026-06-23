@@ -1,7 +1,9 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { NumberTicker } from "@/components/ui/number-ticker"
+import { api, type HomeTrustStatsDTO } from "@/lib/api"
 
 type Stat = {
   eyebrow: string
@@ -15,7 +17,7 @@ type Stat = {
   desc: string
 }
 
-const STATS: Stat[] = [
+const STATS_FALLBACK: Stat[] = [
   {
     eyebrow: "Tradição",
     prefix: "Desde",
@@ -45,7 +47,31 @@ const STATS: Stat[] = [
   },
 ]
 
+function fromDTO(dto: HomeTrustStatsDTO): Stat {
+  return {
+    eyebrow: dto.eyebrow ?? "",
+    prefix: dto.prefixo,
+    prefixClass: dto.prefixo === "Desde"
+      ? "text-2xl sm:text-3xl font-bold mr-2 text-ink-300"
+      : "text-brand mr-1 font-bold",
+    suffix: dto.sufixo,
+    suffixClass: "text-brand ml-1 font-bold",
+    value: dto.valor,
+    startValue: dto.valorInicial,
+    title: dto.titulo,
+    desc: dto.descricao ?? "",
+  }
+}
+
 export const TrustPoints = () => {
+  const [stats, setStats] = useState<Stat[]>(STATS_FALLBACK)
+
+  useEffect(() => {
+    api.homeTrustStats()
+      .then((data) => { if (data.length > 0) setStats(data.map(fromDTO)) })
+      .catch(() => { /* mantém fallback */ })
+  }, [])
+
   return (
     <section className="relative overflow-hidden bg-ink-50 pb-14 pt-8 md:py-16">
       <div className="container-default relative z-10">
@@ -68,7 +94,7 @@ export const TrustPoints = () => {
           </div>
 
           <div className="grid grid-cols-1 divide-y divide-ink-200/80 md:grid-cols-3 md:divide-y-0">
-            {STATS.map((stat, index) => (
+            {stats.map((stat, index) => (
               <motion.div
                 key={stat.eyebrow}
                 initial={{ opacity: 0, y: 24, filter: "blur(8px)" }}

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { api } from "@/lib/api";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MoveRight } from "lucide-react";
@@ -16,8 +17,7 @@ type Marco = {
   destaque?: boolean;
 };
 
-// Conteúdo placeholder — ajustar com os marcos reais da Infodive.
-const MARCOS: Marco[] = [
+const MARCOS_FALLBACK: Marco[] = [
   {
     year: "2003",
     title: "O início",
@@ -101,6 +101,23 @@ export function SobreTimeline() {
   const trackRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
 
+  const [marcos, setMarcos] = useState<Marco[]>(MARCOS_FALLBACK);
+
+  useEffect(() => {
+    api.sobreTimeline()
+      .then((data) => {
+        if (data.marcos && data.marcos.length > 0) {
+          setMarcos(data.marcos.map((m) => ({
+            year: m.ano,
+            title: m.titulo,
+            description: m.descricao,
+            destaque: m.destaque,
+          })));
+        }
+      })
+      .catch(() => { /* mantém fallback */ });
+  }, []);
+
   useEffect(() => {
     const pin = pinRef.current;
     const wrapper = wrapperRef.current;
@@ -164,7 +181,7 @@ export function SobreTimeline() {
             ref={trackRef}
             className="flex w-max items-stretch gap-6 pl-[max(2.5rem,calc((100vw-80rem)/2+2.5rem))] pr-[12vw]"
           >
-            {MARCOS.map((marco, i) => (
+            {marcos.map((marco, i) => (
               <MarcoCard key={marco.year} marco={marco} index={i} />
             ))}
           </div>
@@ -190,7 +207,7 @@ export function SobreTimeline() {
           </Reveal>
 
           <ol className="mt-12 space-y-12 border-l border-white/10 pl-6">
-            {MARCOS.map((marco, i) => (
+            {marcos.map((marco, i) => (
               <Reveal as="li" key={marco.year} delay={0.05} className="relative">
                 <span
                   aria-hidden

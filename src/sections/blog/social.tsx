@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
 import Image from "next/image";
 import {
   ArrowUpRight,
@@ -130,19 +131,27 @@ const linkedinPosts: LinkedinPost[] = [
   },
 ];
 
-const INSTAGRAM_URL = "https://www.instagram.com/infodiveit/";
-const LINKEDIN_URL =
-  "https://www.linkedin.com/company/infodiveit/posts/?feedView=all";
-
 type Rede = "instagram" | "linkedin";
 
-/**
- * Feed social mockado (Instagram + LinkedIn). Tabs alternam o feed; layouts
- * distintos por rede — mosaico/masonry no Instagram, posts longos no LinkedIn.
- * No futuro virá da API; por ora estático. Fundo dark para separar dos artigos.
- */
 export function BlogSocial() {
   const [rede, setRede] = useState<Rede>("instagram");
+  const [instagramUrl, setInstagramUrl] = useState("https://www.instagram.com/infodiveit/");
+  const [linkedinUrl, setLinkedinUrl] = useState("https://www.linkedin.com/company/infodiveit/posts/?feedView=all");
+  const [socialEyebrow, setSocialEyebrow] = useState("Nas redes sociais");
+  const [socialHeadline, setSocialHeadline] = useState("Acompanhe a Infodive no Instagram e LinkedIn.");
+  const [socialDescricao, setSocialDescricao] = useState("Conteúdo técnico, novidades e bastidores da equipe.");
+
+  useEffect(() => {
+    api.configBlog()
+      .then((data) => {
+        if (data.urlInstagram) setInstagramUrl(data.urlInstagram);
+        if (data.urlLinkedin) setLinkedinUrl(data.urlLinkedin);
+        if (data.socialEyebrow) setSocialEyebrow(data.socialEyebrow);
+        if (data.socialHeadline) setSocialHeadline(data.socialHeadline);
+        if (data.socialDescricao) setSocialDescricao(data.socialDescricao);
+      })
+      .catch(() => { /* mantém fallback */ });
+  }, []);
 
   return (
     <section className="relative overflow-hidden bg-[#050507] py-20 text-white md:py-28">
@@ -151,20 +160,20 @@ export function BlogSocial() {
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
             <p className="text-xs font-medium uppercase tracking-widest text-brand-accent">
-              Nas redes sociais
+              {socialEyebrow}
             </p>
             <h2 className="mt-3 text-balance text-white">
-              Acompanhe a Infodive no Instagram e LinkedIn.
+              {socialHeadline}
             </h2>
             <p className="mt-4 text-pretty leading-relaxed text-ink-300">
-              Conteúdo técnico, novidades e bastidores da equipe.
+              {socialDescricao}
             </p>
           </div>
 
           {/* Botões de perfil */}
           <div className="flex flex-shrink-0 flex-wrap gap-3">
             <a
-              href={INSTAGRAM_URL}
+              href={instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-medium !text-white transition-colors hover:border-white/40"
@@ -179,7 +188,7 @@ export function BlogSocial() {
               <ArrowUpRight className="h-4 w-4 text-ink-300" aria-hidden />
             </a>
             <a
-              href={LINKEDIN_URL}
+              href={linkedinUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-medium !text-white transition-colors hover:border-white/40"

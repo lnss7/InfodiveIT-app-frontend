@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { api } from "@/lib/api";
+import { api, type ConteudoDTO } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/animations/reveal";
 
@@ -17,7 +17,7 @@ type ContentItem = {
   id: string;
   titulo: string;
   slug: string;
-  tipo: "ARTIGO" | "VIDEO" | "POST_SOCIAL";
+  tipo: ConteudoDTO['tipo'];
   descricao?: string;
   publicadoEm?: string;
   tempoLeitura: string;
@@ -25,16 +25,6 @@ type ContentItem = {
   imagem: any;
 };
 
-type ApiContentItem = {
-  id: string;
-  titulo: string;
-  slug: string;
-  tipo: "ARTIGO" | "VIDEO" | "POST_SOCIAL";
-  descricao?: string;
-  publicadoEm?: string;
-  conteudo?: string;
-  categoriaSlug?: string;
-};
 
 // Fallback estático correspondendo fielmente ao screenshot
 const MOCK_CONTEUDOS: ContentItem[] = [
@@ -95,7 +85,7 @@ export function Blog() {
           if (res && res.content && res.content.length > 0) {
             const formatted = res.content
               .slice(0, 3)
-              .map((item: ApiContentItem, idx: number) => ({
+              .map((item: ConteudoDTO, idx: number) => ({
                 id: item.id,
                 titulo: item.titulo,
                 slug: item.slug,
@@ -108,10 +98,8 @@ export function Blog() {
                       year: "numeric",
                     })
                   : "01 jun 2026",
-                tempoLeitura: `${Math.max(3, Math.round((item.conteudo?.split(" ").length || 200) / 200))} min read`,
-                categoria: item.categoriaSlug
-                  ? item.categoriaSlug.toUpperCase()
-                  : defaultCategories[idx % 3],
+                tempoLeitura: item.tempoLeitura || `${Math.max(3, Math.round((item.conteudo?.split(" ").length || 200) / 200))} min read`,
+                categoria: defaultCategories[idx % 3],
                 imagem: defaultImages[idx % 3],
               }));
             setItems(formatted);

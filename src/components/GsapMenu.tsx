@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { api } from "@/lib/api";
 import { createPortal } from "react-dom";
 import gsap from "gsap";
 import Image from "next/image";
@@ -269,29 +270,37 @@ export function GsapMenu({
     setErrors({});
     setStatus("submitting");
 
-    // Simulate API request
-    setTimeout(() => {
-      setStatus("success");
-      
-      // Auto-close menu after success feedback (5 seconds)
-      setTimeout(() => {
-        onToggle(false);
-        // Reset state after closing animation completes
+    api.enviarLead({
+      nomeCompleto: `${firstName} ${lastName}`.trim(),
+      email,
+      telefone: phone || undefined,
+      empresa: company,
+      cargo: role || undefined,
+      mensagem: message || undefined,
+      consentimentoLgpd: agreeToTerms,
+    })
+      .then(() => {
+        setStatus("success");
         setTimeout(() => {
-          setStatus("idle");
-          setFirstName("");
-          setLastName("");
-          setEmail("");
-          setPhone("");
-          setCompany("");
-          setRole("");
-          setTechnologies([]);
-          setMessage("");
-          setAgreeToTerms(false);
-          setErrors({});
-        }, 1000);
-      }, 5000);
-    }, 1200);
+          onToggle(false);
+          setTimeout(() => {
+            setStatus("idle");
+            setFirstName("");
+            setLastName("");
+            setEmail("");
+            setPhone("");
+            setCompany("");
+            setRole("");
+            setTechnologies([]);
+            setMessage("");
+            setAgreeToTerms(false);
+            setErrors({});
+          }, 1000);
+        }, 5000);
+      })
+      .catch(() => {
+        setStatus("error");
+      });
   };
 
   if (!mounted) return null;

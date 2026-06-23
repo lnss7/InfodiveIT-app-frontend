@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
@@ -8,12 +8,29 @@ import { ArrowLeft } from "lucide-react";
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
 import { Reveal } from "@/components/animations/reveal";
 import { TextEffect } from "@/components/animations/text-effect";
+import { api } from "@/lib/api";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export function SobreHero() {
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  const [eyebrow, setEyebrow] = useState("Quem Somos");
+  const [headline, setHeadline] = useState("Integradores de tecnologia desde 2003.");
+  const [subtitulo, setSubtitulo] = useState("Há mais de duas décadas, a Infodive desenha, implementa e sustenta a infraestrutura crítica de empresas que não podem parar — da arquitetura à operação.");
+  const [highlightWords, setHighlightWords] = useState(["2003"]);
+
+  useEffect(() => {
+    api.paginaHero("sobre")
+      .then((data) => {
+        if (data.eyebrow) setEyebrow(data.eyebrow);
+        if (data.headline) setHeadline(data.headline);
+        if (data.subtitulo) setSubtitulo(data.subtitulo);
+        if (data.tagline) setHighlightWords([data.tagline]);
+      })
+      .catch(() => { /* mantém fallback */ });
+  }, []);
 
   // Parallax de saída — o conteúdo desce mais devagar que o scroll e esmaece,
   // criando profundidade na transição para o manifesto. Apenas no desktop:
@@ -76,7 +93,7 @@ export function SobreHero() {
         <div className="flex max-w-4xl flex-col items-center mx-auto text-center w-full">
           <Reveal>
             <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-[#7aa9ff]">
-              Quem Somos
+              {eyebrow}
             </p>
           </Reveal>
 
@@ -87,18 +104,16 @@ export function SobreHero() {
             as="span"
             delay={0.15}
             duration={0.9}
-            highlightWords={["2003"]}
+            highlightWords={highlightWords}
             highlightClassName="text-transparent [-webkit-text-stroke:1.8px_#0E66FF]"
           >
-            Integradores de tecnologia desde 2003.
+            {headline}
           </TextEffect>
         </h1>
 
         <Reveal delay={0.5}>
           <p className="max-w-2xl text-balance text-base leading-relaxed text-ink-300 sm:text-lg">
-            Há mais de duas décadas, a Infodive desenha, implementa e sustenta a
-            infraestrutura crítica de empresas que não podem parar — da
-            arquitetura à operação.
+            {subtitulo}
           </p>
         </Reveal>
 

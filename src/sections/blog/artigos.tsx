@@ -1,42 +1,79 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Reveal } from "@/components/animations/reveal";
-import { ARTIGOS, FILTROS, type TipoConteudo } from "@/lib/blog-data";
+import { api, type ConteudoDTO } from "@/lib/api";
+import { ARTIGOS, FILTROS, type Artigo, type TipoConteudo } from "@/lib/blog-data";
 import { cn } from "@/lib/utils";
 import { ArtigoCard } from "./article-card";
 
-/**
- * Seção de artigos e materiais técnicos próprios da Infodive. Filtros por tipo
- * (client) sobre os mocks e grid de cards revelando em camadas. Cada card é um
- * link para a página de detalhe em /blog/[slug].
- */
+const TIPO_MAP: Record<string, TipoConteudo> = {
+  ARTIGO: "artigo",
+  WHITEPAPER: "whitepaper",
+  CASE: "case",
+  DATASHEET: "datasheet",
+  VIDEO: "video",
+};
+
+function fromConteudoDTO(dto: ConteudoDTO): Artigo {
+  return {
+    slug: dto.slug,
+    tipo: TIPO_MAP[dto.tipo] ?? "artigo",
+    categoria: "",
+    fabricante: "",
+    titulo: dto.titulo,
+    descricao: dto.descricao ?? "",
+    data: dto.publicadoEm
+      ? new Date(dto.publicadoEm).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })
+      : "",
+    imagemBg: "#0D1221",
+    autor: dto.autor ?? "Equipe Infodive",
+    tempoLeitura: dto.tempoLeitura ?? "",
+    conteudo: [],
+  };
+}
+
 export function BlogArtigos() {
-  const [filtroAtivo, setFiltroAtivo] = useState<TipoConteudo | "todos">(
-    "todos",
-  );
+  const [artigos, setArtigos] = useState<Artigo[]>(ARTIGOS);
+  const [filtroAtivo, setFiltroAtivo] = useState<TipoConteudo | "todos">("todos");
+  const [eyebrow, setEyebrow] = useState("Artigos & Materiais");
+  const [headline, setHeadline] = useState("Conteúdo técnico produzido pela equipe Infodive.");
+
+  useEffect(() => {
+    api.conteudos({ size: 50 })
+      .then((page) => {
+        const mapped = page.content
+          .filter((dto) => dto.tipo !== "POST_SOCIAL" && TIPO_MAP[dto.tipo])
+          .map(fromConteudoDTO);
+        if (mapped.length > 0) setArtigos(mapped);
+      })
+      .catch(() => { /* mantém fallback */ });
+
+    api.configBlog()
+      .then((data) => {
+        if (data.artigosEyebrow) setEyebrow(data.artigosEyebrow);
+        if (data.artigosHeadline) setHeadline(data.artigosHeadline);
+      })
+      .catch(() => { /* mantém fallback */ });
+  }, []);
 
   const artigosFiltrados =
     filtroAtivo === "todos"
-      ? ARTIGOS
-      : ARTIGOS.filter((artigo) => artigo.tipo === filtroAtivo);
+      ? artigos
+      : artigos.filter((artigo) => artigo.tipo === filtroAtivo);
 
   return (
     <section className="relative bg-white py-20 md:py-28">
       <div className="container-default">
-        {/* Header */}
         <div className="max-w-2xl">
           <Reveal>
-            <p className="eyebrow">Artigos &amp; Materiais</p>
+            <p className="eyebrow">{eyebrow}</p>
           </Reveal>
           <Reveal delay={0.1}>
-            <h2 className="text-balance">
-              Conteúdo técnico produzido pela equipe Infodive.
-            </h2>
+            <h2 className="text-balance">{headline}</h2>
           </Reveal>
         </div>
 
-        {/* Filtros */}
         <Reveal delay={0.15}>
           <div className="mt-10 flex flex-wrap gap-2.5">
             {FILTROS.map((filtro) => {
@@ -60,20 +97,14 @@ export function BlogArtigos() {
           </div>
         </Reveal>
 
-        {/* Grid de cards */}
         <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {artigosFiltrados.map((artigo, index) => (
-            <Reveal
-              key={artigo.slug}
-              delay={(index % 3) * 0.08}
-              className="h-full"
-            >
+            <Reveal key={artigo.slug} delay={(index % 3) * 0.08} className="h-full">
               <ArtigoCard artigo={artigo} />
             </Reveal>
           ))}
         </div>
 
-        {/* Carregar mais */}
         <div className="mt-12 flex justify-center">
           <button type="button" className="btn-secondary !text-ink-950">
             Carregar mais conteúdos

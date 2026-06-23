@@ -3,13 +3,16 @@ import { ArrowLeft } from "lucide-react";
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
 import { Reveal } from "@/components/animations/reveal";
 import { TextEffect } from "@/components/animations/text-effect";
+import { api } from "@/lib/api";
 
-/**
- * Hero do /blog — simples e direto, na mesma linguagem dark dos heros de
- * /servicos e /sobre: grid interativo ao fundo, eyebrow, título via TextEffect
- * (blur) e subtítulo. Sem botões.
- */
-export function BlogHero() {
+export async function BlogHero() {
+  const hero = await api.paginaHero("blog").catch(() => null);
+
+  const eyebrow = hero?.eyebrow ?? "Conteúdos";
+  const headline = hero?.headline ?? "Conhecimento técnico para decisões melhores.";
+  const subtitulo = hero?.subtitulo ?? "Artigos, materiais técnicos e o que a Infodive compartilha nas redes.";
+  const highlightWords = hero?.tagline ? [hero.tagline] : ["melhores"];
+
   return (
     <section className="relative overflow-hidden border-b border-white/5 bg-[#050507] pb-24 pt-24 text-white sm:pt-40 md:pb-28">
       {/* Grid decorativo interativo ao fundo */}
@@ -40,7 +43,7 @@ export function BlogHero() {
         <div className="flex max-w-4xl flex-col items-center mx-auto text-center w-full">
           <Reveal>
             <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-[#7aa9ff]">
-              Conteúdos
+              {eyebrow}
             </p>
           </Reveal>
 
@@ -51,16 +54,16 @@ export function BlogHero() {
             as="span"
             delay={0.15}
             duration={0.9}
-            highlightWords={["melhores"]}
+            highlightWords={highlightWords}
             highlightClassName="text-transparent [-webkit-text-stroke:1.8px_#0E66FF]"
           >
-            Conhecimento técnico para decisões melhores.
+            {headline}
           </TextEffect>
         </h1>
 
         <Reveal delay={0.5}>
           <p className="max-w-2xl text-balance text-base leading-relaxed text-ink-300 sm:text-lg">
-            Artigos, materiais técnicos e o que a Infodive compartilha nas redes.
+            {subtitulo}
           </p>
         </Reveal>
       </div>

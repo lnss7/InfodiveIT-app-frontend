@@ -29,7 +29,7 @@ export type SpringPageResponse<T> = {
   empty: boolean
 }
 
-// DTOs do Frontend correspondendo exatamente aos contratos do Backend Spring Boot
+// ─── DTOs de conteúdo dinâmico ────────────────────────────────────────────────
 
 export type CategoriaDTO = {
   id: string
@@ -49,6 +49,8 @@ export type FabricanteDTO = {
   nome: string
   slug: string
   descricao?: string
+  descricaoCurta?: string
+  logoUrl?: string
   siteOficial?: string
   destaque: boolean
   ordem: number
@@ -76,9 +78,13 @@ export type ProdutoResumoDTO = {
   slug: string
   subcategoria?: string
   descricaoCurta?: string
+  imagemUrl?: string
   destaque: boolean
   categoriaSlug: string
+  categoriaTitle?: string
   fabricanteSlug: string
+  fabricanteNome?: string
+  fabricanteLogoUrl?: string
 }
 
 export type ProdutoDTO = {
@@ -105,9 +111,12 @@ export type ConteudoDTO = {
   id: string
   titulo: string
   slug: string
-  tipo: 'ARTIGO' | 'VIDEO' | 'POST_SOCIAL'
+  tipo: 'ARTIGO' | 'WHITEPAPER' | 'CASE' | 'DATASHEET' | 'VIDEO' | 'POST_SOCIAL'
   origem: 'INTERNO' | 'INSTAGRAM' | 'LINKEDIN'
   descricao?: string
+  imagemUrl?: string
+  autor?: string
+  tempoLeitura?: string
   conteudo?: string
   urlExterna?: string
   socialPostId?: string
@@ -120,17 +129,228 @@ export type ConteudoDTO = {
   updatedAt: string
 }
 
-export type BannerDTO = {
+export type CaseDTO = {
   id: string
+  segmento: string
+  cliente: string
+  titulo: string
+  desafio: string
+  resultado: string
+  metrica: string
+  autor: string
+  cargo: string
+  depoimento: string
+  imagemUrl?: string
+  ordem: number
+}
+
+// ─── DTOs de configuração de página ──────────────────────────────────────────
+
+export type PaginaHeroDTO = {
+  pagina: string
+  eyebrow?: string
+  headline?: string
+  subtitulo?: string
+  tagline?: string
+}
+
+export type CtaDTO = {
+  pagina: string
   titulo?: string
   subtitulo?: string
-  secao: 'HERO_HOME' | 'SOLUCOES' | 'PRODUTOS' | 'SERVICOS' | 'SOBRE'
   ctaTexto?: string
-  ctaUrl?: string
-  ativo: boolean
-  createdAt: string
-  updatedAt: string
 }
+
+export type ConfigFooterDTO = {
+  descricaoEmpresa?: string
+  badgeNoc?: string
+  badgeCloud?: string
+  nomeLegal?: string
+  urlLinkedin?: string
+  urlInstagram?: string
+  urlFacebook?: string
+}
+
+export type ConfigBlogDTO = {
+  artigosEyebrow?: string
+  artigosHeadline?: string
+  socialEyebrow?: string
+  socialHeadline?: string
+  socialDescricao?: string
+  urlInstagram?: string
+  urlLinkedin?: string
+}
+
+export type ContatoInfoDTO = {
+  eyebrow?: string
+  headline?: string
+  subtitulo?: string
+  email?: string
+  telefone?: string
+  endereco?: string
+  horarioComercial?: string
+  horarioNoc?: string
+  cardTitulo?: string
+  cardDescricao?: string
+  cardBullets?: string[]
+  cardCtaTexto?: string
+  cardStatus?: string
+}
+
+export type FaqDTO = {
+  id: string
+  pergunta: string
+  resposta: string
+  ordem: number
+}
+
+export type SecaoHomeDTO = {
+  secao: string
+  eyebrow?: string
+  headline?: string
+  subtitulo?: string
+}
+
+// ─── DTOs de seções da Home ───────────────────────────────────────────────────
+
+export type HeroCarouselDTO = {
+  id: string
+  imagemUrl: string
+  ordem: number
+}
+
+export type HomeSolucoesBentoDTO = {
+  id: string
+  nome: string
+  descricao?: string
+  icone?: string
+  imagemIaUrl?: string
+  ordem: number
+}
+
+export type HomeSegurancaMarqueeDTO = {
+  id: string
+  icone?: string
+  titulo: string
+  corpo: string
+  ordem: number
+}
+
+export type HomeProblemasDTO = {
+  id: string
+  titulo: string
+  descricao: string
+  solucaoIndicada?: string
+  href?: string
+  ordem: number
+}
+
+export type HomeTrustStatsDTO = {
+  id: string
+  eyebrow?: string
+  prefixo?: string
+  valor: number
+  valorInicial: number
+  sufixo?: string
+  titulo: string
+  descricao?: string
+  ordem: number
+}
+
+// ─── DTOs de seções de Serviços ───────────────────────────────────────────────
+
+export type EtapaItem = {
+  titulo: string
+  descricao: string
+  icone?: string
+  ordem: number
+}
+
+export type MetricaItem = {
+  prefixo?: string
+  valor: number
+  sufixo?: string
+  label: string
+}
+
+export type PilarItem = {
+  icone?: string
+  titulo: string
+  descricao: string
+}
+
+export type ServicosEtapasDTO = {
+  eyebrow?: string
+  headline?: string
+  subtitulo?: string
+  etapas: EtapaItem[]
+}
+
+export type ServicosMetodologiaDTO = {
+  eyebrow?: string
+  headline?: string
+  paragrafo?: string
+  metricas: MetricaItem[]
+  pilares: PilarItem[]
+}
+
+// ─── DTOs de seções Sobre ─────────────────────────────────────────────────────
+
+export type StatItem = {
+  prefixo?: string
+  valor: number
+  valorInicial: number
+  sufixo?: string
+  label: string
+  coluna?: string
+}
+
+export type MarcoItem = {
+  ano: string
+  titulo: string
+  descricao: string
+  destaque: boolean
+  ordem: number
+}
+
+export type ValorItem = {
+  icone?: string
+  titulo: string
+  descricao: string
+}
+
+export type FotoItem = {
+  imagemUrl: string
+  alt?: string
+  ordem: number
+}
+
+export type SobreNumerosDTO = {
+  textoDescritivo?: string
+  stats: StatItem[]
+}
+
+export type SobreTimelineDTO = {
+  eyebrow?: string
+  headline?: string
+  marcos: MarcoItem[]
+}
+
+export type SobreValoresDTO = {
+  eyebrow?: string
+  headline?: string
+  paragrafo?: string
+  valores: ValorItem[]
+}
+
+export type SobreCulturaDTO = {
+  eyebrow?: string
+  headline?: string
+  paragrafo?: string
+  fotos: FotoItem[]
+}
+
+// ─── Infraestrutura HTTP ──────────────────────────────────────────────────────
 
 type FetchOptions = Omit<RequestInit, 'next'> & {
   /** Tempo de revalidação em segundos. Default 60s. Passe 0 para sempre fresco. */
@@ -147,7 +367,6 @@ export async function fetchAPI<T>(
     throw new Error('NEXT_PUBLIC_API_URL is not configured.')
   }
 
-  // Garante que o caminho comece com '/' e junta com a URL base da API
   const cleanPath = path.startsWith('/') ? path : `/${path}`
   const url = `${API_URL}${cleanPath}`
 
@@ -177,69 +396,102 @@ function buildQuery(params?: Record<string, string | number | boolean | undefine
   return '?' + new URLSearchParams(entries.map(([k, v]) => [k, String(v)])).toString()
 }
 
+// ─── Métodos da API ───────────────────────────────────────────────────────────
+
 export const api = {
-  /**
-   * Lista todas as categorias ativas (não paginada)
-   */
-  categorias: () => fetchAPI<CategoriaDTO[]>('/categorias'),
+  // Conteúdo dinâmico
+  categorias: () =>
+    fetchAPI<CategoriaDTO[]>('/categorias'),
 
-  /**
-   * Busca os detalhes de uma categoria específica via slug
-   */
-  categoria: (slug: string) => fetchAPI<CategoriaDTO>(`/categorias/${encodeURIComponent(slug)}`),
+  categoria: (slug: string) =>
+    fetchAPI<CategoriaDTO>(`/categorias/${encodeURIComponent(slug)}`),
 
-  /**
-   * Lista produtos com filtros opcionais de categoria, fabricante e paginação
-   */
-  produtos: (params?: { categoria?: string; fabricante?: string; page?: number; size?: number }) =>
+  produtos: (params?: { categoria?: string; fabricante?: string; destaque?: boolean; page?: number; size?: number }) =>
     fetchAPI<SpringPageResponse<ProdutoResumoDTO>>(`/produtos${buildQuery(params)}`),
 
-  /**
-   * Busca detalhes de um único produto pelo slug
-   */
-  produto: (slug: string) => fetchAPI<ProdutoDTO>(`/produtos/${encodeURIComponent(slug)}`),
+  produto: (slug: string) =>
+    fetchAPI<ProdutoDTO>(`/produtos/${encodeURIComponent(slug)}`),
 
-  /**
-   * Lista fabricantes ativos (permite filtrar por destaque para a home)
-   */
   fabricantes: (params?: { destaque?: boolean }) =>
     fetchAPI<FabricanteDTO[]>(`/fabricantes${buildQuery(params)}`),
 
-  /**
-   * Busca detalhes de um fabricante pelo slug
-   */
-  fabricante: (slug: string) => fetchAPI<FabricanteDTO>(`/fabricantes/${encodeURIComponent(slug)}`),
+  fabricante: (slug: string) =>
+    fetchAPI<FabricanteDTO>(`/fabricantes/${encodeURIComponent(slug)}`),
 
-  /**
-   * Lista todos os serviços profissionais ativos (não paginada)
-   */
-  servicos: () => fetchAPI<ServicoDTO[]>('/servicos'),
+  servicos: () =>
+    fetchAPI<ServicoDTO[]>('/servicos'),
 
-  /**
-   * Busca detalhes de um serviço pelo slug
-   */
-  servico: (slug: string) => fetchAPI<ServicoDTO>(`/servicos/${encodeURIComponent(slug)}`),
+  servico: (slug: string) =>
+    fetchAPI<ServicoDTO>(`/servicos/${encodeURIComponent(slug)}`),
 
-  /**
-   * Lista conteúdos de blog/redes sociais com filtros opcionais por tipo e paginação
-   */
-  conteudos: (params?: { tipo?: 'ARTIGO' | 'VIDEO' | 'POST_SOCIAL'; page?: number; size?: number }) =>
+  conteudos: (params?: { tipo?: ConteudoDTO['tipo']; origem?: ConteudoDTO['origem']; page?: number; size?: number }) =>
     fetchAPI<SpringPageResponse<ConteudoDTO>>(`/conteudos${buildQuery(params)}`),
 
-  /**
-   * Busca detalhes de um conteúdo específico pelo slug
-   */
-  conteudo: (slug: string) => fetchAPI<ConteudoDTO>(`/conteudos/${encodeURIComponent(slug)}`),
+  conteudo: (slug: string) =>
+    fetchAPI<ConteudoDTO>(`/conteudos/${encodeURIComponent(slug)}`),
 
-  /**
-   * Lista os banners configurados para uma seção específica (ex: HERO_HOME)
-   */
-  banners: (params?: { secao?: 'HERO_HOME' | 'SOLUCOES' | 'PRODUTOS' | 'SERVICOS' | 'SOBRE' }) =>
-    fetchAPI<BannerDTO[]>(`/banners${buildQuery(params)}`),
+  cases: () =>
+    fetchAPI<CaseDTO[]>('/cases'),
 
-  /**
-   * Envia as informações de captura de lead comercial (LGPD obrigatória)
-   */
+  faq: () =>
+    fetchAPI<FaqDTO[]>('/faq'),
+
+  // Configuração de página
+  paginaHero: (pagina: string) =>
+    fetchAPI<PaginaHeroDTO>(`/paginas-hero/${encodeURIComponent(pagina)}`),
+
+  cta: (pagina: string) =>
+    fetchAPI<CtaDTO>(`/ctas/${encodeURIComponent(pagina)}`),
+
+  configFooter: () =>
+    fetchAPI<ConfigFooterDTO>('/config-footer'),
+
+  configBlog: () =>
+    fetchAPI<ConfigBlogDTO>('/config-blog'),
+
+  contatoInfo: () =>
+    fetchAPI<ContatoInfoDTO>('/contato-info'),
+
+  secaoHome: (secao: string) =>
+    fetchAPI<SecaoHomeDTO>(`/secoes-home/${encodeURIComponent(secao)}`),
+
+  // Seções da Home
+  heroCarousel: () =>
+    fetchAPI<HeroCarouselDTO[]>('/hero-carousel'),
+
+  homeSolucoesBento: () =>
+    fetchAPI<HomeSolucoesBentoDTO[]>('/home-solucoes-bento'),
+
+  homeSegurancaMarquee: () =>
+    fetchAPI<HomeSegurancaMarqueeDTO[]>('/home-seguranca-marquee'),
+
+  homeProblemas: () =>
+    fetchAPI<HomeProblemasDTO[]>('/home-problemas'),
+
+  homeTrustStats: () =>
+    fetchAPI<HomeTrustStatsDTO[]>('/home-trust-stats'),
+
+  // Seções de Serviços
+  servicosEtapas: () =>
+    fetchAPI<ServicosEtapasDTO>('/servicos-etapas'),
+
+  servicosMetodologia: () =>
+    fetchAPI<ServicosMetodologiaDTO>('/servicos-metodologia'),
+
+  // Seções Sobre
+  sobreNumeros: () =>
+    fetchAPI<SobreNumerosDTO>('/sobre-numeros'),
+
+  sobreTimeline: () =>
+    fetchAPI<SobreTimelineDTO>('/sobre-timeline'),
+
+  sobreValores: () =>
+    fetchAPI<SobreValoresDTO>('/sobre-valores'),
+
+  sobreCultura: () =>
+    fetchAPI<SobreCulturaDTO>('/sobre-cultura'),
+
+  // Leads (sem cache — sempre fresco)
   enviarLead: (data: {
     nomeCompleto: string
     email: string

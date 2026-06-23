@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { api } from "@/lib/api";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowDown } from "lucide-react";
@@ -18,14 +19,13 @@ type Stat = {
   label: string;
 };
 
-// Conteúdo placeholder — ajustar com os números reais da Infodive.
-const COLUNA_A: Stat[] = [
+const COLUNA_A_FALLBACK: Stat[] = [
   { value: 2003, startValue: 1990, label: "Ano de fundação" },
   { prefix: "+", value: 500, label: "Projetos entregues em todo o país" },
   { prefix: "+", value: 12, label: "Fabricantes parceiros certificados" },
 ];
 
-const COLUNA_B: Stat[] = [
+const COLUNA_B_FALLBACK: Stat[] = [
   { prefix: "+", value: 20, label: "Anos integrando tecnologia B2B" },
   { prefix: "+", value: 100, label: "Clientes ativos em setores críticos" },
   { value: 24, suffix: "/7", label: "Suporte e monitoramento contínuos" },
@@ -62,6 +62,34 @@ export function SobreNumeros() {
   const sectionRef = useRef<HTMLElement>(null);
   const colARef = useRef<HTMLDivElement>(null);
   const colBRef = useRef<HTMLDivElement>(null);
+
+  const [colunaA, setColunaA] = useState<Stat[]>(COLUNA_A_FALLBACK);
+  const [colunaB, setColunaB] = useState<Stat[]>(COLUNA_B_FALLBACK);
+
+  useEffect(() => {
+    api.sobreNumeros()
+      .then((data) => {
+        if (data.stats && data.stats.length > 0) {
+          const a = data.stats.filter((s) => s.coluna !== "B").map((s) => ({
+            prefix: s.prefixo,
+            value: s.valor,
+            startValue: s.valorInicial,
+            suffix: s.sufixo,
+            label: s.label,
+          }));
+          const b = data.stats.filter((s) => s.coluna === "B").map((s) => ({
+            prefix: s.prefixo,
+            value: s.valor,
+            startValue: s.valorInicial,
+            suffix: s.sufixo,
+            label: s.label,
+          }));
+          if (a.length > 0) setColunaA(a);
+          if (b.length > 0) setColunaB(b);
+        }
+      })
+      .catch(() => { /* mantém fallback */ });
+  }, []);
 
   // Parallax entre colunas — só no desktop (no mobile o grid empilha em
   // coluna única e transform atrelado ao scroll trava no iOS).
@@ -136,12 +164,12 @@ export function SobreNumeros() {
           <div className="lg:col-span-7 lg:col-start-6">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div ref={colARef} className="flex flex-col gap-6">
-                {COLUNA_A.map((stat, i) => (
+                {colunaA.map((stat, i) => (
                   <StatCard key={stat.label} stat={stat} delay={i * 0.08} />
                 ))}
               </div>
               <div ref={colBRef} className="flex flex-col gap-6 sm:mt-28">
-                {COLUNA_B.map((stat, i) => (
+                {colunaB.map((stat, i) => (
                   <StatCard key={stat.label} stat={stat} delay={0.1 + i * 0.08} />
                 ))}
               </div>

@@ -17,14 +17,24 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { Reveal } from "@/components/animations/reveal";
 import { cn } from "@/lib/utils";
+import { api } from "@/lib/api";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Gradiente-acento exclusivo de Serviços (mesma marca do nav-middle).
 const GRADIENT_FILL = "linear-gradient(135deg,#6F0101 0%,#3B1F59 50%,#063FB4 100%)";
-// Versão Tailwind p/ texto recortado (background-clip: text).
 const GRADIENT_TEXT =
   "bg-[linear-gradient(135deg,#6F0101_0%,#3B1F59_50%,#063FB4_100%)] bg-clip-text text-transparent";
+
+const ICON_MAP: Record<string, LucideIcon> = {
+  Search, ClipboardCheck, PenTool, Rocket, ArrowRightLeft, Wrench, Users, Activity,
+  search: Search, clipboardcheck: ClipboardCheck, pentool: PenTool, rocket: Rocket,
+  arrowrightleft: ArrowRightLeft, wrench: Wrench, users: Users, activity: Activity,
+};
+
+function getIcon(name?: string): LucideIcon {
+  if (!name) return Search;
+  return ICON_MAP[name] ?? ICON_MAP[name.toLowerCase()] ?? Search;
+}
 
 type Etapa = {
   icon: LucideIcon;
@@ -32,55 +42,15 @@ type Etapa = {
   description: string;
 };
 
-const ETAPAS: Etapa[] = [
-  {
-    icon: Search,
-    title: "Consultoria",
-    description:
-      "Entendemos seu ambiente, suas dores e seus objetivos antes de qualquer recomendação.",
-  },
-  {
-    icon: ClipboardCheck,
-    title: "Assessment",
-    description:
-      "Diagnóstico técnico detalhado do cenário atual: o que existe, o que falta, o que está em risco.",
-  },
-  {
-    icon: PenTool,
-    title: "Projeto",
-    description:
-      "Desenho da arquitetura e planejamento da solução sob medida para o seu ambiente.",
-  },
-  {
-    icon: Rocket,
-    title: "Implantação",
-    description:
-      "Execução e instalação das soluções com metodologia e mínimo impacto na operação.",
-  },
-  {
-    icon: ArrowRightLeft,
-    title: "Migração",
-    description:
-      "Transição de ambientes legados para novas plataformas sem downtime e sem perda de dados.",
-  },
-  {
-    icon: Wrench,
-    title: "Sustentação",
-    description:
-      "Suporte contínuo e manutenção para manter tudo funcionando com previsibilidade.",
-  },
-  {
-    icon: Users,
-    title: "Operação Assistida",
-    description:
-      "Nossa equipe opera e gere o ambiente como extensão do seu time de TI.",
-  },
-  {
-    icon: Activity,
-    title: "Monitoramento",
-    description:
-      "Observabilidade e resposta proativa — detectamos e agimos antes que vire problema.",
-  },
+const ETAPAS_FALLBACK: Etapa[] = [
+  { icon: Search, title: "Consultoria", description: "Entendemos seu ambiente, suas dores e seus objetivos antes de qualquer recomendação." },
+  { icon: ClipboardCheck, title: "Assessment", description: "Diagnóstico técnico detalhado do cenário atual: o que existe, o que falta, o que está em risco." },
+  { icon: PenTool, title: "Projeto", description: "Desenho da arquitetura e planejamento da solução sob medida para o seu ambiente." },
+  { icon: Rocket, title: "Implantação", description: "Execução e instalação das soluções com metodologia e mínimo impacto na operação." },
+  { icon: ArrowRightLeft, title: "Migração", description: "Transição de ambientes legados para novas plataformas sem downtime e sem perda de dados." },
+  { icon: Wrench, title: "Sustentação", description: "Suporte contínuo e manutenção para manter tudo funcionando com previsibilidade." },
+  { icon: Users, title: "Operação Assistida", description: "Nossa equipe opera e gere o ambiente como extensão do seu time de TI." },
+  { icon: Activity, title: "Monitoramento", description: "Observabilidade e resposta proativa — detectamos e agimos antes que vire problema." },
 ];
 
 /**
@@ -97,6 +67,30 @@ export function ServicosCiclo() {
   const progressRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(0);
   const [active, setActive] = useState(0);
+  const [etapas, setEtapas] = useState<Etapa[]>(ETAPAS_FALLBACK);
+  const etapasRef = useRef<Etapa[]>(ETAPAS_FALLBACK);
+  const [eyebrow, setEyebrow] = useState("O ciclo Infodive");
+  const [headline, setHeadline] = useState("Da estratégia à operação contínua.");
+  const [subtitulo, setSubtitulo] = useState("Soluções dizem o que. Serviços dizem como — e quem planeja, implanta e mantém de pé.");
+
+  useEffect(() => {
+    api.servicosEtapas()
+      .then((data) => {
+        if (data.eyebrow) setEyebrow(data.eyebrow);
+        if (data.headline) setHeadline(data.headline);
+        if (data.subtitulo) setSubtitulo(data.subtitulo);
+        if (data.etapas && data.etapas.length > 0) {
+          const mapped = data.etapas.map((e) => ({
+            icon: getIcon(e.icone),
+            title: e.titulo,
+            description: e.descricao,
+          }));
+          etapasRef.current = mapped;
+          setEtapas(mapped);
+        }
+      })
+      .catch(() => { /* mantém fallback */ });
+  }, []);
 
   useEffect(() => {
     const pin = pinRef.current;
@@ -114,18 +108,15 @@ export function ServicosCiclo() {
         scrollTrigger: {
           trigger: pin,
           start: "top top",
-          // Fixa a seção e traduz scroll vertical em avanço horizontal da jornada;
-          // o comprimento do pin é a largura excedente do track (último nó encosta
-          // na borda direita ao fim).
           end: () => `+=${getDistance()}`,
           pin: true,
-          scrub: 1, // 1s de defasagem entre scroll e animação — suaviza sem soltar
-          anticipatePin: 1, // evita o "pulo" de 1 frame ao fixar a seção
+          scrub: 1,
+          anticipatePin: 1,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             const idx = Math.min(
-              ETAPAS.length - 1,
-              Math.floor(self.progress * ETAPAS.length)
+              etapasRef.current.length - 1,
+              Math.floor(self.progress * etapasRef.current.length)
             );
             if (idx !== activeRef.current) {
               activeRef.current = idx;
@@ -156,12 +147,10 @@ export function ServicosCiclo() {
         <div className="container-default w-full">
           <div className="flex items-end justify-between gap-8">
             <div>
-              <p className="eyebrow">O ciclo Infodive</p>
-              <h2 className="text-white">Da estratégia à operação contínua.</h2>
+              <p className="eyebrow">{eyebrow}</p>
+              <h2 className="text-white">{headline}</h2>
               <p className="mt-4 max-w-md text-sm leading-relaxed text-white/55">
-                Soluções dizem <span className="text-white">o que</span>.
-                Serviços dizem <span className="text-white">como</span> — e quem
-                planeja, implanta e mantém de pé.
+                {subtitulo}
               </p>
             </div>
             <p className="flex shrink-0 items-center gap-2 pb-1 text-xs uppercase tracking-[0.2em] text-white/35">
@@ -176,7 +165,7 @@ export function ServicosCiclo() {
             ref={trackRef}
             className="flex w-max items-stretch gap-6 pl-[max(2.5rem,calc((100vw-80rem)/2+2.5rem))] pr-[12vw]"
           >
-            {ETAPAS.map((etapa, i) => {
+            {etapas.map((etapa, i) => {
               const isActive = i === active;
               const isDone = i < active;
               return (
@@ -255,17 +244,13 @@ export function ServicosCiclo() {
       <div className="py-20 lg:hidden">
         <div className="container-default">
           <Reveal>
-            <p className="eyebrow">O ciclo Infodive</p>
-            <h2 className="text-white">Da estratégia à operação contínua.</h2>
-            <p className="mt-4 text-sm leading-relaxed text-white/55">
-              Soluções dizem <span className="text-white">o que</span>. Serviços
-              dizem <span className="text-white">como</span> — e quem planeja,
-              implanta e mantém de pé.
-            </p>
+            <p className="eyebrow">{eyebrow}</p>
+            <h2 className="text-white">{headline}</h2>
+            <p className="mt-4 text-sm leading-relaxed text-white/55">{subtitulo}</p>
           </Reveal>
 
           <ol className="mt-12 space-y-5">
-            {ETAPAS.map((etapa, i) => (
+            {etapas.map((etapa, i) => (
               <Reveal as="li" key={etapa.title} delay={0.05}>
                 <article className="flex flex-col border border-white/10 bg-white/[0.02] p-7">
                   <div className="flex items-start justify-between">

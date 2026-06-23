@@ -1,48 +1,48 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Handshake, Layers, Network, Eye } from "lucide-react";
+import { Eye, Handshake, Layers, Network } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Reveal } from "@/components/animations/reveal";
+import { api } from "@/lib/api";
 
-type Valor = {
-  icon: LucideIcon;
-  title: string;
-  description: string;
+const ICON_MAP: Record<string, LucideIcon> = {
+  Handshake, Layers, Network, Eye,
+  handshake: Handshake, layers: Layers, network: Network, eye: Eye,
 };
 
-const VALORES: Valor[] = [
-  {
-    icon: Handshake,
-    title: "Parceria de longo prazo",
-    description:
-      "Relacionamentos que atravessam ciclos de tecnologia. Clientes que chegaram em 2003 seguem com a gente — porque parceiro de verdade não troca de lado quando o projeto acaba.",
-  },
-  {
-    icon: Layers,
-    title: "Profundidade técnica",
-    description:
-      "Especialistas certificados nos principais fabricantes do mercado. Não revendemos caixas: entendemos o problema antes de propor a solução.",
-  },
-  {
-    icon: Network,
-    title: "Execução ponta a ponta",
-    description:
-      "Do desenho da arquitetura à operação contínua. Assumimos a responsabilidade pelo ciclo completo, sem empurrar complexidade para o cliente.",
-  },
-  {
-    icon: Eye,
-    title: "Transparência",
-    description:
-      "Escopo claro, comunicação direta e métricas abertas. Quando algo sai do plano, o cliente é o primeiro a saber — junto com o plano de correção.",
-  },
+function getIcon(name?: string): LucideIcon {
+  if (!name) return Handshake;
+  return ICON_MAP[name] ?? ICON_MAP[name.toLowerCase()] ?? Handshake;
+}
+
+type Valor = { icon: LucideIcon; title: string; description: string };
+
+const VALORES_FALLBACK: Valor[] = [
+  { icon: Handshake, title: "Parceria de longo prazo", description: "Relacionamentos que atravessam ciclos de tecnologia. Clientes que chegaram em 2003 seguem com a gente — porque parceiro de verdade não troca de lado quando o projeto acaba." },
+  { icon: Layers, title: "Profundidade técnica", description: "Especialistas certificados nos principais fabricantes do mercado. Não revendemos caixas: entendemos o problema antes de propor a solução." },
+  { icon: Network, title: "Execução ponta a ponta", description: "Do desenho da arquitetura à operação contínua. Assumimos a responsabilidade pelo ciclo completo, sem empurrar complexidade para o cliente." },
+  { icon: Eye, title: "Transparência", description: "Escopo claro, comunicação direta e métricas abertas. Quando algo sai do plano, o cliente é o primeiro a saber — junto com o plano de correção." },
 ];
 
-/**
- * Valores — split editorial: a coluna esquerda fica sticky enquanto os
- * cards passam à direita, revelando em camadas (blur + y, padrão do projeto).
- */
 export function SobreValores() {
+  const [valores, setValores] = useState<Valor[]>(VALORES_FALLBACK);
+
+  useEffect(() => {
+    api.sobreValores()
+      .then((data) => {
+        if (data.valores && data.valores.length > 0) {
+          setValores(data.valores.map((v) => ({
+            icon: getIcon(v.icone),
+            title: v.titulo,
+            description: v.descricao,
+          })));
+        }
+      })
+      .catch(() => { /* mantém fallback */ });
+  }, []);
+
   return (
     <section className="relative border-t border-ink-200/60 bg-white py-20 md:py-28">
       <div className="container-default">
@@ -69,17 +69,13 @@ export function SobreValores() {
 
           <div className="lg:col-span-7 lg:col-start-6">
             <div className="flex flex-col gap-6">
-              {VALORES.map((valor, index) => (
+              {valores.map((valor, index) => (
                 <motion.article
                   key={valor.title}
                   initial={{ opacity: 0, y: 24, filter: "blur(8px)" }}
                   whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                   viewport={{ once: true, margin: "-80px" }}
-                  transition={{
-                    duration: 0.7,
-                    delay: index * 0.08,
-                    ease: [0.25, 1, 0.5, 1],
-                  }}
+                  transition={{ duration: 0.7, delay: index * 0.08, ease: [0.25, 1, 0.5, 1] }}
                   className="group border border-ink-200 bg-white p-8 transition-colors duration-300 hover:border-ink-500 sm:p-10"
                 >
                   <div className="flex items-start justify-between">
