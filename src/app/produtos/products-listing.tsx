@@ -33,6 +33,31 @@ const FABRICANTE_OPTIONS = [
   ...PRODUCT_FABRICANTES.map((f) => ({ value: f, label: f })),
 ]
 
+import { useEffect } from "react"
+import { api, type ProdutoResumoDTO } from "@/lib/api"
+import type { Product } from "@/lib/products-data"
+
+function toProduct(dto: ProdutoResumoDTO): Product {
+  const staticProduct = PRODUCTS.find((p) => p.slug === dto.slug)
+  return {
+    slug: dto.slug,
+    nome: dto.nome,
+    fabricante: dto.fabricanteNome || dto.fabricanteSlug,
+    fabricanteSlug: dto.fabricanteSlug,
+    logo: staticProduct?.logo || VENDOR_LOGOS[dto.fabricanteNome || dto.fabricanteSlug] || "",
+    logoClass: staticProduct?.logoClass || "h-5",
+    categoria: dto.categoriaTitle || dto.categoriaSlug,
+    categoriaSlug: dto.categoriaSlug,
+    subcategoria: dto.subcategoria || "",
+    descricaoCurta: dto.descricaoCurta || "",
+    descricaoCompleta: staticProduct?.descricaoCompleta || "",
+    destaque: dto.destaque,
+    diferenciais: staticProduct?.diferenciais || [],
+    casosDeUso: staticProduct?.casosDeUso || [],
+    servicos: staticProduct?.servicos || [],
+  }
+}
+
 export function ProductsListing() {
   const searchParams = useSearchParams()
   const urlFabricante = searchParams.get("fabricante")
@@ -41,6 +66,17 @@ export function ProductsListing() {
   const [selectedCategory, setSelectedCategory] = useState("Todos")
   const [selectedFabricante, setSelectedFabricante] = useState(urlFabricante || "Todos")
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [products, setProducts] = useState<Product[]>(PRODUCTS)
+
+  useEffect(() => {
+    api.produtos({ size: 100 })
+      .then((res) => {
+        if (res && res.content && res.content.length > 0) {
+          setProducts(res.content.map(toProduct))
+        }
+      })
+      .catch(() => { /* mantém fallback */ })
+  }, [])
 
   const isDefaultView =
     selectedCategory === "Todos" &&
@@ -49,7 +85,7 @@ export function ProductsListing() {
 
   const filtered = useMemo(() => {
     const q = searchQuery.trim().toLowerCase()
-    return PRODUCTS.filter((p) => {
+    return products.filter((p) => {
       const matchesSearch =
         q === "" ||
         p.nome.toLowerCase().includes(q) ||
@@ -62,9 +98,9 @@ export function ProductsListing() {
         selectedFabricante === "Todos" || p.fabricante === selectedFabricante
       return matchesSearch && matchesCategory && matchesFabricante
     })
-  }, [searchQuery, selectedCategory, selectedFabricante])
+  }, [searchQuery, selectedCategory, selectedFabricante, products])
 
-  const featured = useMemo(() => PRODUCTS.filter((p) => p.destaque).slice(0, 3), [])
+  const featured = useMemo(() => products.filter((p) => p.destaque).slice(0, 3), [products])
   // Na visão padrão, o grid mostra os não-destaque (os destaque já aparecem na faixa).
   const gridProducts = isDefaultView
     ? filtered.filter((p) => !p.destaque)

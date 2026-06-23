@@ -170,9 +170,8 @@ function RelatedCarousel({ products }: { products: Product[] }) {
   )
 }
 
-export function ProductDetailContent({ slug }: { slug: string }) {
+export function ProductDetailContent({ product }: { product: Product }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const product = getProductBySlug(slug)
 
   if (!product) return null
 

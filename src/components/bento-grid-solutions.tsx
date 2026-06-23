@@ -24,6 +24,19 @@ import { AnimatedBeam } from "@/components/animations/animated-beam"
 import { OrbitingCircles } from "@/components/ui/orbiting-circles"
 import { cn } from "@/lib/utils"
 import iaImage from "@/assets/bento-grid/inteligencia-artificial.webp"
+import { api } from "@/lib/api"
+
+const SECURITY_ICON_MAP: Record<string, any> = {
+  shield: ShieldCheck,
+  database: Database,
+  lock: Lock,
+  key: KeyRound,
+  check: FileCheck2,
+  activity: Activity,
+  brain: BrainCircuit,
+  server: Server,
+  cloud: Cloud,
+}
 
 // Nó circular (hub ou periférico). forwardRef para o AnimatedBeam conseguir medir
 // sua posição e ancorar o feixe no centro do círculo.
@@ -206,13 +219,13 @@ const securityEvents = [
   },
 ]
 
-function SecurityMarquee() {
+function SecurityMarquee({ events = securityEvents }: { events?: any[] }) {
   return (
     <div className="absolute inset-x-0 top-6 [mask-image:linear-gradient(to_top,transparent_18%,#000_60%)]">
       {/* Esteira: conteúdo duplicado + translateX(-50%) (animate-marquee) = loop contínuo.
           group-hover pausa a animação ao passar o mouse no card. */}
       <div className="flex w-max animate-marquee items-start gap-4 px-4 group-hover:[animation-play-state:paused]">
-        {[...securityEvents, ...securityEvents].map(({ Icon, title, body }, i) => (
+        {[...events, ...events].map(({ Icon, title, body }, i) => (
           <figure
             key={i}
             className={cn(
@@ -299,9 +312,86 @@ const features = [
 ]
 
 export function BentoGridSolutions() {
+  const [marqueeEvents, setMarqueeEvents] = React.useState<any[]>(securityEvents)
+  const [bentoData, setBentoData] = React.useState<any>(null)
+
+  React.useEffect(() => {
+    api.homeSegurancaMarquee()
+      .then((data) => {
+        if (data && data.length > 0) {
+          const sorted = [...data].sort((a, b) => a.ordem - b.ordem);
+          setMarqueeEvents(sorted.map((item) => {
+            const IconComponent = SECURITY_ICON_MAP[item.icone || ""] || ShieldCheck;
+            return {
+              Icon: IconComponent,
+              title: item.titulo,
+              body: item.corpo,
+            };
+          }));
+        }
+      })
+      .catch(() => { /* fallback */ });
+
+    api.homeSolucoesBento()
+      .then((data) => {
+        if (data && data.length > 0) {
+          setBentoData(data);
+        }
+      })
+      .catch(() => { /* fallback */ });
+  }, [])
+
+  const dynamicFeatures = React.useMemo(() => {
+    const list = [...features];
+
+    if (bentoData) {
+      bentoData.forEach((item: any) => {
+        const nameLower = item.nome.toLowerCase();
+        if (nameLower.includes("segurança") || item.icone === "lock" || item.icone === "shield") {
+          const iconComponent = SECURITY_ICON_MAP[item.icone || ""] || ShieldCheck;
+          list[0] = {
+            ...list[0],
+            name: item.nome,
+            description: item.descricao || list[0].description,
+            Icon: iconComponent,
+          };
+        } else if (nameLower.includes("inteligência") || nameLower.includes("ia") || item.icone === "brain") {
+          const iconComponent = SECURITY_ICON_MAP[item.icone || ""] || BrainCircuit;
+          const bgImage = item.imagemIaUrl || iaImage;
+          list[2] = {
+            ...list[2],
+            name: item.nome,
+            description: item.descricao || list[2].description,
+            Icon: iconComponent,
+            background: (
+              <div className="absolute inset-0">
+                <Image
+                  src={bgImage}
+                  alt={item.nome}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                  className="object-cover object-center transition-transform duration-300 ease-out [mask-image:linear-gradient(to_top,transparent_22%,#000_85%)] group-hover:scale-105 lg:object-contain lg:object-right"
+                  unoptimized={typeof bgImage === 'string'}
+                />
+              </div>
+            )
+          };
+        }
+      });
+    }
+
+    // Always update Security background to use dynamic marqueeEvents
+    list[0] = {
+      ...list[0],
+      background: <SecurityMarquee events={marqueeEvents} />,
+    };
+
+    return list;
+  }, [bentoData, marqueeEvents]);
+
   return (
     <BentoGrid>
-      {features.map((feature, idx) => (
+      {dynamicFeatures.map((feature, idx) => (
         <BentoCard key={idx} {...feature} />
       ))}
     </BentoGrid>

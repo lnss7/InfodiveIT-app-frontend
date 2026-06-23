@@ -65,12 +65,29 @@ function toFeatured(dto: ProdutoResumoDTO): FeaturedProduct {
 export function Products() {
   const [products, setProducts] = React.useState<FeaturedProduct[]>(FEATURED_FALLBACK)
   const [active, setActive] = React.useState("Todos")
+  const [sectionInfo, setSectionInfo] = React.useState({
+    eyebrow: "Produtos",
+    headline: "Produtos em destaque",
+    subtitulo: "Uma seleção do nosso catálogo dos principais fabricantes do mundo — prontos para resolver desafios reais de infraestrutura, segurança e cloud.",
+  })
 
   React.useEffect(() => {
     api.produtos({ destaque: true, size: 6 })
       .then((res) => {
         if (res.content.length > 0) {
           setProducts(res.content.map(toFeatured))
+        }
+      })
+      .catch(() => { /* mantém fallback */ })
+
+    api.secaoHome("produtos")
+      .then((data) => {
+        if (data) {
+          setSectionInfo({
+            eyebrow: data.eyebrow || "Produtos",
+            headline: data.headline || "Produtos em destaque",
+            subtitulo: data.subtitulo || "Uma seleção do nosso catálogo dos principais fabricantes do mundo — prontos para resolver desafios reais de infraestrutura, segurança e cloud.",
+          })
         }
       })
       .catch(() => { /* mantém fallback */ })
@@ -87,13 +104,20 @@ export function Products() {
     <section id="produtos" className="relative bg-ink-50 py-20 md:py-28">
       <div className="container-default">
         <Reveal className="flex flex-col items-center gap-4 text-center">
-          <p className="eyebrow text-sm">Produtos</p>
+          <p className="eyebrow text-sm">{sectionInfo.eyebrow}</p>
           <h2 className="text-ink-950 max-w-4xl text-balance text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.15]">
-            Produtos em <span className="text-[var(--brand-light)]">destaque</span>
+            {sectionInfo.headline.includes("destaque") ? (
+              <>
+                {sectionInfo.headline.split("destaque")[0]}
+                <span className="text-[var(--brand-light)]">destaque</span>
+                {sectionInfo.headline.split("destaque")[1]}
+              </>
+            ) : (
+              sectionInfo.headline
+            )}
           </h2>
           <p className="max-w-2xl text-balance text-base text-ink-500 leading-relaxed">
-            Uma seleção do nosso catálogo dos principais fabricantes do mundo — prontos
-            para resolver desafios reais de infraestrutura, segurança e cloud.
+            {sectionInfo.subtitulo}
           </p>
         </Reveal>
 

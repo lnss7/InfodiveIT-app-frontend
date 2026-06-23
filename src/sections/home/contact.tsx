@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/animations/reveal";
 import dynamic from "next/dynamic";
 import { Mail, Phone, MapPin, Clock, MessageSquare, Check, ArrowRight } from "lucide-react";
+import { api } from "@/lib/api";
 
 const GsapMenu = dynamic(() => import("@/components/GsapMenu").then((mod) => mod.GsapMenu), {
   ssr: false,
@@ -12,6 +13,64 @@ const GsapMenu = dynamic(() => import("@/components/GsapMenu").then((mod) => mod
 
 export function Contact() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [info, setInfo] = useState({
+    eyebrow: "Contato",
+    headline: "Pronto para evoluir a TI da sua empresa?",
+    subtitulo: "Conecte-se com nossos consultores seniores. Estamos prontos para projetar e implementar soluções de infraestrutura e nuvem sob medida para o seu negócio.",
+    email: "contato@infodive.com.br",
+    telefone: "+55 (51) 3330-0444",
+    endereco: "Av. Cristovão Colombo, 3000 - Sala 704 | Floresta, Porto Alegre - RS",
+    horarioComercial: "Seg a Sex, 9h às 18h",
+    horarioNoc: "Suporte Crítico NOC: 24/7",
+    cardTitulo: "Precisa de ajuda imediata?",
+    cardDescricao: "Fale com nossos engenheiros e receba uma análise rápida dos requisitos de TI, segurança e nuvem do seu negócio.",
+    cardBullets: [
+      "Resposta em até 1 hora",
+      "Diagnóstico inicial sem custo",
+      "Especialistas certificados",
+    ] as string[],
+    cardCtaTexto: "Falar com Especialista",
+    cardStatus: "Especialistas online no momento",
+  });
+
+  useEffect(() => {
+    api.contatoInfo()
+      .then((data) => {
+        if (data) {
+          let bullets: string[] = [];
+          if (Array.isArray(data.cardBullets)) {
+            bullets = data.cardBullets;
+          } else if (typeof data.cardBullets === 'string') {
+            try {
+              bullets = JSON.parse(data.cardBullets);
+            } catch {
+              bullets = [];
+            }
+          }
+
+          setInfo({
+            eyebrow: data.eyebrow || "Contato",
+            headline: data.headline || "Pronto para evoluir a TI da sua empresa?",
+            subtitulo: data.subtitulo || "Conecte-se com nossos consultores seniores. Estamos prontos para projetar e implementar soluções de infraestrutura e nuvem sob medida para o seu negócio.",
+            email: data.email || "contato@infodive.com.br",
+            telefone: data.telefone || "+55 (51) 3330-0444",
+            endereco: data.endereco || "Av. Cristovão Colombo, 3000 - Sala 704 | Floresta, Porto Alegre - RS",
+            horarioComercial: data.horarioComercial || "Seg a Sex, 9h às 18h",
+            horarioNoc: data.horarioNoc || "Suporte Crítico NOC: 24/7",
+            cardTitulo: data.cardTitulo || "Precisa de ajuda imediata?",
+            cardDescricao: data.cardDescricao || "Fale com nossos engenheiros e receba uma análise rápida dos requisitos de TI, segurança e nuvem do seu negócio.",
+            cardBullets: bullets.length > 0 ? bullets : (data.cardBullets || [
+              "Resposta em até 1 hora",
+              "Diagnóstico inicial sem custo",
+              "Especialistas certificados",
+            ]),
+            cardCtaTexto: data.cardCtaTexto || "Falar com Especialista",
+            cardStatus: data.cardStatus || "Especialistas online no momento",
+          });
+        }
+      })
+      .catch(() => { /* fallback */ });
+  }, []);
 
   return (
     <section id="contact" className="relative z-10 bg-white py-20 md:py-28 border-t border-ink-200/60">
@@ -46,12 +105,18 @@ export function Contact() {
           
           {/* Contact Details (Left Column) */}
           <Reveal className="lg:col-span-7 flex flex-col gap-6">
-            <p className="eyebrow text-sm text-white/70">Contato</p>
+            <p className="eyebrow text-sm text-white/70">{info.eyebrow}</p>
             <h2 className="text-white text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight leading-[1.15] text-balance">
-              Pronto para evoluir a <span className="text-[#9DB8FF]">TI da sua empresa</span>?
+              {info.headline.includes("TI da sua empresa") ? (
+                <>
+                  {info.headline.split("TI da sua empresa")[0]}
+                  <span className="text-[#9DB8FF]">TI da sua empresa</span>
+                  {info.headline.split("TI da sua empresa")[1]}
+                </>
+              ) : info.headline}
             </h2>
             <p className="text-ink-300 text-base md:text-lg max-w-2xl font-light leading-relaxed text-pretty">
-              Conecte-se com nossos consultores seniores. Estamos prontos para projetar e implementar soluções de infraestrutura e nuvem sob medida para o seu negócio.
+              {info.subtitulo}
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
@@ -62,8 +127,8 @@ export function Contact() {
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold text-white">E-mail</h4>
-                  <a href="mailto:contato@infodive.com.br" className="text-xs text-ink-300 hover:text-brand transition-colors mt-0.5 block">
-                    contato@infodive.com.br
+                  <a href={`mailto:${info.email}`} className="text-xs text-ink-300 hover:text-brand transition-colors mt-0.5 block">
+                    {info.email}
                   </a>
                 </div>
               </div>
@@ -74,8 +139,8 @@ export function Contact() {
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold text-white">Telefone</h4>
-                  <a href="tel:+551140030000" className="text-xs text-ink-300 hover:text-brand transition-colors mt-0.5 block">
-                    +55 (51) 3330-0444
+                  <a href={`tel:${info.telefone.replace(/\D/g, "")}`} className="text-xs text-ink-300 hover:text-brand transition-colors mt-0.5 block">
+                    {info.telefone}
                   </a>
                 </div>
               </div>
@@ -87,7 +152,7 @@ export function Contact() {
                 <div>
                   <h4 className="text-sm font-semibold text-white">Localização</h4>
                   <span className="text-xs text-ink-300 mt-0.5 block leading-relaxed">
-                    Av. Cristovão Colombo, 3000 - Sala 704 | Floresta, Porto Alegre - RS
+                    {info.endereco}
                   </span>
                 </div>
               </div>
@@ -99,7 +164,7 @@ export function Contact() {
                 <div>
                   <h4 className="text-sm font-semibold text-white">Disponibilidade</h4>
                   <span className="text-xs text-ink-300 mt-0.5 block leading-relaxed">
-                    Comercial: Seg a Sex, 9h às 18h<br />Suporte Crítico NOC: 24/7
+                    Comercial: {info.horarioComercial}<br />{info.horarioNoc}
                   </span>
                 </div>
               </div>
@@ -121,19 +186,15 @@ export function Contact() {
               </div>
 
               <h3 className="text-xl md:text-2xl font-bold text-white mb-2.5">
-                Precisa de ajuda imediata?
+                {info.cardTitulo}
               </h3>
               <p className="text-sm text-white/70 leading-relaxed mb-6">
-                Fale com nossos engenheiros e receba uma análise rápida dos requisitos de TI, segurança e nuvem do seu negócio.
+                {info.cardDescricao}
               </p>
 
               {/* Quick reassurances */}
               <ul className="flex flex-col gap-3 mb-8">
-                {[
-                  "Resposta em até 1 hora",
-                  "Diagnóstico inicial sem custo",
-                  "Especialistas certificados",
-                ].map((item) => (
+                {info.cardBullets.map((item) => (
                   <li key={item} className="flex items-center gap-3 text-sm text-white/85">
                     <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#46BEA3]/20 text-[#46BEA3]">
                       <Check className="h-3 w-3" strokeWidth={3} />
@@ -151,13 +212,13 @@ export function Contact() {
                 onClick={() => setIsMenuOpen(true)}
                 className="w-full text-sm font-bold py-3.5 flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)]"
               >
-                Falar com Especialista
+                {info.cardCtaTexto}
                 <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
               </Button>
 
               <div className="flex items-center gap-2 justify-center w-full mt-5 text-xs text-white/60">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#46BEA3] animate-pulse"></span>
-                Especialistas online no momento
+                {info.cardStatus}
               </div>
             </div>
           </Reveal>

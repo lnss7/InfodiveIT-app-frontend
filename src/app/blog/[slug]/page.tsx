@@ -3,10 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays, Clock, Play, User } from "lucide-react";
 import {
-  ARTIGOS,
   type ArtigoBloco,
-  getArtigoBySlug,
-  getArtigosRelacionados,
+  type Artigo,
+  type TipoConteudo,
   TIPO_CONFIG,
 } from "@/lib/blog-data";
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
@@ -14,22 +13,117 @@ import { Reveal } from "@/components/animations/reveal";
 import { ArtigoCard } from "@/sections/blog/article-card";
 import { BlogCta } from "@/sections/blog/cta";
 import { Footer } from "@/layout/footer";
+import { api } from "@/lib/api";
 
 interface PageProps {
   params: { slug: string };
 }
 
-export function generateStaticParams() {
-  return ARTIGOS.map((artigo) => ({ slug: artigo.slug }));
+const TIPO_MAP: Record<string, TipoConteudo> = {
+  ARTIGO: "artigo",
+  WHITEPAPER: "whitepaper",
+  CASE: "case",
+  DATASHEET: "datasheet",
+  VIDEO: "video",
+};
+
+async function getArtigo(slug: string): Promise<{ artigo: Artigo; publicadoEmIso: string } | null> {
+  try {
+    const dto = await api.conteudo(slug);
+    if (!dto || !dto.ativo) return null;
+
+    const [categorias, fabricantes] = await Promise.all([
+      api.categorias().catch(() => []),
+      api.fabricantes().catch(() => [])
+    ]);
+
+    const categoriaObj = categorias.find((c) => c.id === dto.categoriaId);
+    const fabricanteObj = fabricantes.find((f) => f.id === dto.fabricanteId);
+
+    let blocos: ArtigoBloco[] = [];
+    if (dto.conteudo) {
+      try {
+        blocos = JSON.parse(dto.conteudo);
+      } catch (e) {
+        console.error("Erro ao fazer parse do conteudo", e);
+      }
+    }
+
+    const artigo: Artigo = {
+      slug: dto.slug,
+      tipo: TIPO_MAP[dto.tipo] ?? "artigo",
+      categoria: categoriaObj ? categoriaObj.nome : "",
+      fabricante: fabricanteObj ? fabricanteObj.nome : "",
+      titulo: dto.titulo,
+      descricao: dto.descricao ?? "",
+      data: dto.publicadoEm
+        ? new Date(dto.publicadoEm).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })
+        : "",
+      imagemBg: "#0D1221",
+      autor: dto.autor ?? "Equipe Infodive",
+      tempoLeitura: dto.tempoLeitura ?? "",
+      conteudo: blocos,
+    };
+
+    return { artigo, publicadoEmIso: dto.publicadoEm || new Date().toISOString() };
+  } catch (e) {
+    return null;
+  }
 }
 
-export function generateMetadata({ params }: PageProps): Metadata {
-  const artigo = getArtigoBySlug(params.slug);
+async function getRelacionados(currentSlug: string, limit = 3): Promise<Artigo[]> {
+  try {
+    const page = await api.conteudos({ size: 10 });
+    const filtrados = page.content.filter((c) => c.slug !== currentSlug && c.tipo !== "POST_SOCIAL");
 
-  if (!artigo) {
+    const [categorias, fabricantes] = await Promise.all([
+      api.categorias().catch(() => []),
+      api.fabricantes().catch(() => [])
+    ]);
+
+    return filtrados.slice(0, limit).map((dto) => {
+      const categoriaObj = categorias.find((c) => c.id === dto.categoriaId);
+      const fabricanteObj = fabricantes.find((f) => f.id === dto.fabricanteId);
+      return {
+        slug: dto.slug,
+        tipo: TIPO_MAP[dto.tipo] ?? "artigo",
+        categoria: categoriaObj ? categoriaObj.nome : "",
+        fabricante: fabricanteObj ? fabricanteObj.nome : "",
+        titulo: dto.titulo,
+        descricao: dto.descricao ?? "",
+        data: dto.publicadoEm
+          ? new Date(dto.publicadoEm).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })
+          : "",
+        imagemBg: "#0D1221",
+        autor: dto.autor ?? "Equipe Infodive",
+        tempoLeitura: dto.tempoLeitura ?? "",
+        conteudo: [],
+      };
+    });
+  } catch (e) {
+    return [];
+  }
+}
+
+export async function generateStaticParams() {
+  try {
+    const page = await api.conteudos({ size: 100 });
+    return page.content
+      .filter((c) => c.tipo !== "POST_SOCIAL")
+      .map((c) => ({ slug: c.slug }));
+  } catch (e) {
+    return [];
+  }
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const result = await getArtigo(params.slug);
+
+  if (!result) {
     return { title: "Conteúdo não encontrado | Infodive" };
   }
 
+  const { artigo } = result;
   const seoTitle = `${artigo.titulo} | Infodive IT`
   const seoDesc = artigo.descricao
 
@@ -59,19 +153,6 @@ export function generateMetadata({ params }: PageProps): Metadata {
       description: seoDesc,
     },
   };
-}
-
-function parseArticleDate(dateStr: string): string {
-  const parts = dateStr.split(' ');
-  if (parts.length < 3) return new Date().toISOString().split('T')[0];
-  const day = parts[0].padStart(2, '0');
-  const months: Record<string, string> = {
-    Jan: '01', Fev: '02', Mar: '03', Abr: '04', Mai: '05', Jun: '06',
-    Jul: '07', Ago: '08', Set: '09', Out: '10', Nov: '11', Dez: '12'
-  };
-  const month = months[parts[1]] || '01';
-  const year = parts[2];
-  return `${year}-${month}-${day}`;
 }
 
 /** Renderiza um bloco do corpo do conteúdo. */
@@ -112,18 +193,19 @@ function Bloco({ bloco }: { bloco: ArtigoBloco }) {
   }
 }
 
-export default function ArtigoDetailPage({ params }: PageProps) {
-  const artigo = getArtigoBySlug(params.slug);
+export default async function ArtigoDetailPage({ params }: PageProps) {
+  const result = await getArtigo(params.slug);
 
-  if (!artigo) {
+  if (!result) {
     notFound();
   }
 
+  const { artigo, publicadoEmIso } = result;
   const config = TIPO_CONFIG[artigo.tipo];
   const Icon = config.icon;
-  const relacionados = getArtigosRelacionados(artigo.slug);
+  const relacionados = await getRelacionados(artigo.slug);
 
-  const isoDate = parseArticleDate(artigo.data);
+  const isoDate = publicadoEmIso.split('T')[0];
   const blogJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',

@@ -35,6 +35,9 @@ import tela1 from "@/assets/telasCarrosselHero/tela-1.webp";
 import tela2 from "@/assets/telasCarrosselHero/tela-2.webp";
 import tela3 from "@/assets/telasCarrosselHero/tela-3.webp";
 
+import { api } from "@/lib/api";
+import { useEffect } from "react";
+
 const SHOWCASE_SLIDES = [
   { src: tela1, alt: "Dashboard de monitoramento Infodive" },
   { src: tela2, alt: "Painel de indicadores Infodive" },
@@ -55,9 +58,6 @@ const PARTNERS = [
   { name: "Apple", description: "Ecossistema tecnológico premium integrado.", logo: appleLogo, keepWhiteOnHover: true },
 ];
 
-// Duplicate the array to create a seamless infinite scrolling effect
-const MARQUEE_PARTNERS = [...PARTNERS, ...PARTNERS];
-
 const MOBILE_LOGO_CLASSES: Record<string, string> = {
   IBM: "h-6",
   AWS: "h-9",
@@ -72,10 +72,45 @@ const MOBILE_LOGO_CLASSES: Record<string, string> = {
   Apple: "h-8",
 };
 
-
 export function Hero() {
   const { scrollTo } = useSmoothScroll();
   const [activePartnerIndex, setActivePartnerIndex] = useState<number | null>(null);
+  const [slides, setSlides] = useState<any[]>(SHOWCASE_SLIDES);
+  const [partners, setPartners] = useState<any[]>(PARTNERS);
+
+  useEffect(() => {
+    api.heroCarousel()
+      .then((data) => {
+        if (data && data.length > 0) {
+          const sorted = [...data].sort((a, b) => a.ordem - b.ordem);
+          setSlides(sorted.map((item) => ({
+            src: item.imagemUrl,
+            alt: "Dashboard Infodive " + item.ordem
+          })));
+        }
+      })
+      .catch(() => { /* fallback */ });
+
+    api.fabricantes({ destaque: true })
+      .then((data) => {
+        if (data && data.length > 0) {
+          const sorted = [...data].sort((a, b) => a.ordem - b.ordem);
+          setPartners(sorted.map((p) => {
+            const staticPartner = PARTNERS.find((sp) => sp.name.toLowerCase() === p.nome.toLowerCase() || sp.name.toLowerCase() === p.slug.toLowerCase());
+            return {
+              name: p.nome,
+              description: p.descricaoCurta || p.descricao || "",
+              logo: p.logoUrl || staticPartner?.logo || "",
+              className: staticPartner?.className || "h-4 sm:h-5",
+              keepWhiteOnHover: staticPartner?.keepWhiteOnHover || false
+            };
+          }));
+        }
+      })
+      .catch(() => { /* fallback */ });
+  }, []);
+
+  const marqueePartners = [...partners, ...partners];
 
   const handlePartnerClick = (index: number, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -205,7 +240,7 @@ export function Hero() {
             animationPlayState: activePartnerIndex !== null ? 'paused' : 'running'
           }}
         >
-          {MARQUEE_PARTNERS.map((partner, index) => {
+          {marqueePartners.map((partner, index) => {
             const isActive = activePartnerIndex === index;
             return (
               <React.Fragment key={index}>
@@ -322,7 +357,7 @@ export function Hero() {
           da foto some no overflow-hidden (corte seco, sem invadir a seção branca). */}
       <Reveal delay={0.9} className="relative z-0 w-full mt-8 sm:mt-12 overflow-hidden">
         <div className="-mb-16 sm:-mb-20 md:-mb-28 lg:-mb-40">
-          <DashboardCarousel slides={SHOWCASE_SLIDES} className="w-full" />
+          <DashboardCarousel slides={slides} className="w-full" />
         </div>
       </Reveal>
     </section>

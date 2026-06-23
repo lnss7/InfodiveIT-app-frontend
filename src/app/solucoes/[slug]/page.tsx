@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { SOLUTIONS } from "@/lib/solutions-data";
+import { SOLUTIONS, type Solution } from "@/lib/solutions-data";
 import { SolutionDetailContent } from "./solution-detail-client";
 import { Footer } from "@/layout/footer";
+import { api } from "@/lib/api";
 
 interface PageProps {
   params: {
@@ -10,16 +11,46 @@ interface PageProps {
   };
 }
 
+async function getSolution(slug: string): Promise<Solution | null> {
+  try {
+    const cat = await api.categoria(slug);
+    if (!cat || !cat.ativo) return null;
+
+    const staticSol = SOLUTIONS.find((s) => s.slug === cat.slug);
+    return {
+      slug: cat.slug,
+      title: cat.nome,
+      subtitle: cat.descricaoCurta || "",
+      description: cat.descricaoCompleta || "",
+      overview: cat.descricaoCompleta || "",
+      iconName: (cat.icone as any) || staticSol?.iconName || "infraestrutura",
+      metrics: staticSol?.metrics || [],
+      features: staticSol?.features || [],
+      vendors: staticSol?.vendors || [],
+      caseStudy: staticSol?.caseStudy || { client: "", segmento: "", metric: "", resultado: "" }
+    };
+  } catch (e) {
+    return null;
+  }
+}
+
 // Pre-generate dynamic paths at build time for ultimate performance
-export function generateStaticParams() {
-  return SOLUTIONS.map((solution) => ({
-    slug: solution.slug,
-  }));
+export async function generateStaticParams() {
+  try {
+    const list = await api.categorias();
+    return list.map((solution) => ({
+      slug: solution.slug,
+    }));
+  } catch (e) {
+    return SOLUTIONS.map((solution) => ({
+      slug: solution.slug,
+    }));
+  }
 }
 
 // Generate high-fidelity dynamic SEO metadata for each page
-export function generateMetadata({ params }: PageProps): Metadata {
-  const solution = SOLUTIONS.find((s) => s.slug === params.slug);
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const solution = await getSolution(params.slug);
 
   if (!solution) {
     return {
@@ -58,8 +89,8 @@ export function generateMetadata({ params }: PageProps): Metadata {
   };
 }
 
-export default function SolutionDetailPage({ params }: PageProps) {
-  const solution = SOLUTIONS.find((s) => s.slug === params.slug);
+export default async function SolutionDetailPage({ params }: PageProps) {
+  const solution = await getSolution(params.slug);
 
   if (!solution) {
     notFound();

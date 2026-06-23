@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { ArrowRight, Search, ArrowUpRight, ArrowLeft } from "lucide-react";
-import { SOLUTIONS, SOLUTION_ICONS } from "@/lib/solutions-data";
+import { SOLUTIONS, SOLUTION_ICONS, type Solution } from "@/lib/solutions-data";
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
 import { Reveal } from "@/components/animations/reveal";
 import { Button } from "@/components/ui/button";
@@ -26,14 +26,43 @@ const CATEGORIES = [
   "Inteligência Artificial",
 ];
 
+import { useEffect } from "react";
+import { api } from "@/lib/api";
+
 export function SolutionsListing() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todas");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [solutions, setSolutions] = useState<Solution[]>(SOLUTIONS);
+
+  useEffect(() => {
+    api.categorias()
+      .then((data) => {
+        if (data && data.length > 0) {
+          const mapped = data.map((cat) => {
+            const staticSol = SOLUTIONS.find((s) => s.slug === cat.slug);
+            return {
+              slug: cat.slug,
+              title: cat.nome,
+              subtitle: cat.descricaoCurta || "",
+              description: cat.descricaoCompleta || "",
+              overview: cat.descricaoCompleta || "",
+              iconName: (cat.icone as any) || staticSol?.iconName || "infraestrutura",
+              metrics: staticSol?.metrics || [],
+              features: staticSol?.features || [],
+              vendors: staticSol?.vendors || [],
+              caseStudy: staticSol?.caseStudy || { client: "", segmento: "", metric: "", resultado: "" }
+            };
+          });
+          setSolutions(mapped);
+        }
+      })
+      .catch(() => { /* mantém fallback */ });
+  }, []);
 
   // Filter solutions based on search input and selected category tab
   const filteredSolutions = useMemo(() => {
-    return SOLUTIONS.filter((solution) => {
+    return solutions.filter((solution) => {
       const matchesSearch =
         solution.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         solution.subtitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -56,7 +85,7 @@ export function SolutionsListing() {
       const slugs = categoryMap[selectedCategory] || [];
       return matchesSearch && slugs.includes(solution.slug);
     });
-  }, [searchQuery, selectedCategory]);
+  }, [searchQuery, selectedCategory, solutions]);
 
   return (
     <div className="relative z-20 w-full min-h-screen bg-white text-ink-900">

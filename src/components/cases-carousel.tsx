@@ -84,6 +84,11 @@ export function CasesCarousel() {
   const [cases, setCases] = useState<Case[]>(CASES_FALLBACK);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [sectionInfo, setSectionInfo] = useState({
+    eyebrow: "Cases de sucesso",
+    headline: "Tecnologia aplicada a resultados de negócios",
+    subtitulo: "",
+  });
   const autoplayTimer = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -92,6 +97,18 @@ export function CasesCarousel() {
         if (data.length > 0) {
           setCases(data.map(fromDTO));
           setActiveIndex(0);
+        }
+      })
+      .catch(() => { /* mantém fallback */ });
+
+    api.secaoHome("cases")
+      .then((data) => {
+        if (data) {
+          setSectionInfo({
+            eyebrow: data.eyebrow || "Cases de sucesso",
+            headline: data.headline || "Tecnologia aplicada a resultados de negócios",
+            subtitulo: data.subtitulo || "",
+          });
         }
       })
       .catch(() => { /* mantém fallback */ });
@@ -121,11 +138,16 @@ export function CasesCarousel() {
       <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-accent">
-            Cases de sucesso
+            {sectionInfo.eyebrow}
           </p>
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Tecnologia aplicada a resultados de negócios
+            {sectionInfo.headline}
           </h2>
+          {sectionInfo.subtitulo && (
+            <p className="mt-2 text-ink-300 text-sm font-light">
+              {sectionInfo.subtitulo}
+            </p>
+          )}
         </div>
 
         <div className="flex items-center gap-3">

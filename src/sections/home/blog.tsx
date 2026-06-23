@@ -132,7 +132,7 @@ export function Blog() {
           </h2>
 
           <Link
-            href="/conteudos"
+            href="/blog"
             className="focus:outline-none shrink-0"
             tabIndex={-1}
           >
@@ -180,7 +180,7 @@ export function Blog() {
               {/* Título do Artigo */}
               <h3 className="mt-2.5 text-base sm:text-lg font-bold text-ink-950 leading-snug group-hover:text-brand transition-colors duration-300">
                 <Link
-                  href={`/conteudos/${item.slug}`}
+                  href={`/blog/${item.slug}`}
                   className="focus:outline-none"
                 >
                   {item.titulo}
