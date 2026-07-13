@@ -52,6 +52,8 @@ export interface Solution {
     metric: string;
     resultado: string;
   };
+  categoriaId?: string;
+  categoriaNome?: string;
 }
 
 export const SOLUTIONS: Solution[] = [

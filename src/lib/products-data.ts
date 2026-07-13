@@ -32,7 +32,7 @@ export interface ProductUseCase {
 
 export interface ProductService {
   nome: string;
-  icon: LucideIcon;
+  icon: LucideIcon | string;
 }
 
 /**
@@ -45,11 +45,13 @@ export interface Product {
   nome: string;
   fabricante: string;
   fabricanteSlug: string;
-  logo: StaticImageData;
+  logo: StaticImageData | string;
   /** altura do logo (os SVGs têm proporções diferentes) */
   logoClass: string;
   categoria: string;
   categoriaSlug: string;
+  solucaoSlug?: string;
+  solucaoTitle?: string;
   subcategoria: string;
   descricaoCurta: string;
   descricaoCompleta: string;

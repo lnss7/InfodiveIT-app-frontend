@@ -28,6 +28,17 @@ export async function Problems() {
         : CHALLENGES_FALLBACK
     )
     .catch(() => CHALLENGES_FALLBACK)
+
+  const sectionInfoRaw = await api.secaoHome('problemas').catch(() => null)
+  const sectionInfo = {
+    eyebrow: sectionInfoRaw?.eyebrow || "Problemas que resolvemos",
+    headline: sectionInfoRaw?.headline || "Desafios complexos de TI. Soluções simples e definitivas.",
+    headlineDestaque: sectionInfoRaw?.headlineDestaque || "Soluções simples e definitivas.",
+    subtitulo: sectionInfoRaw?.subtitulo || "A tecnologia deve impulsionar o seu negócio, não paralisá-lo. Mapeamos os principais gargalos operacionais do mercado e desenvolvemos arquiteturas sob medida para superá-los.",
+    boxTitulo: sectionInfoRaw?.boxTitulo || "Suporte Proativo 24/7/365",
+    boxDescricao: sectionInfoRaw?.boxDescricao || "Sua infraestrutura crítica é monitorada ativamente para conter anomalias antes que virem incidentes."
+  }
+
   return (
     <section id="problemas" className="relative bg-white">
       {/* Texto revelado conforme o scroll. trackHeight maior = a frase fica fixa
@@ -48,28 +59,39 @@ export async function Problems() {
             <div className="lg:col-span-5">
               <Reveal className="lg:sticky lg:top-28">
                 <span className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-accent">
-                  Problemas que resolvemos
+                  {sectionInfo.eyebrow}
                 </span>
-                <h2 className="mt-3 text-3xl font-bold leading-[1.15] tracking-tight text-white sm:text-4xl">
-                  Desafios complexos de TI. <br />
-                  <span className="text-brand-accent">Soluções simples e definitivas.</span>
+                <h2 className="mt-3 text-3xl font-bold leading-[1.15] tracking-tight text-white sm:text-4xl whitespace-pre-line">
+                  {sectionInfo.headlineDestaque && sectionInfo.headline.includes(sectionInfo.headlineDestaque) ? (
+                    <>
+                      {sectionInfo.headline.split(sectionInfo.headlineDestaque)[0]}
+                      <span className="text-brand-accent">{sectionInfo.headlineDestaque}</span>
+                      {sectionInfo.headline.split(sectionInfo.headlineDestaque)[1]}
+                    </>
+                  ) : (
+                    sectionInfo.headline
+                  )}
                 </h2>
-                <p className="mt-6 max-w-md font-sans text-sm font-light leading-relaxed text-ink-300 sm:text-base">
-                  A tecnologia deve impulsionar o seu negócio, não paralisá-lo. Mapeamos os principais gargalos operacionais do mercado e desenvolvemos arquiteturas sob medida para superá-los.
+                <p className="mt-6 max-w-md font-sans text-sm font-light leading-relaxed text-ink-300 sm:text-base whitespace-pre-line">
+                  {sectionInfo.subtitulo}
                 </p>
 
                 {/* Badge Informativa Estática */}
-                <div className="mt-8 hidden max-w-sm items-center gap-4 rounded-xl border border-white/10 bg-white/[0.03] p-4 lg:flex">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand/15 text-brand-accent">
-                    <Activity className="h-5 w-5" />
+                {(sectionInfo.boxTitulo || sectionInfo.boxDescricao) && (
+                  <div className="mt-8 hidden max-w-sm items-center gap-4 rounded-xl border border-white/10 bg-white/[0.03] p-4 lg:flex">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand/15 text-brand-accent">
+                      <Activity className="h-5 w-5" />
+                    </div>
+                    <div>
+                      {sectionInfo.boxTitulo && <h4 className="text-xs font-bold text-white">{sectionInfo.boxTitulo}</h4>}
+                      {sectionInfo.boxDescricao && (
+                        <p className="mt-0.5 text-[11px] leading-normal text-ink-300 whitespace-pre-line">
+                          {sectionInfo.boxDescricao}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-white">Suporte Proativo 24/7/365</h4>
-                    <p className="mt-0.5 text-[11px] leading-normal text-ink-300">
-                      Sua infraestrutura crítica é monitorada ativamente para conter anomalias antes que virem incidentes.
-                    </p>
-                  </div>
-                </div>
+                )}
               </Reveal>
             </div>
 

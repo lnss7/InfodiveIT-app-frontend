@@ -33,7 +33,7 @@ async function getArtigo(slug: string): Promise<{ artigo: Artigo; publicadoEmIso
     if (!dto || !dto.ativo) return null;
 
     const [categorias, fabricantes] = await Promise.all([
-      api.categorias().catch(() => []),
+      api.solucoes().catch(() => []),
       api.fabricantes().catch(() => [])
     ]);
 
@@ -77,7 +77,7 @@ async function getRelacionados(currentSlug: string, limit = 3): Promise<Artigo[]
     const filtrados = page.content.filter((c) => c.slug !== currentSlug && c.tipo !== "POST_SOCIAL");
 
     const [categorias, fabricantes] = await Promise.all([
-      api.categorias().catch(() => []),
+      api.solucoes().catch(() => []),
       api.fabricantes().catch(() => [])
     ]);
 

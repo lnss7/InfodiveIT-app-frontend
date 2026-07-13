@@ -49,8 +49,8 @@ const FEATURED_FALLBACK: FeaturedProduct[] = [
 
 function toFeatured(dto: ProdutoResumoDTO): FeaturedProduct {
   const logoUrl =
-    dto.fabricanteLogoUrl ||
     STATIC_LOGO_MAP[dto.fabricanteSlug] ||
+    dto.fabricanteLogoUrl ||
     ibmLogo
   return {
     nome: dto.nome,
@@ -69,6 +69,7 @@ export function Products() {
     eyebrow: "Produtos",
     headline: "Produtos em destaque",
     subtitulo: "Uma seleção do nosso catálogo dos principais fabricantes do mundo — prontos para resolver desafios reais de infraestrutura, segurança e cloud.",
+    headlineDestaque: "",
   })
 
   React.useEffect(() => {
@@ -87,6 +88,7 @@ export function Products() {
             eyebrow: data.eyebrow || "Produtos",
             headline: data.headline || "Produtos em destaque",
             subtitulo: data.subtitulo || "Uma seleção do nosso catálogo dos principais fabricantes do mundo — prontos para resolver desafios reais de infraestrutura, segurança e cloud.",
+            headlineDestaque: data.headlineDestaque || "",
           })
         }
       })
@@ -106,11 +108,11 @@ export function Products() {
         <Reveal className="flex flex-col items-center gap-4 text-center">
           <p className="eyebrow text-sm">{sectionInfo.eyebrow}</p>
           <h2 className="text-ink-950 max-w-4xl text-balance text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.15]">
-            {sectionInfo.headline.includes("destaque") ? (
+            {sectionInfo.headlineDestaque && sectionInfo.headline.includes(sectionInfo.headlineDestaque) ? (
               <>
-                {sectionInfo.headline.split("destaque")[0]}
-                <span className="text-[var(--brand-light)]">destaque</span>
-                {sectionInfo.headline.split("destaque")[1]}
+                {sectionInfo.headline.split(sectionInfo.headlineDestaque)[0]}
+                <span className="text-[var(--brand-light)]">{sectionInfo.headlineDestaque}</span>
+                {sectionInfo.headline.split(sectionInfo.headlineDestaque)[1]}
               </>
             ) : (
               sectionInfo.headline

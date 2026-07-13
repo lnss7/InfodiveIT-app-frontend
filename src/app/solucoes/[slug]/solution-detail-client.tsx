@@ -24,7 +24,7 @@ interface SolutionDetailContentProps {
 export function SolutionDetailContent({
   solution,
 }: SolutionDetailContentProps) {
-  const Icon = SOLUTION_ICONS[solution.iconName];
+  const Icon = SOLUTION_ICONS[solution.iconName] || SOLUTION_ICONS.infraestrutura;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (

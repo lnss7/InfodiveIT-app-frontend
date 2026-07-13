@@ -38,6 +38,20 @@ const SECURITY_ICON_MAP: Record<string, any> = {
   cloud: Cloud,
 }
 
+const resolveIcon = (iconName: string, defaultIcon: any) => {
+  const name = (iconName || "").toLowerCase();
+  if (name.includes("shield")) return ShieldCheck;
+  if (name.includes("lock")) return Lock;
+  if (name.includes("key")) return KeyRound;
+  if (name.includes("check")) return FileCheck2;
+  if (name.includes("activity")) return Activity;
+  if (name.includes("brain")) return BrainCircuit;
+  if (name.includes("server")) return Server;
+  if (name.includes("cloud")) return Cloud;
+  if (name.includes("database")) return Database;
+  return defaultIcon;
+};
+
 // Nó circular (hub ou periférico). forwardRef para o AnimatedBeam conseguir medir
 // sua posição e ancorar o feixe no centro do círculo.
 const Circle = React.forwardRef<
@@ -342,51 +356,142 @@ export function BentoGridSolutions() {
   }, [])
 
   const dynamicFeatures = React.useMemo(() => {
-    const list = [...features];
-
-    if (bentoData) {
-      bentoData.forEach((item: any) => {
-        const nameLower = item.nome.toLowerCase();
-        if (nameLower.includes("segurança") || item.icone === "lock" || item.icone === "shield") {
-          const iconComponent = SECURITY_ICON_MAP[item.icone || ""] || ShieldCheck;
-          list[0] = {
-            ...list[0],
-            name: item.nome,
-            description: item.descricao || list[0].description,
-            Icon: iconComponent,
-          };
-        } else if (nameLower.includes("inteligência") || nameLower.includes("ia") || item.icone === "brain") {
-          const iconComponent = SECURITY_ICON_MAP[item.icone || ""] || BrainCircuit;
-          const bgImage = item.imagemIaUrl || iaImage;
-          list[2] = {
-            ...list[2],
-            name: item.nome,
-            description: item.descricao || list[2].description,
-            Icon: iconComponent,
-            background: (
-              <div className="absolute inset-0">
-                <Image
-                  src={bgImage}
-                  alt={item.nome}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 66vw"
-                  className="object-cover object-center transition-transform duration-300 ease-out [mask-image:linear-gradient(to_top,transparent_22%,#000_85%)] group-hover:scale-105 lg:object-contain lg:object-right"
-                  unoptimized={typeof bgImage === 'string'}
-                />
-              </div>
-            )
-          };
-        }
-      });
+    if (!bentoData || bentoData.length === 0) {
+      const list = [...features];
+      list[0] = {
+        ...list[0],
+        background: <SecurityMarquee events={marqueeEvents} />,
+      };
+      return list;
     }
 
-    // Always update Security background to use dynamic marqueeEvents
-    list[0] = {
-      ...list[0],
-      background: <SecurityMarquee events={marqueeEvents} />,
-    };
+    const sorted = [...bentoData].sort((a, b) => a.ordem - b.ordem);
 
-    return list;
+    return sorted.map((item: any) => {
+      const iconeLower = (item.icone || "").toLowerCase();
+
+      if (iconeLower.includes("shield") || iconeLower.includes("lock")) {
+        const iconComponent = resolveIcon(item.icone, ShieldCheck);
+        
+        let marqueeList = marqueeEvents;
+        if (item.textoCarrossel && item.textoCarrossel.trim() !== "") {
+          const lines = item.textoCarrossel.split("\n");
+          const parsed = lines
+            .map((line: string) => {
+              let cleanLine = line.trim();
+              if (cleanLine.startsWith("'") && cleanLine.endsWith("'")) {
+                cleanLine = cleanLine.substring(1, cleanLine.length - 1).trim();
+              }
+              if (cleanLine === "") return null;
+
+              const parts = cleanLine.split("|");
+              if (parts.length >= 2) {
+                const itemIconName = parts[0].trim();
+                const itemIcon = resolveIcon(itemIconName, ShieldCheck);
+                const itemTitle = parts[1].trim();
+                const itemBody = parts.slice(2).join("|").trim();
+                return {
+                  Icon: itemIcon,
+                  title: itemTitle,
+                  body: itemBody || "",
+                };
+              }
+              const partsColon = cleanLine.split(":");
+              if (partsColon.length >= 2) {
+                return {
+                  Icon: ShieldCheck,
+                  title: partsColon[0].trim(),
+                  body: partsColon.slice(1).join(":").trim(),
+                };
+              }
+              return null;
+            })
+            .filter(Boolean) as any[];
+
+          if (parsed.length > 0) {
+            marqueeList = parsed;
+          }
+        }
+
+        return {
+          Icon: iconComponent,
+          name: item.nome,
+          description: item.descricao,
+          href: "/solucoes",
+          cta: "Saiba mais",
+          className: "col-span-3 lg:col-span-1",
+          background: <SecurityMarquee events={marqueeList} />,
+        };
+      }
+
+      if (iconeLower.includes("server")) {
+        const iconComponent = resolveIcon(item.icone, Server);
+        return {
+          Icon: iconComponent,
+          name: item.nome,
+          description: item.descricao,
+          href: "/solucoes",
+          cta: "Saiba mais",
+          className: "col-span-3 lg:col-span-2",
+          background: (
+            <BeamBackground
+              center={Server}
+              left={Building2}
+              right={[HardDrive, Network, Database, Boxes]}
+            />
+          ),
+        };
+      }
+
+      if (iconeLower.includes("brain")) {
+        const iconComponent = resolveIcon(item.icone, BrainCircuit);
+        const bgImage = item.imagemIaUrl || iaImage;
+        return {
+          Icon: iconComponent,
+          name: item.nome,
+          description: item.descricao,
+          href: "/solucoes",
+          cta: "Saiba mais",
+          className: "col-span-3 lg:col-span-2",
+          background: (
+            <div className="absolute inset-0">
+              <Image
+                src={bgImage}
+                alt={item.nome}
+                fill
+                sizes="(max-width: 1024px) 100vw, 66vw"
+                className="object-cover object-center transition-transform duration-300 ease-out [mask-image:linear-gradient(to_top,transparent_22%,#000_85%)] group-hover:scale-105 lg:object-contain lg:object-right"
+                unoptimized={typeof bgImage === 'string'}
+              />
+            </div>
+          ),
+        };
+      }
+
+      if (iconeLower.includes("cloud")) {
+        const iconComponent = resolveIcon(item.icone, Cloud);
+        return {
+          Icon: iconComponent,
+          name: item.nome,
+          description: item.descricao,
+          href: "/solucoes",
+          cta: "Saiba mais",
+          className: "col-span-3 lg:col-span-1",
+          background: <CloudOrbit />,
+        };
+      }
+
+      const defaultIcon = resolveIcon(item.icone, Server);
+      return {
+        Icon: defaultIcon,
+        name: item.nome,
+        description: item.descricao,
+        href: "/solucoes",
+        cta: "Saiba mais",
+        className: "col-span-3 lg:col-span-1",
+        background: null,
+      };
+    });
   }, [bentoData, marqueeEvents]);
 
   return (

@@ -12,6 +12,7 @@ export function Solutions() {
   const [info, setInfo] = useState({
     eyebrow: "Soluções",
     headline: "Um portfólio completo para a sua operação crítica",
+    headlineDestaque: "portfólio completo",
     subtitulo: "",
   });
 
@@ -22,6 +23,7 @@ export function Solutions() {
           setInfo({
             eyebrow: data.eyebrow || "Soluções",
             headline: data.headline || "Um portfólio completo para a sua operação crítica",
+            headlineDestaque: data.headlineDestaque || "portfólio completo",
             subtitulo: data.subtitulo || "",
           });
         }
@@ -35,7 +37,20 @@ export function Solutions() {
         <Reveal className="flex flex-col items-center gap-4 text-center">
           <p className="eyebrow text-sm">{info.eyebrow}</p>
           <h2 className="text-ink-950 max-w-4xl text-balance text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.15]">
-            {info.headline.includes("portfólio completo") ? (
+            {info.headlineDestaque && info.headline.includes(info.headlineDestaque) ? (
+              (() => {
+                const parts = info.headline.split(info.headlineDestaque);
+                return (
+                  <>
+                    {parts[0]}
+                    <span className="text-[var(--brand-light)]">
+                      {info.headlineDestaque}
+                    </span>
+                    {parts.slice(1).join(info.headlineDestaque)}
+                  </>
+                );
+              })()
+            ) : info.headline.includes("portfólio completo") ? (
               <>
                 {info.headline.split("portfólio completo")[0]}
                 <span className="text-[var(--brand-light)]">
@@ -47,11 +62,6 @@ export function Solutions() {
               info.headline
             )}
           </h2>
-          {info.subtitulo && (
-            <p className="text-ink-500 text-sm sm:text-base max-w-2xl font-light">
-              {info.subtitulo}
-            </p>
-          )}
           <Link
             href="/solucoes"
             className="focus:outline-none w-full sm:w-auto flex justify-center"

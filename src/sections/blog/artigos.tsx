@@ -15,20 +15,20 @@ const TIPO_MAP: Record<string, TipoConteudo> = {
   VIDEO: "video",
 };
 
-function fromConteudoDTO(dto: ConteudoDTO): Artigo {
+function conteudoToArtigo(dto: ConteudoDTO): Artigo {
   return {
     slug: dto.slug,
-    tipo: TIPO_MAP[dto.tipo] ?? "artigo",
-    categoria: "",
-    fabricante: "",
+    tipo: (TIPO_MAP[dto.tipo] || dto.tipo.toLowerCase()) as TipoConteudo,
+    categoria: dto.categoriaId || "",
+    fabricante: dto.fabricanteId || "",
     titulo: dto.titulo,
-    descricao: dto.descricao ?? "",
+    descricao: dto.descricao || "",
     data: dto.publicadoEm
       ? new Date(dto.publicadoEm).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })
       : "",
-    imagemBg: "#0D1221",
-    autor: dto.autor ?? "Equipe Infodive",
-    tempoLeitura: dto.tempoLeitura ?? "",
+    imagemBg: dto.imagemUrl || "#0D1221",
+    autor: dto.autor || "Equipe Infodive",
+    tempoLeitura: dto.tempoLeitura || "",
     conteudo: [],
   };
 }
@@ -44,10 +44,12 @@ export function BlogArtigos() {
       .then((page) => {
         const mapped = page.content
           .filter((dto) => dto.tipo !== "POST_SOCIAL" && TIPO_MAP[dto.tipo])
-          .map(fromConteudoDTO);
-        if (mapped.length > 0) setArtigos(mapped);
+          .map(conteudoToArtigo);
+        if (mapped.length > 0) {
+          setArtigos(mapped);
+        }
       })
-      .catch(() => { /* mantém fallback */ });
+      .catch(() => {}); // mantém ARTIGOS como fallback
 
     api.configBlog()
       .then((data) => {

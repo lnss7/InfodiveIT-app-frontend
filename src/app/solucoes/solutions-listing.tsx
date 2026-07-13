@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, Search, ArrowUpRight, ArrowLeft } from "lucide-react";
 import { SOLUTIONS, SOLUTION_ICONS, type Solution } from "@/lib/solutions-data";
+import { categoriaToSolution } from "@/lib/converters";
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
 import { Reveal } from "@/components/animations/reveal";
 import { Button } from "@/components/ui/button";
@@ -11,12 +12,14 @@ import { GlowBorderOverlay, handleGlowMove } from "@/components/ui/glow-border";
 import { motion } from "framer-motion";
 import { ConversionCTA } from "@/components/conversion-cta";
 import dynamic from "next/dynamic";
+import { useSearchParams } from "next/navigation";
+import { api, type CategoriaDTO } from "@/lib/api";
 
 const GsapMenu = dynamic(() => import("@/components/GsapMenu").then((mod) => mod.GsapMenu), {
   ssr: false,
 });
 
-const CATEGORIES = [
+const FALLBACK_CATEGORIES = [
   "Todas",
   "Segurança",
   "Infraestrutura",
@@ -26,39 +29,68 @@ const CATEGORIES = [
   "Inteligência Artificial",
 ];
 
-import { useEffect } from "react";
-import { api } from "@/lib/api";
+const FALLBACK_CATEGORY_MAP: Record<string, string[]> = {
+  "Segurança": ["seguranca"],
+  "Infraestrutura": ["infraestrutura", "virtualizacao", "endpoints"],
+  "Armazenamento": ["armazenamento"],
+  "Proteção de Dados": ["protecao-de-dados"],
+  "Cloud": ["cloud", "observability"],
+  "Inteligência Artificial": ["inteligencia-artificial"],
+};
 
 export function SolutionsListing() {
+  const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todas");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [solutions, setSolutions] = useState<Solution[]>(SOLUTIONS);
+  const [categories, setCategories] = useState<string[]>(FALLBACK_CATEGORIES);
+  const [categoryList, setCategoryList] = useState<CategoriaDTO[]>([]);
 
   useEffect(() => {
+    // 1. Fetch categories
     api.categorias()
-      .then((data) => {
-        if (data && data.length > 0) {
-          const mapped = data.map((cat) => {
-            const staticSol = SOLUTIONS.find((s) => s.slug === cat.slug);
-            return {
-              slug: cat.slug,
-              title: cat.nome,
-              subtitle: cat.descricaoCurta || "",
-              description: cat.descricaoCompleta || "",
-              overview: cat.descricaoCompleta || "",
-              iconName: (cat.icone as any) || staticSol?.iconName || "infraestrutura",
-              metrics: staticSol?.metrics || [],
-              features: staticSol?.features || [],
-              vendors: staticSol?.vendors || [],
-              caseStudy: staticSol?.caseStudy || { client: "", segmento: "", metric: "", resultado: "" }
-            };
-          });
-          setSolutions(mapped);
+      .then((cats) => {
+        if (cats && cats.length > 0) {
+          const activeCats = cats.filter(c => c.ativo).sort((a, b) => a.ordem - b.ordem);
+          setCategoryList(activeCats);
+          setCategories(["Todas", ...activeCats.map(c => c.nome)]);
         }
       })
-      .catch(() => { /* mantém fallback */ });
+      .catch(() => {});
+
+    // 2. Fetch solutions
+    api.solucoes()
+      .then((data) => {
+        if (data && data.length > 0) {
+          const sorted = [...data].sort((a, b) => a.ordem - b.ordem);
+          setSolutions(sorted.map(cat => {
+            const fallback = SOLUTIONS.find(s => s.slug === cat.slug);
+            return categoriaToSolution(cat, fallback);
+          }));
+        }
+      })
+      .catch(() => {});
   }, []);
+
+  // Sync selectedCategory with searchParams (e.g. ?seguranca)
+  useEffect(() => {
+    let foundCategory = "Todas";
+    if (categoryList.length > 0) {
+      const matched = categoryList.find(c => searchParams.has(c.slug));
+      if (matched) {
+        foundCategory = matched.nome;
+      }
+    } else {
+      for (const [cat, slugs] of Object.entries(FALLBACK_CATEGORY_MAP)) {
+        if (slugs.some(slug => searchParams.has(slug))) {
+          foundCategory = cat;
+          break;
+        }
+      }
+    }
+    setSelectedCategory(foundCategory);
+  }, [searchParams, categoryList]);
 
   // Filter solutions based on search input and selected category tab
   const filteredSolutions = useMemo(() => {
@@ -71,21 +103,18 @@ export function SolutionsListing() {
       if (selectedCategory === "Todas") {
         return matchesSearch;
       }
-      
-      // Categorize slugs
-      const categoryMap: Record<string, string[]> = {
-        "Segurança": ["seguranca"],
-        "Infraestrutura": ["infraestrutura", "virtualizacao", "endpoints"],
-        "Armazenamento": ["armazenamento"],
-        "Proteção de Dados": ["protecao-de-dados"],
-        "Cloud": ["cloud", "observability"],
-        "Inteligência Artificial": ["inteligencia-artificial"],
-      };
 
-      const slugs = categoryMap[selectedCategory] || [];
+      if (categoryList.length > 0 && solution.categoriaId) {
+        const selectedCatObj = categoryList.find(c => c.nome === selectedCategory);
+        if (selectedCatObj) {
+          return matchesSearch && solution.categoriaId === selectedCatObj.id;
+        }
+      }
+
+      const slugs = FALLBACK_CATEGORY_MAP[selectedCategory] || [];
       return matchesSearch && slugs.includes(solution.slug);
     });
-  }, [searchQuery, selectedCategory, solutions]);
+  }, [searchQuery, selectedCategory, solutions, categoryList]);
 
   return (
     <div className="relative z-20 w-full min-h-screen bg-white text-ink-900">
@@ -166,12 +195,34 @@ export function SolutionsListing() {
 
               {/* Filter Tabs */}
               <div className="flex overflow-x-auto no-scrollbar gap-1.5 w-full lg:flex-1 lg:min-w-0 justify-start py-2 px-1 select-none">
-                {CATEGORIES.map((category) => {
+                {categories.map((category) => {
                   const isActive = selectedCategory === category;
                   return (
                     <button
                       key={category}
-                      onClick={() => setSelectedCategory(category)}
+                      onClick={() => {
+                        setSelectedCategory(category);
+                        if (typeof window !== "undefined") {
+                          const url = new URL(window.location.href);
+                          const allSlugs = [
+                            ...categoryList.map(c => c.slug),
+                            ...Object.values(FALLBACK_CATEGORY_MAP).flat()
+                          ];
+                          allSlugs.forEach(slug => {
+                            url.searchParams.delete(slug);
+                          });
+                          if (category !== "Todas") {
+                            const dynamicCat = categoryList.find(c => c.nome === category);
+                            const slug = dynamicCat ? dynamicCat.slug : FALLBACK_CATEGORY_MAP[category]?.[0];
+                            if (slug) {
+                              url.search = `?${slug}`;
+                            }
+                          } else {
+                            url.search = "";
+                          }
+                          window.history.pushState({}, "", url.pathname + url.search);
+                        }
+                      }}
                       className={`relative px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-300 focus:outline-none cursor-pointer select-none whitespace-nowrap ${
                         isActive
                           ? "text-white"
@@ -198,7 +249,7 @@ export function SolutionsListing() {
           {filteredSolutions.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               {filteredSolutions.map((solution, index) => {
-                const Icon = SOLUTION_ICONS[solution.iconName];
+                const Icon = SOLUTION_ICONS[solution.iconName] || SOLUTION_ICONS.infraestrutura;
                 return (
                   <Reveal 
                     key={solution.slug} 

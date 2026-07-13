@@ -7,11 +7,10 @@ import { ArrowRight, ArrowUpRight, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useSmoothScroll } from '@/hooks/use-smooth-scroll'
 import {
-  categorias,
   fabricantesDestaque,
-  fabricantesProdutos,
   navLinks,
 } from './data'
+import { useNavbarData } from './use-navbar-data'
 
 type MobileMenuProps = {
   open: boolean
@@ -51,6 +50,7 @@ const socials = [
 
 export function MobileMenu({ open, onClose }: MobileMenuProps) {
   const { scrollTo } = useSmoothScroll()
+  const { categorias, fabricantes } = useNavbarData()
   const [solucoesOpen, setSolucoesOpen] = useState(false)
   const [produtosOpen, setProdutosOpen] = useState(false)
 
@@ -200,7 +200,7 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
                               <div className="pb-5 pt-1">
                                 <p className={SECTION_LABEL}>Fabricantes</p>
                                 <ul className="mt-2 grid grid-cols-1 gap-0.5 sm:grid-cols-2">
-                                  {fabricantesProdutos.map((fab) => (
+                                  {fabricantes.map((fab) => (
                                     <li key={fab.href}>
                                       <Link
                                         href={fab.href}

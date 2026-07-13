@@ -5,15 +5,28 @@ import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
-  categorias,
   ultimoConteudoDestaque,
+  type NavCategoria,
+  type NavConteudo,
 } from './data'
+import { useNavbarData } from './use-navbar-data'
 
 type SolucoesDropdownProps = {
   onItemClick?: () => void
 }
 
 export function SolucoesDropdown({ onItemClick }: SolucoesDropdownProps) {
+  const { categorias, ultimoConteudo } = useNavbarData()
+
+  const destaque: NavConteudo = ultimoConteudo
+    ? {
+        titulo: ultimoConteudo.titulo,
+        descricao: ultimoConteudo.descricao ?? '',
+        href: `/blog/${ultimoConteudo.slug}`,
+        tag: 'Artigo',
+      }
+    : ultimoConteudoDestaque
+
   return (
     <motion.div
       initial={{ opacity: 0, y: -6 }}
@@ -30,8 +43,8 @@ export function SolucoesDropdown({ onItemClick }: SolucoesDropdownProps) {
       role="menu"
     >
       <div className="grid grid-cols-12 gap-8 p-8">
-        <ColumnCategorias onItemClick={onItemClick} />
-        <ColumnDestaque onItemClick={onItemClick} />
+        <ColumnCategorias categorias={categorias} onItemClick={onItemClick} />
+        <ColumnDestaque destaque={destaque} onItemClick={onItemClick} />
       </div>
 
       <div className="flex items-center justify-between border-t border-ink-200 bg-ink-50 px-8 py-4">
@@ -59,7 +72,13 @@ function ColumnTitle({ children }: { children: React.ReactNode }) {
   )
 }
 
-function ColumnCategorias({ onItemClick }: { onItemClick?: () => void }) {
+function ColumnCategorias({
+  categorias,
+  onItemClick,
+}: {
+  categorias: NavCategoria[]
+  onItemClick?: () => void
+}) {
   return (
     <div className="col-span-12 md:col-span-6">
       <ColumnTitle>Categorias</ColumnTitle>
@@ -103,7 +122,13 @@ function ColumnCategorias({ onItemClick }: { onItemClick?: () => void }) {
   )
 }
 
-function ColumnDestaque({ onItemClick }: { onItemClick?: () => void }) {
+function ColumnDestaque({
+  destaque,
+  onItemClick,
+}: {
+  destaque: NavConteudo
+  onItemClick?: () => void
+}) {
   return (
     <div className="col-span-12 md:col-span-6">
       <ColumnTitle>Em destaque</ColumnTitle>
@@ -111,25 +136,25 @@ function ColumnDestaque({ onItemClick }: { onItemClick?: () => void }) {
         {/* Card 1 */}
         <li>
           <Link
-            href={ultimoConteudoDestaque.href}
+            href={destaque.href}
             onClick={onItemClick}
             role="menuitem"
             className="group block rounded-lg border border-ink-200 overflow-hidden transition-colors hover:border-ink-500 h-full"
           >
             <div className="aspect-[4/3] w-full bg-gradient-to-br from-ink-950 via-ink-900 to-brand-deep relative">
               <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_30%_20%,white,transparent_50%)]" />
-              {ultimoConteudoDestaque.tag && (
+              {destaque.tag && (
                 <span className="absolute left-3 top-3 inline-flex items-center rounded bg-white/95 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-ink-950">
-                  {ultimoConteudoDestaque.tag}
+                  {destaque.tag}
                 </span>
               )}
             </div>
             <div className="p-3.5">
               <p className="text-sm font-medium text-ink-950 leading-snug group-hover:text-brand transition-colors">
-                {ultimoConteudoDestaque.titulo}
+                {destaque.titulo}
               </p>
               <p className="mt-1.5 text-xs text-ink-500 leading-snug line-clamp-3">
-                {ultimoConteudoDestaque.descricao}
+                {destaque.descricao}
               </p>
               <span className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-ink-950 group-hover:text-brand transition-colors">
                 Ler mais
@@ -142,25 +167,25 @@ function ColumnDestaque({ onItemClick }: { onItemClick?: () => void }) {
         {/* Card 2 */}
         <li>
           <Link
-            href={ultimoConteudoDestaque.href}
+            href={destaque.href}
             onClick={onItemClick}
             role="menuitem"
             className="group block rounded-lg border border-ink-200 overflow-hidden transition-colors hover:border-ink-500 h-full"
           >
             <div className="aspect-[4/3] w-full bg-gradient-to-br from-ink-950 via-ink-900 to-brand-deep relative">
               <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_30%_20%,white,transparent_50%)]" />
-              {ultimoConteudoDestaque.tag && (
+              {destaque.tag && (
                 <span className="absolute left-3 top-3 inline-flex items-center rounded bg-white/95 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-ink-950">
-                  {ultimoConteudoDestaque.tag}
+                  {destaque.tag}
                 </span>
               )}
             </div>
             <div className="p-3.5">
               <p className="text-sm font-medium text-ink-950 leading-snug group-hover:text-brand transition-colors">
-                {ultimoConteudoDestaque.titulo}
+                {destaque.titulo}
               </p>
               <p className="mt-1.5 text-xs text-ink-500 leading-snug line-clamp-3">
-                {ultimoConteudoDestaque.descricao}
+                {destaque.descricao}
               </p>
               <span className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-ink-950 group-hover:text-brand transition-colors">
                 Ler mais

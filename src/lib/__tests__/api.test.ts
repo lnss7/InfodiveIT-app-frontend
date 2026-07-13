@@ -219,6 +219,23 @@ describe("api", () => {
     });
   });
 
+  describe("solucoes()", () => {
+    it("faz fetch para /solucoes", async () => {
+      const mockResponse: any[] = [];
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockResponse,
+      });
+
+      await api.solucoes();
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.stringContaining("/solucoes"),
+        expect.any(Object),
+      );
+    });
+  });
+
   describe("enviarLead()", () => {
     it("faz POST para /leads", async () => {
       const mockResponse = { id: "1", message: "Lead criado" };

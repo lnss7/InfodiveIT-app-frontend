@@ -45,31 +45,64 @@ const SHOWCASE_SLIDES = [
 ];
 
 const PARTNERS = [
-  { name: "IBM", description: "Líder global em IA e nuvem híbrida segura.", logo: ibmLogo, className: "h-4 sm:h-5" },
+  { name: "IBM", description: "Líder global em IA e nuvem híbrida segura.", logo: ibmLogo, className: "h-5 sm:h-6" },
   { name: "AWS", description: "Nuvem de escala global com serviços avançados.", logo: awsLogo, className: "h-7 sm:h-10" },
-  { name: "Lenovo", description: "Infraestrutura robusta de servidores e alta performance.", logo: lenovoLogo, className: "h-4 sm:h-6", keepWhiteOnHover: true },
-  { name: "Dell Technologies", description: "Computação e armazenamento de ponta corporativo.", logo: dellLogo },
-  { name: "Veeam", description: "Proteção moderna de dados e backup inteligente.", logo: veeamLogo, className: "h-4 sm:h-5" },
-  { name: "Acronis", description: "Integração inovadora de cibersegurança e backup.", logo: acronisLogo, keepWhiteOnHover: true },
-  { name: "Red Hat", description: "Soluções open source corporativas e Kubernetes.", logo: redhatLogo },
-  { name: "Microsoft", description: "A nuvem do Azure para escala e inovação global.", logo: microsoftLogo },
+  { name: "Lenovo", description: "Infraestrutura robusta de servidores e alta performance.", logo: lenovoLogo, className: "h-5 sm:h-7", keepWhiteOnHover: true },
+  { name: "Dell Technologies", description: "Computação e armazenamento de ponta corporativo.", logo: dellLogo, className: "h-6 sm:h-8" },
+  { name: "Veeam", description: "Proteção moderna de dados e backup inteligente.", logo: veeamLogo, className: "h-6 sm:h-8" },
+  { name: "Acronis", description: "Integração inovadora de cibersegurança e backup.", logo: acronisLogo, className: "h-6 sm:h-9", keepWhiteOnHover: true },
+  { name: "Red Hat", description: "Soluções open source corporativas e Kubernetes.", logo: redhatLogo, className: "h-7 sm:h-10" },
+  { name: "Microsoft", description: "A nuvem do Azure para escala e inovação global.", logo: microsoftLogo, className: "h-6 sm:h-8" },
   { name: "SUSE", description: "Soluções corporativas de Linux e Kubernetes open.", logo: suseLogo, className: "h-7 sm:h-10", keepWhiteOnHover: true },
-  { name: "Virtuozzo", description: "Virtualização eficiente e hiperconvergência em nuvem.", logo: virtuozzoLogo, className: "h-4 sm:h-5", keepWhiteOnHover: true },
-  { name: "Apple", description: "Ecossistema tecnológico premium integrado.", logo: appleLogo, keepWhiteOnHover: true },
+  { name: "Virtuozzo", description: "Virtualização eficiente e hiperconvergência em nuvem.", logo: virtuozzoLogo, className: "h-5 sm:h-7", keepWhiteOnHover: true },
+  { name: "Apple", description: "Ecossistema tecnológico premium integrado.", logo: appleLogo, className: "h-6 sm:h-8", keepWhiteOnHover: true },
 ];
 
 const MOBILE_LOGO_CLASSES: Record<string, string> = {
-  IBM: "h-6",
+  IBM: "h-7",
   AWS: "h-9",
-  Lenovo: "h-6",
-  "Dell Technologies": "h-8",
-  Veeam: "h-6",
-  Acronis: "h-8",
-  "Red Hat": "h-8",
-  Microsoft: "h-8",
+  Lenovo: "h-7",
+  "Dell Technologies": "h-9",
+  Veeam: "h-8",
+  Acronis: "h-9",
+  "Red Hat": "h-10",
+  Microsoft: "h-9",
   SUSE: "h-9",
-  Virtuozzo: "h-6",
-  Apple: "h-8",
+  Virtuozzo: "h-7",
+  Apple: "h-9",
+};
+
+const renderHeadline = (text: string, highlight?: string) => {
+  if (!highlight || !text.includes(highlight)) {
+    if (text.includes('*')) {
+      const parts = text.split('*');
+      return parts.map((part, index) => {
+        if (index % 2 === 1) {
+          return (
+            <span
+              key={index}
+              className="font-black animate-shine bg-[linear-gradient(110deg,#0E66FF,#0E66FF_38%,#7aa9ff_47%,#eaf1ff_50%,#7aa9ff_53%,#0E66FF_62%,#0E66FF)] bg-[length:200%_auto] bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(14,102,255,0.25)]"
+            >
+              {part}
+            </span>
+          );
+        }
+        return <span key={index}>{part}</span>;
+      });
+    }
+    return <span>{text}</span>;
+  }
+
+  const parts = text.split(highlight);
+  return (
+    <>
+      <span>{parts[0]}</span>
+      <span className="font-black animate-shine bg-[linear-gradient(110deg,#0E66FF,#0E66FF_38%,#7aa9ff_47%,#eaf1ff_50%,#7aa9ff_53%,#0E66FF_62%,#0E66FF)] bg-[length:200%_auto] bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(14,102,255,0.25)]">
+        {highlight}
+      </span>
+      <span>{parts.slice(1).join(highlight)}</span>
+    </>
+  );
 };
 
 export function Hero() {
@@ -77,8 +110,21 @@ export function Hero() {
   const [activePartnerIndex, setActivePartnerIndex] = useState<number | null>(null);
   const [slides, setSlides] = useState<any[]>(SHOWCASE_SLIDES);
   const [partners, setPartners] = useState<any[]>(PARTNERS);
+  const [heroData, setHeroData] = useState<any>(null);
 
   useEffect(() => {
+    console.log("Hero: fetching api.paginaHero('home')");
+    api.paginaHero('home')
+      .then((data) => {
+        console.log("Hero: fetched heroData successfully:", data);
+        if (data) {
+          setHeroData(data);
+        }
+      })
+      .catch((err) => {
+        console.error("Hero: failed to fetch heroData:", err);
+      });
+
     api.heroCarousel()
       .then((data) => {
         if (data && data.length > 0) {
@@ -89,7 +135,9 @@ export function Hero() {
           })));
         }
       })
-      .catch(() => { /* fallback */ });
+      .catch((err) => {
+        console.error("Hero: failed to fetch carousel data:", err);
+      });
 
     api.fabricantes({ destaque: true })
       .then((data) => {
@@ -100,14 +148,16 @@ export function Hero() {
             return {
               name: p.nome,
               description: p.descricaoCurta || p.descricao || "",
-              logo: p.logoUrl || staticPartner?.logo || "",
+              logo: staticPartner?.logo || p.logoUrl || "",
               className: staticPartner?.className || "h-4 sm:h-5",
               keepWhiteOnHover: staticPartner?.keepWhiteOnHover || false
             };
           }));
         }
       })
-      .catch(() => { /* fallback */ });
+      .catch((err) => {
+        console.error("Hero: failed to fetch partners:", err);
+      });
   }, []);
 
   const marqueePartners = [...partners, ...partners];
@@ -154,32 +204,34 @@ export function Hero() {
       <div className="container-default relative z-10 text-center pt-28 sm:pt-24 pb-4 flex flex-col items-center justify-center w-full max-w-full mt-0 sm:mt-6">
         {/* Eyebrow */}
         <TextEffect
+          key={heroData?.eyebrow || 'default-eyebrow'}
           per="word"
           preset="blur"
           delay={0.1}
           className="text-xs font-semibold uppercase tracking-[0.25em] text-white mb-4"
           duration={0.9}
         >
-          INFODIVE IT
+          {heroData?.eyebrow || "INFODIVE IT"}
         </TextEffect>
-
+ 
         {/* Title — "missão crítica" é um span único, então o brilho varre a frase
             inteira de uma vez (não palavra por palavra). */}
         <motion.h1
+          key={`${heroData?.headline || 'default-headline'}-${heroData?.headlineDestaque || 'no-destaque'}`}
           initial={{ opacity: 0, filter: "blur(6px)", y: 8 }}
           animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
           transition={{ delay: 0.2, duration: 0.9, ease: [0.25, 1, 0.5, 1] }}
           className="text-balance text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-4 max-w-4xl leading-[1.15] px-2"
         >
-          Tecnologia de{" "}
-          <span className="font-black animate-shine bg-[linear-gradient(110deg,#0E66FF,#0E66FF_38%,#7aa9ff_47%,#eaf1ff_50%,#7aa9ff_53%,#0E66FF_62%,#0E66FF)] bg-[length:200%_auto] bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(14,102,255,0.25)]">
-            missão crítica
-          </span>{" "}
-          para empresas que não param
+          {renderHeadline(
+            heroData?.headline || "Tecnologia de *missão crítica* para empresas que não param",
+            heroData?.headlineDestaque
+          )}
         </motion.h1>
-
+ 
         {/* Description */}
         <TextEffect
+          key={heroData?.subtitulo || 'default-sub'}
           per="word"
           as="p"
           preset="blur"
@@ -187,9 +239,9 @@ export function Hero() {
           duration={0.9}
           className="text-balance text-sm sm:text-base md:text-base text-ink-300 mb-6 max-w-2xl leading-relaxed px-4"
         >
-          Infraestrutura, segurança, cloud e inteligência artificial, integrados, gerenciados e sustentados pela Infodive.
+          {heroData?.subtitulo || "Infraestrutura, segurança, cloud e inteligência artificial, integrados, gerenciados e sustentados pela Infodive."}
         </TextEffect>
-
+ 
         {/* Buttons */}
         <Reveal delay={0.6}>
           <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto justify-center px-4">
@@ -222,11 +274,11 @@ export function Hero() {
             </Link>
           </div>
         </Reveal>
-
+ 
         {/* Social Proof */}
-        <Reveal delay={0.7}>
+        <Reveal key={heroData?.tagline || 'default-tagline'} delay={0.7}>
           <p className="mt-8 text-[10px] font-semibold uppercase tracking-[0.25em] text-ink-500 px-4">
-            Desde 2003 integrando tecnologia e negócios.
+            {heroData?.tagline || "Desde 2003 integrando tecnologia e negócios."}
           </p>
         </Reveal>
       </div>

@@ -37,20 +37,21 @@ import { useEffect } from "react"
 import { api, type ProdutoResumoDTO } from "@/lib/api"
 import type { Product } from "@/lib/products-data"
 
-function toProduct(dto: ProdutoResumoDTO): Product {
+function mapDtoToProduct(dto: ProdutoResumoDTO): Product {
   const staticProduct = PRODUCTS.find((p) => p.slug === dto.slug)
   return {
     slug: dto.slug,
     nome: dto.nome,
-    fabricante: dto.fabricanteNome || dto.fabricanteSlug,
+    fabricante: dto.fabricanteNome || staticProduct?.fabricante || dto.fabricanteSlug,
     fabricanteSlug: dto.fabricanteSlug,
-    logo: staticProduct?.logo || VENDOR_LOGOS[dto.fabricanteNome || dto.fabricanteSlug] || "",
-    logoClass: staticProduct?.logoClass || "h-5",
-    categoria: dto.categoriaTitle || dto.categoriaSlug,
+    // Logo: usa API primeiro, depois estático, depois VENDOR_LOGOS
+    logo: VENDOR_LOGOS[dto.fabricanteNome || ''] || staticProduct?.logo || dto.fabricanteLogoUrl || '',
+    logoClass: staticProduct?.logoClass || 'h-5',
+    categoria: dto.categoriaTitle || staticProduct?.categoria || dto.categoriaSlug,
     categoriaSlug: dto.categoriaSlug,
-    subcategoria: dto.subcategoria || "",
-    descricaoCurta: dto.descricaoCurta || "",
-    descricaoCompleta: staticProduct?.descricaoCompleta || "",
+    subcategoria: dto.subcategoria || staticProduct?.subcategoria || '',
+    descricaoCurta: dto.descricaoCurta || staticProduct?.descricaoCurta || '',
+    descricaoCompleta: staticProduct?.descricaoCompleta || '',
     destaque: dto.destaque,
     diferenciais: staticProduct?.diferenciais || [],
     casosDeUso: staticProduct?.casosDeUso || [],
@@ -70,12 +71,12 @@ export function ProductsListing() {
 
   useEffect(() => {
     api.produtos({ size: 100 })
-      .then((res) => {
-        if (res && res.content && res.content.length > 0) {
-          setProducts(res.content.map(toProduct))
+      .then((page) => {
+        if (page.content.length > 0) {
+          setProducts(page.content.map(mapDtoToProduct))
         }
       })
-      .catch(() => { /* mantém fallback */ })
+      .catch(() => {}) // mantém PRODUCTS como fallback
   }, [])
 
   const isDefaultView =

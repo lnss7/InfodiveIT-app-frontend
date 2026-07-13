@@ -3,7 +3,22 @@
 import { createRef, useRef, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowLeft, ArrowRight, ArrowUpRight, Building2, Check, Layers, Tag } from "lucide-react"
+import {
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  Building2,
+  Check,
+  Layers,
+  Tag,
+  Wrench,
+  Headphones as HeadphonesIcon,
+  ShieldCheck,
+  RefreshCcw,
+  Activity,
+  Cloud,
+  Cog
+} from "lucide-react"
 import { type Product, getProductBySlug, getRelatedProducts } from "@/lib/products-data"
 import { VENDOR_LOGOS, VENDOR_URLS } from "@/lib/vendor-logos"
 import redhatPretoLogo from "@/assets/Red Hat Preto Logo.svg"
@@ -32,6 +47,25 @@ import dynamic from "next/dynamic"
 const GsapMenu = dynamic(() => import("@/components/GsapMenu").then((mod) => mod.GsapMenu), {
   ssr: false,
 })
+
+const SERVICE_ICONS: Record<string, any> = {
+  wrench: Wrench,
+  headphones: HeadphonesIcon,
+  "shield-check": ShieldCheck,
+  "life-buoy": Wrench,
+  "server-cog": Cog,
+  activity: Activity,
+  cog: Cog,
+  "refresh-ccw": RefreshCcw,
+  cloud: Cloud,
+  
+  implementacao: Wrench,
+  sustentacao: HeadphonesIcon,
+  conformidade: ShieldCheck,
+  migracao: RefreshCcw,
+  monitoramento: Activity,
+  default: Cog,
+}
 
 /** Diagrama "integra com nossos serviços" (AnimatedBeam). */
 function ServicesDiagram({ product }: { product: Product }) {
@@ -69,14 +103,16 @@ function ServicesDiagram({ product }: { product: Product }) {
         {/* Serviços empilhados */}
         <div className="w-full flex flex-col gap-3">
           {product.servicos.map((service) => {
-            const Icon = service.icon
+            const Icon = typeof service.icon === 'string'
+              ? (SERVICE_ICONS[service.icon] || SERVICE_ICONS.default)
+              : service.icon;
             return (
               <div
                 key={service.nome}
                 className="flex items-center gap-3 rounded-xl border border-ink-200 bg-white px-4 py-3 shadow-sm w-full"
               >
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand/5 text-brand shrink-0">
-                  <Icon className="h-4 w-4" strokeWidth={1.75} />
+                  {Icon && <Icon className="h-4 w-4" strokeWidth={1.75} />}
                 </span>
                 <span className="text-sm font-semibold text-ink-800">
                   {service.nome}
@@ -111,7 +147,9 @@ function ServicesDiagram({ product }: { product: Product }) {
         {/* Nós laterais: serviços */}
         <div className="relative z-10 flex flex-col gap-4">
           {product.servicos.map((service, i) => {
-            const Icon = service.icon
+            const Icon = typeof service.icon === 'string'
+              ? (SERVICE_ICONS[service.icon] || SERVICE_ICONS.default)
+              : service.icon;
             return (
               <div
                 key={service.nome}
@@ -205,8 +243,8 @@ export function ProductDetailContent({ product }: { product: Product }) {
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbLink href={`/solucoes/${product.categoriaSlug}`}>
-                      {product.categoria}
+                    <BreadcrumbLink href={product.solucaoSlug ? `/solucoes/${product.solucaoSlug}` : `/produtos?categoria=${product.categoriaSlug}`}>
+                      {product.solucaoTitle || product.categoria}
                     </BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />

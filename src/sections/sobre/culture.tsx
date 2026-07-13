@@ -126,12 +126,14 @@ export function SobreCultura() {
                   whileInView={{ scale: 1 }}
                   viewport={{ once: true, amount: 0.3 }}
                   transition={{ duration: 1.2, delay: index * 0.1, ease: [0.25, 1, 0.5, 1] }}
-                  className="h-full w-full"
+                  className="relative h-full w-full"
                 >
                   <Image
                     src={foto.src}
                     alt={foto.alt}
                     className="h-full w-full object-cover"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     {...(typeof foto.src !== "string" ? { placeholder: "blur" } : {})}
                   />
                 </motion.div>

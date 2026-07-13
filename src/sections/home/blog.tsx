@@ -26,49 +26,7 @@ type ContentItem = {
 };
 
 
-// Fallback estático correspondendo fielmente ao screenshot
-const MOCK_CONTEUDOS: ContentItem[] = [
-  {
-    id: "1",
-    titulo:
-      "Inteligência artificial nas empresas: produtividade real ou apenas uma tendência passageira?",
-    tipo: "ARTIGO",
-    descricao:
-      "Descubra como a inteligência artificial está revolucionando a tomada de decisão corporativa.",
-    publicadoEm: "01 jun 2026",
-    tempoLeitura: "5 min read",
-    slug: "inteligencia-artificial-nas-empresas",
-    categoria: "IA",
-    imagem: peopleImg,
-  },
-  {
-    id: "2",
-    titulo:
-      "Por que a computação em nuvem é essencial para a inteligência artificial?",
-    tipo: "ARTIGO",
-    descricao:
-      "Entenda a sinergia essencial entre o processamento em nuvem e a sustentação de modelos de inteligência artificial.",
-    publicadoEm: "01 jun 2026",
-    tempoLeitura: "6 min read",
-    slug: "por-que-computacao-em-nuvem-essencial-para-ia",
-    categoria: "NUVEM",
-    imagem: cloudImg,
-  },
-  {
-    id: "3",
-    titulo:
-      "Por que a Infodive é incrível? A resposta de quem faz a tecnologia acontecer...",
-    tipo: "ARTIGO",
-    descricao:
-      "Entenda os bastidores e os diferenciais que tornam as parcerias de tecnologia tão impactantes nas operações críticas.",
-    publicadoEm: "29 maio 2026",
-    tempoLeitura: "7 min read",
-    slug: "por-que-infodive-e-incrivel",
-    categoria: "IA",
-    imagem: presentationImg,
-  },
-];
-
+// Imagens e categorias de apresentação (UI) ciclicamente atribuídas aos cards.
 const defaultImages = [peopleImg, cloudImg, presentationImg];
 const defaultCategories = ["IA", "NUVEM", "IA"];
 
@@ -79,7 +37,7 @@ export function Blog() {
     let active = true;
 
     api
-      .conteudos({ size: 3 })
+      .conteudos({ size: 3, destaque: true })
       .then((res) => {
         if (active) {
           if (res && res.content && res.content.length > 0) {
@@ -104,13 +62,13 @@ export function Blog() {
               }));
             setItems(formatted);
           } else {
-            setItems(MOCK_CONTEUDOS);
+            setItems([]);
           }
         }
       })
       .catch(() => {
         if (active) {
-          setItems(MOCK_CONTEUDOS);
+          setItems([]);
         }
       });
 
@@ -146,8 +104,10 @@ export function Blog() {
           </Link>
         </Reveal>
 
-        {/* Grade de 3 Cards com Bordas Compartilhadas */}
-        <div className="border border-ink-200 rounded-2xl overflow-hidden grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-ink-200 bg-transparent">
+        {/* Grade de Cards com Redimensionamento e Bordas Compartilhadas dinâmicas */}
+        <div className={`border border-ink-200 rounded-2xl overflow-hidden grid grid-cols-1 ${
+          items.length === 1 ? 'md:grid-cols-1 max-w-[400px] mx-auto' : items.length === 2 ? 'md:grid-cols-2 max-w-[800px] mx-auto' : 'md:grid-cols-3 max-w-none'
+        } divide-y md:divide-y-0 md:divide-x divide-ink-200 bg-transparent`}>
           {items.map((item, index) => (
             <motion.article
               key={item.id}

@@ -17,16 +17,28 @@ import {
   Wrench,
 } from "lucide-react"
 
-const SERVICE_ICON_MAP: Record<string, any> = {
-  wrench: Wrench,
-  headphones: HeadphonesIcon,
-  "shield-check": ShieldCheck,
-  "life-buoy": LifeBuoy,
-  "server-cog": ServerCog,
-  activity: Activity,
-  cog: Cog,
-  "refresh-ccw": RefreshCcw,
+const SERVICE_ICONS: Record<string, any> = {
+  implementacao: Wrench,
+  sustentacao: HeadphonesIcon,
+  conformidade: ShieldCheck,
+  migracao: RefreshCcw,
+  monitoramento: Activity,
   cloud: Cloud,
+  default: Cog,
+}
+
+function getIconName(icon: any): string {
+  if (typeof icon === 'string') return icon;
+  if (icon === Wrench) return 'wrench';
+  if (icon === HeadphonesIcon) return 'headphones';
+  if (icon === ShieldCheck) return 'shield-check';
+  if (icon === LifeBuoy) return 'life-buoy';
+  if (icon === ServerCog) return 'server-cog';
+  if (icon === Activity) return 'activity';
+  if (icon === Cog) return 'cog';
+  if (icon === RefreshCcw) return 'refresh-ccw';
+  if (icon === Cloud) return 'cloud';
+  return 'default';
 }
 
 async function getProduct(slug: string): Promise<Product | null> {
@@ -34,62 +46,51 @@ async function getProduct(slug: string): Promise<Product | null> {
     const dto = await api.produto(slug)
     if (!dto || !dto.ativo) return null
 
-    const [categorias, fabricantes, servicosList] = await Promise.all([
+    const [categorias] = await Promise.all([
       api.categorias().catch(() => []),
-      api.fabricantes().catch(() => []),
-      api.servicos().catch(() => [])
     ])
 
     const staticProduct = PRODUCTS.find((p) => p.slug === dto.slug)
     const catObj = categorias.find((c) => c.id === dto.categoriaId)
-    const fabObj = fabricantes.find((f) => f.id === dto.fabricanteId)
 
-    let diferenciais = []
-    if (dto.diferenciais) {
-      try {
-        diferenciais = JSON.parse(dto.diferenciais)
-      } catch (e) {
-        diferenciais = staticProduct?.diferenciais || []
-      }
-    } else {
-      diferenciais = staticProduct?.diferenciais || []
+    // diferenciais: API retorna array agora, não mais string
+    let diferenciais = staticProduct?.diferenciais || []
+    if (dto.diferenciais && dto.diferenciais.length > 0) {
+      diferenciais = dto.diferenciais.map(d => ({ title: d.titulo, description: d.descricao }))
     }
 
-    let casosDeUso = []
-    if (dto.casosDeUso) {
-      try {
-        casosDeUso = JSON.parse(dto.casosDeUso)
-      } catch (e) {
-        casosDeUso = staticProduct?.casosDeUso || []
-      }
-    } else {
-      casosDeUso = staticProduct?.casosDeUso || []
+    // casosDeUso: idem
+    let casosDeUso = staticProduct?.casosDeUso || []
+    if (dto.casosDeUso && dto.casosDeUso.length > 0) {
+      casosDeUso = dto.casosDeUso.map(c => ({ title: c.titulo, description: c.descricao }))
     }
 
-    const mappedServices = (dto.servicoIds || []).map((id) => {
-      const sDto = servicosList.find((s) => s.id === id)
-      if (!sDto) return null
-      const IconComp = SERVICE_ICON_MAP[sDto.icone || ""] || Wrench
-      return {
-        nome: sDto.nome,
-        icon: IconComp,
-      }
-    }).filter(Boolean) as any[]
-
-    const servicos = mappedServices.length > 0 ? mappedServices : (staticProduct?.servicos || [])
+    // servicos: API retorna objetos completos agora, e fallback usa string de ícones para serialização RSC
+    let servicos = (staticProduct?.servicos || []).map(s => ({
+      nome: s.nome,
+      icon: getIconName(s.icon),
+    }))
+    if (dto.servicos && dto.servicos.length > 0) {
+      servicos = dto.servicos.map(s => ({
+        nome: s.nome,
+        icon: s.icone || s.slug || 'default',
+      }))
+    }
 
     return {
       slug: dto.slug,
       nome: dto.nome,
-      fabricante: fabObj ? fabObj.nome : (staticProduct?.fabricante || dto.fabricanteSlug),
+      fabricante: dto.fabricanteNome || staticProduct?.fabricante || dto.fabricanteSlug,
       fabricanteSlug: dto.fabricanteSlug,
-      logo: staticProduct?.logo || VENDOR_LOGOS[dto.fabricanteSlug] || "",
-      logoClass: staticProduct?.logoClass || "h-5",
-      categoria: catObj ? catObj.nome : (staticProduct?.categoria || dto.categoriaSlug),
+      logo: VENDOR_LOGOS[dto.fabricanteNome || ''] || staticProduct?.logo || dto.fabricanteLogoUrl || '',
+      logoClass: staticProduct?.logoClass || 'h-5',
+      categoria: dto.categoriaNome || catObj?.nome || staticProduct?.categoria || dto.categoriaSlug,
       categoriaSlug: dto.categoriaSlug,
-      subcategoria: dto.subcategoria || "",
-      descricaoCurta: dto.descricaoCurta || "",
-      descricaoCompleta: dto.descricaoCompleta || "",
+      solucaoSlug: dto.solucaoSlug,
+      solucaoTitle: dto.solucaoNome,
+      subcategoria: dto.subcategoria || staticProduct?.subcategoria || '',
+      descricaoCurta: dto.descricaoCurta || staticProduct?.descricaoCurta || '',
+      descricaoCompleta: dto.descricaoCompleta || staticProduct?.descricaoCompleta || '',
       destaque: dto.destaque,
       diferenciais,
       casosDeUso,
@@ -108,11 +109,10 @@ interface PageProps {
 
 export async function generateStaticParams() {
   try {
-    const list = await api.produtos({ size: 100 })
-    return list.content.map((product) => ({ slug: product.slug }))
-  } catch (e) {
-    return PRODUCTS.map((product) => ({ slug: product.slug }))
-  }
+    const page = await api.produtos({ size: 100 })
+    if (page.content.length > 0) return page.content.map((p) => ({ slug: p.slug }))
+  } catch {}
+  return PRODUCTS.map((p) => ({ slug: p.slug }))  // fallback estático
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

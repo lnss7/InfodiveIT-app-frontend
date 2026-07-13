@@ -35,11 +35,29 @@ export type CategoriaDTO = {
   id: string
   nome: string
   slug: string
-  icone?: string
-  descricaoCurta?: string
-  descricaoCompleta?: string
   ordem: number
   ativo: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export type SolucaoDTO = {
+  id: string
+  nome: string
+  slug: string
+  icone?: string
+  subtituloCurto?: string
+  descricaoCurta?: string
+  descricaoCompleta?: string
+  features?: { titulo: string; descricao: string; tag?: string }[]
+  imagemUrl?: string
+  fabricantesTitulo?: string
+  fabricantesDescricao?: string
+  fabricantes?: { id: string; nome: string; slug: string; logoUrl?: string }[]
+  ordem: number
+  ativo: boolean
+  categoriaId?: string
+  categoriaNome?: string
   createdAt: string
   updatedAt: string
 }
@@ -82,6 +100,8 @@ export type ProdutoResumoDTO = {
   destaque: boolean
   categoriaSlug: string
   categoriaTitle?: string
+  solucaoSlug?: string
+  solucaoTitle?: string
   fabricanteSlug: string
   fabricanteNome?: string
   fabricanteLogoUrl?: string
@@ -94,15 +114,25 @@ export type ProdutoDTO = {
   subcategoria?: string
   descricaoCurta?: string
   descricaoCompleta?: string
-  casosDeUso?: string
-  diferenciais?: string
+  casosDeUso?: { titulo: string; descricao: string }[]
+  diferenciais?: { titulo: string; descricao: string }[]
+  servicosEyebrow?: string
+  servicosTitulo?: string
+  servicosDescricao?: string
+  imagemUrl?: string
   destaque: boolean
   ativo: boolean
   categoriaId: string
   categoriaSlug: string
+  categoriaNome?: string
+  solucaoId?: string
+  solucaoSlug?: string
+  solucaoNome?: string
   fabricanteId: string
   fabricanteSlug: string
-  servicoIds: string[]
+  fabricanteNome?: string
+  fabricanteLogoUrl?: string
+  servicos?: { id: string; nome: string; slug: string; icone?: string }[]
   createdAt: string
   updatedAt: string
 }
@@ -122,6 +152,7 @@ export type ConteudoDTO = {
   socialPostId?: string
   publicadoEm?: string
   ativo: boolean
+  destaque: boolean
   categoriaId?: string
   fabricanteId?: string
   produtoId?: string
@@ -150,6 +181,7 @@ export type PaginaHeroDTO = {
   pagina: string
   eyebrow?: string
   headline?: string
+  headlineDestaque?: string
   subtitulo?: string
   tagline?: string
 }
@@ -208,7 +240,10 @@ export type SecaoHomeDTO = {
   secao: string
   eyebrow?: string
   headline?: string
+  headlineDestaque?: string
   subtitulo?: string
+  boxTitulo?: string
+  boxDescricao?: string
 }
 
 // ─── DTOs de seções da Home ───────────────────────────────────────────────────
@@ -225,6 +260,7 @@ export type HomeSolucoesBentoDTO = {
   descricao?: string
   icone?: string
   imagemIaUrl?: string
+  textoCarrossel?: string
   ordem: number
 }
 
@@ -406,6 +442,12 @@ export const api = {
   categoria: (slug: string) =>
     fetchAPI<CategoriaDTO>(`/categorias/${encodeURIComponent(slug)}`),
 
+  solucoes: () =>
+    fetchAPI<SolucaoDTO[]>('/solucoes'),
+
+  solucao: (slug: string) =>
+    fetchAPI<SolucaoDTO>(`/solucoes/${encodeURIComponent(slug)}`),
+
   produtos: (params?: { categoria?: string; fabricante?: string; destaque?: boolean; page?: number; size?: number }) =>
     fetchAPI<SpringPageResponse<ProdutoResumoDTO>>(`/produtos${buildQuery(params)}`),
 
@@ -424,7 +466,7 @@ export const api = {
   servico: (slug: string) =>
     fetchAPI<ServicoDTO>(`/servicos/${encodeURIComponent(slug)}`),
 
-  conteudos: (params?: { tipo?: ConteudoDTO['tipo']; origem?: ConteudoDTO['origem']; page?: number; size?: number }) =>
+  conteudos: (params?: { tipo?: ConteudoDTO['tipo']; origem?: ConteudoDTO['origem']; destaque?: boolean; page?: number; size?: number }) =>
     fetchAPI<SpringPageResponse<ConteudoDTO>>(`/conteudos${buildQuery(params)}`),
 
   conteudo: (slug: string) =>

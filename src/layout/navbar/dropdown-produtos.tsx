@@ -4,16 +4,16 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import {
-  fabricantesProdutos,
-  produtosIbm,
-} from './data'
+import { produtosIbm } from './data'
+import { useNavbarData } from './use-navbar-data'
 
 type ProdutosDropdownProps = {
   onItemClick?: () => void
 }
 
 export function ProdutosDropdown({ onItemClick }: ProdutosDropdownProps) {
+  const { fabricantes } = useNavbarData()
+
   return (
     <motion.div
       initial={{ opacity: 0, y: -6 }}
@@ -34,7 +34,7 @@ export function ProdutosDropdown({ onItemClick }: ProdutosDropdownProps) {
         <div className="col-span-12 lg:col-span-3">
           <ColumnTitle>Fabricantes</ColumnTitle>
           <ul className="flex flex-col gap-1">
-            {fabricantesProdutos.map((fab) => {
+            {fabricantes.map((fab) => {
               const isActive = fab.nome === 'IBM'
               return (
                 <li key={fab.nome}>
