@@ -65,27 +65,36 @@ export function SobreNumeros() {
 
   const [colunaA, setColunaA] = useState<Stat[]>(COLUNA_A_FALLBACK);
   const [colunaB, setColunaB] = useState<Stat[]>(COLUNA_B_FALLBACK);
+  const [textoDescritivo, setTextoDescritivo] = useState("Fundada em 2003, a Infodive reúne hoje um time de especialistas que projeta, implementa e sustenta a infraestrutura de empresas em todo o Brasil.");
 
   useEffect(() => {
     api.sobreNumeros()
       .then((data) => {
+        if (data.textoDescritivo) setTextoDescritivo(data.textoDescritivo);
         if (data.stats && data.stats.length > 0) {
-          const a = data.stats.filter((s) => s.coluna !== "B").map((s) => ({
-            prefix: s.prefixo,
-            value: s.valor,
-            startValue: s.valorInicial,
-            suffix: s.sufixo,
-            label: s.label,
-          }));
-          const b = data.stats.filter((s) => s.coluna === "B").map((s) => ({
-            prefix: s.prefixo,
-            value: s.valor,
-            startValue: s.valorInicial,
-            suffix: s.sufixo,
-            label: s.label,
-          }));
-          if (a.length > 0) setColunaA(a);
-          if (b.length > 0) setColunaB(b);
+          const limitedStats = data.stats.slice(0, 7);
+          const aStats: Stat[] = [];
+          const bStats: Stat[] = [];
+
+          limitedStats.forEach((s, idx) => {
+            const item: Stat = {
+              prefix: s.prefixo,
+              value: s.valor,
+              startValue: s.valorInicial,
+              suffix: s.sufixo,
+              label: s.label,
+            };
+
+            // Alterna automaticamente os cards entre as duas colunas (par -> esq, ímpar -> dir)
+            if (idx % 2 === 1) {
+              bStats.push(item);
+            } else {
+              aStats.push(item);
+            }
+          });
+
+          setColunaA(aStats);
+          setColunaB(bStats);
         }
       })
       .catch(() => { /* mantém fallback */ });
@@ -106,10 +115,6 @@ export function SobreNumeros() {
         invalidateOnRefresh: true,
       };
 
-      // As duas colunas deslizam em ritmos diferentes para criar profundidade:
-      // a coluna B parte mais abaixo (y:120 vs 40) e percorre mais (amplitude
-      // maior), então parece estar numa camada mais distante que a A. `ease:none`
-      // mantém o movimento 100% atrelado ao scroll (sem aceleração própria).
       gsap.fromTo(
         colARef.current,
         { y: 40 },
@@ -142,9 +147,7 @@ export function SobreNumeros() {
               </Reveal>
               <Reveal delay={0.1}>
                 <p className="text-pretty text-2xl leading-snug text-ink-950 sm:text-3xl">
-                  Fundada em 2003, a Infodive reúne hoje um time de
-                  especialistas que projeta, implementa e sustenta a
-                  infraestrutura de empresas em todo o Brasil.
+                  {textoDescritivo}
                 </p>
               </Reveal>
               <Reveal delay={0.2}>

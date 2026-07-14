@@ -102,10 +102,14 @@ export function SobreTimeline() {
   const progressRef = useRef<HTMLDivElement>(null);
 
   const [marcos, setMarcos] = useState<Marco[]>(MARCOS_FALLBACK);
+  const [eyebrow, setEyebrow] = useState("Nossa história");
+  const [headline, setHeadline] = useState("De 2003 até aqui.");
 
   useEffect(() => {
     api.sobreTimeline()
       .then((data) => {
+        if (data.eyebrow) setEyebrow(data.eyebrow);
+        if (data.headline) setHeadline(data.headline);
         if (data.marcos && data.marcos.length > 0) {
           setMarcos(data.marcos.map((m) => ({
             year: m.ano,
@@ -134,13 +138,10 @@ export function SobreTimeline() {
         scrollTrigger: {
           trigger: pin,
           start: "top top",
-          // Fixa a seção e converte rolagem vertical em deslocamento horizontal:
-          // o "comprimento" do pin é exatamente a largura excedente do track, então
-          // a timeline termina quando o último marco encosta na borda direita.
           end: () => `+=${getDistance()}`,
           pin: true,
-          scrub: 1, // 1s de defasagem entre scroll e animação — suaviza sem soltar
-          anticipatePin: 1, // evita o "pulo" de 1 frame ao fixar a seção
+          scrub: 1,
+          anticipatePin: 1,
           invalidateOnRefresh: true,
         },
       });
@@ -166,8 +167,8 @@ export function SobreTimeline() {
         <div className="container-default w-full">
           <div className="flex items-end justify-between">
             <div>
-              <p className="eyebrow">Nossa história</p>
-              <h2 className="text-white">De 2003 até aqui.</h2>
+              <p className="eyebrow">{eyebrow}</p>
+              <h2 className="text-white">{headline}</h2>
             </div>
             <p className="flex items-center gap-2 pb-1 text-xs uppercase tracking-[0.2em] text-white/35">
               Continue rolando
@@ -182,18 +183,18 @@ export function SobreTimeline() {
             className="flex w-max items-stretch gap-6 pl-[max(2.5rem,calc((100vw-80rem)/2+2.5rem))] pr-[12vw]"
           >
             {marcos.map((marco, i) => (
-              <MarcoCard key={marco.year} marco={marco} index={i} />
+              <MarcoCard key={`${marco.year}-${i}`} marco={marco} index={i} />
             ))}
           </div>
         </div>
 
         <div className="container-default mt-14 w-full">
           <div className="flex items-center gap-4 text-xs uppercase tracking-[0.2em] text-white/35">
-            <span>2003</span>
+            <span>{marcos[0]?.year ?? "2003"}</span>
             <div className="h-px flex-1 bg-white/10">
               <div ref={progressRef} className="h-px origin-left bg-brand" />
             </div>
-            <span>Hoje</span>
+            <span>{marcos[marcos.length - 1]?.year ?? "Hoje"}</span>
           </div>
         </div>
       </div>
@@ -202,8 +203,8 @@ export function SobreTimeline() {
       <div className="py-20 lg:hidden">
         <div className="container-default">
           <Reveal>
-            <p className="eyebrow">Nossa história</p>
-            <h2 className="text-white">De 2003 até aqui.</h2>
+            <p className="eyebrow">{eyebrow}</p>
+            <h2 className="text-white">{headline}</h2>
           </Reveal>
 
           <ol className="mt-12 space-y-12 border-l border-white/10 pl-6">

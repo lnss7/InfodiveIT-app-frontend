@@ -2,14 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Eye, Handshake, Layers, Network } from "lucide-react";
+import { Eye, Handshake, Layers, Network, Shield, Zap, Check, Star, Heart, Target, Award, Lock } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Reveal } from "@/components/animations/reveal";
 import { api } from "@/lib/api";
 
 const ICON_MAP: Record<string, LucideIcon> = {
-  Handshake, Layers, Network, Eye,
-  handshake: Handshake, layers: Layers, network: Network, eye: Eye,
+  Handshake, Layers, Network, Eye, Shield, Zap, Check, Star, Heart, Target, Award, Lock,
+  handshake: Handshake, layers: Layers, network: Network, eye: Eye, shield: Shield, zap: Zap,
+  check: Check, star: Star, heart: Heart, target: Target, award: Award, lock: Lock,
 };
 
 function getIcon(name?: string): LucideIcon {
@@ -28,10 +29,16 @@ const VALORES_FALLBACK: Valor[] = [
 
 export function SobreValores() {
   const [valores, setValores] = useState<Valor[]>(VALORES_FALLBACK);
+  const [eyebrow, setEyebrow] = useState("Nossos valores");
+  const [headline, setHeadline] = useState("O que nos guia desde o primeiro projeto.");
+  const [paragrafo, setParagrafo] = useState("Tecnologia é meio. O que sustenta vinte anos de mercado é a forma como trabalhamos — com quem confia operações críticas à nossa equipe.");
 
   useEffect(() => {
     api.sobreValores()
       .then((data) => {
+        if (data.eyebrow) setEyebrow(data.eyebrow);
+        if (data.headline) setHeadline(data.headline);
+        if (data.paragrafo) setParagrafo(data.paragrafo);
         if (data.valores && data.valores.length > 0) {
           setValores(data.valores.map((v) => ({
             icon: getIcon(v.icone),
@@ -50,18 +57,16 @@ export function SobreValores() {
           <div className="lg:col-span-4">
             <div className="lg:sticky lg:top-36">
               <Reveal>
-                <p className="eyebrow">Nossos valores</p>
+                <p className="eyebrow">{eyebrow}</p>
               </Reveal>
               <Reveal delay={0.1}>
                 <h2 className="text-balance">
-                  O que nos guia desde o primeiro projeto.
+                  {headline}
                 </h2>
               </Reveal>
               <Reveal delay={0.2}>
                 <p className="mt-5 text-pretty leading-relaxed text-ink-500">
-                  Tecnologia é meio. O que sustenta vinte anos de mercado é a
-                  forma como trabalhamos — com quem confia operações críticas à
-                  nossa equipe.
+                  {paragrafo}
                 </p>
               </Reveal>
             </div>
