@@ -46,8 +46,28 @@ export function SolutionsListing() {
   const [solutions, setSolutions] = useState<Solution[]>(SOLUTIONS);
   const [categories, setCategories] = useState<string[]>(FALLBACK_CATEGORIES);
   const [categoryList, setCategoryList] = useState<CategoriaDTO[]>([]);
+  const [cta, setCta] = useState<{ titulo?: string; subtitulo?: string; ctaTexto?: string; tipoAcao?: string }>({
+    titulo: "Sua infraestrutura crítica precisa de sustentação?",
+    subtitulo: "Fale com nossos arquitetos de soluções. Projetamos, implementamos e sustentamos seu ambiente 24/7 com garantia de SLA.",
+    ctaTexto: "Falar com especialista",
+    tipoAcao: "DRAWER",
+  });
 
   useEffect(() => {
+    // 0. Fetch CTA
+    api.cta("solucoes")
+      .then((data) => {
+        if (data) {
+          setCta({
+            titulo: data.titulo,
+            subtitulo: data.subtitulo,
+            ctaTexto: data.ctaTexto,
+            tipoAcao: data.tipoAcao,
+          });
+        }
+      })
+      .catch(() => {});
+
     // 1. Fetch categories
     api.categorias()
       .then((cats) => {
@@ -349,9 +369,10 @@ export function SolutionsListing() {
           {/* CTA Section */}
           <Reveal delay={0.2} className="mt-20 max-w-6xl mx-auto">
             <ConversionCTA
-              title="Sua infraestrutura crítica precisa de sustentação?"
-              subtitle="Fale com nossos arquitetos de soluções. Projetamos, implementamos e sustentamos seu ambiente 24/7 com garantia de SLA."
-              ctaLabel="Falar com especialista"
+              title={cta.titulo ?? "Sua infraestrutura crítica precisa de sustentação?"}
+              subtitle={cta.subtitulo ?? "Fale com nossos arquitetos de soluções. Projetamos, implementamos e sustentamos seu ambiente 24/7 com garantia de SLA."}
+              ctaLabel={cta.ctaTexto ?? "Falar com especialista"}
+              tipoAcao={cta.tipoAcao}
               onCtaClick={() => setIsMenuOpen(true)}
             />
           </Reveal>

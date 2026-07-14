@@ -16,6 +16,7 @@ export function Contact() {
   const [info, setInfo] = useState({
     eyebrow: "Contato",
     headline: "Pronto para evoluir a TI da sua empresa?",
+    headlineDestaque: "TI da sua empresa",
     subtitulo: "Conecte-se com nossos consultores seniores. Estamos prontos para projetar e implementar soluções de infraestrutura e nuvem sob medida para o seu negócio.",
     email: "contato@infodive.com.br",
     telefone: "+55 (51) 3330-0444",
@@ -51,6 +52,7 @@ export function Contact() {
           setInfo({
             eyebrow: data.eyebrow || "Contato",
             headline: data.headline || "Pronto para evoluir a TI da sua empresa?",
+            headlineDestaque: data.headlineDestaque || "TI da sua empresa",
             subtitulo: data.subtitulo || "Conecte-se com nossos consultores seniores. Estamos prontos para projetar e implementar soluções de infraestrutura e nuvem sob medida para o seu negócio.",
             email: data.email || "contato@infodive.com.br",
             telefone: data.telefone || "+55 (51) 3330-0444",
@@ -73,7 +75,7 @@ export function Contact() {
   }, []);
 
   return (
-    <section id="contact" className="relative z-10 bg-white py-20 md:py-28 border-t border-ink-200/60">
+    <section id="contact" className="scroll-mt-28 md:scroll-mt-36 relative z-10 bg-white py-20 md:py-28 border-t border-ink-200/60">
       <div className="mx-auto w-full max-w-[1600px] px-6 md:px-10">
         {/* Gradient banner — todos os componentes da seção vivem aqui dentro */}
         <div
@@ -107,13 +109,21 @@ export function Contact() {
           <Reveal className="lg:col-span-7 flex flex-col gap-6">
             <p className="eyebrow text-sm text-white/70">{info.eyebrow}</p>
             <h2 className="text-white text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight leading-[1.15] text-balance">
-              {info.headline.includes("TI da sua empresa") ? (
+              {info.headlineDestaque && info.headline.includes(info.headlineDestaque) ? (
+                <>
+                  {info.headline.split(info.headlineDestaque)[0]}
+                  <span className="text-[#9DB8FF]">{info.headlineDestaque}</span>
+                  {info.headline.split(info.headlineDestaque)[1]}
+                </>
+              ) : info.headline.includes("TI da sua empresa") ? (
                 <>
                   {info.headline.split("TI da sua empresa")[0]}
                   <span className="text-[#9DB8FF]">TI da sua empresa</span>
                   {info.headline.split("TI da sua empresa")[1]}
                 </>
-              ) : info.headline}
+              ) : (
+                info.headline
+              )}
             </h2>
             <p className="text-ink-300 text-base md:text-lg max-w-2xl font-light leading-relaxed text-pretty">
               {info.subtitulo}

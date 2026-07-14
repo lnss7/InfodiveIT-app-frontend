@@ -10,6 +10,7 @@ interface ConversionCTAProps {
   subtitle: string
   ctaLabel?: string
   href?: string
+  tipoAcao?: string
   onCtaClick?: () => void
 }
 
@@ -22,8 +23,26 @@ export function ConversionCTA({
   subtitle,
   ctaLabel = "Falar com especialista",
   href,
+  tipoAcao,
   onCtaClick,
 }: ConversionCTAProps) {
+  const handleClick = () => {
+    if (tipoAcao === "REDIRECT_HOME_CONTACT") {
+      if (typeof window !== "undefined") {
+        if (window.location.pathname === "/") {
+          const el = document.getElementById("contact")
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "start" })
+            return
+          }
+        }
+        window.location.href = "/#contact"
+      }
+    } else if (onCtaClick) {
+      onCtaClick()
+    }
+  }
+
   return (
     <div
       className="relative overflow-hidden rounded-[2rem] px-6 py-12 sm:px-10 md:px-14 md:py-16 text-center text-white shadow-2xl shadow-[#3B1F59]/30"
@@ -85,7 +104,7 @@ export function ConversionCTA({
         <p className="text-ink-300 text-sm sm:text-base font-light leading-relaxed max-w-2xl mx-auto mb-8 text-pretty">
           {subtitle}
         </p>
-        {href ? (
+        {href && !tipoAcao ? (
           <Link href={href} className="focus:outline-none" tabIndex={-1}>
             <Button
               variant="primary"
@@ -100,7 +119,7 @@ export function ConversionCTA({
           <Button
             variant="primary"
             size="lg"
-            onClick={onCtaClick}
+            onClick={handleClick}
             className="text-sm px-8 py-4 font-bold text-white cursor-pointer shadow-[0_4px_20px_rgba(14,102,255,0.25)]"
           >
             {ctaLabel}

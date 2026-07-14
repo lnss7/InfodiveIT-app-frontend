@@ -72,17 +72,14 @@ export function ServicosMetodologia() {
           <div className="lg:col-span-4">
             <div className="lg:sticky lg:top-36">
               <Reveal>
-                <p className="eyebrow">Como trabalhamos</p>
+                <p className="eyebrow">{eyebrow}</p>
               </Reveal>
               <Reveal delay={0.1}>
-                <h2 className="text-balance">Método, não improviso.</h2>
+                <h2 className="text-balance">{headline}</h2>
               </Reveal>
               <Reveal delay={0.2}>
                 <p className="mt-5 text-pretty leading-relaxed text-ink-500">
-                  A diferença entre uma tecnologia que funciona e uma que vira
-                  dor de cabeça está no processo. O nosso é repetível,
-                  documentado e medido — do primeiro diagnóstico à operação
-                  assistida.
+                  {paragrafo}
                 </p>
               </Reveal>
 

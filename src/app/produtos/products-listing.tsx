@@ -63,13 +63,42 @@ export function ProductsListing() {
   const searchParams = useSearchParams()
   const urlFabricante = searchParams.get("fabricante")
 
+  const initialFabricante = useMemo(() => {
+    if (!urlFabricante) return "Todos"
+    const match = PRODUCTS.find(
+      (p) =>
+        p.fabricanteSlug?.toLowerCase() === urlFabricante.toLowerCase() ||
+        p.fabricante?.toLowerCase() === urlFabricante.toLowerCase()
+    )
+    return match ? match.fabricante : urlFabricante
+  }, [urlFabricante])
+
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("Todos")
-  const [selectedFabricante, setSelectedFabricante] = useState(urlFabricante || "Todos")
+  const [selectedFabricante, setSelectedFabricante] = useState(initialFabricante)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [products, setProducts] = useState<Product[]>(PRODUCTS)
+  const [cta, setCta] = useState<{ titulo?: string; subtitulo?: string; ctaTexto?: string; tipoAcao?: string }>({
+    titulo: "Não achou o que procurava?",
+    subtitulo: "Nosso catálogo vai muito além desta vitrine. Fale com um especialista e encontramos o produto certo — com o melhor fabricante — para o seu desafio.",
+    ctaTexto: "Falar com especialista",
+    tipoAcao: "DRAWER",
+  })
 
   useEffect(() => {
+    api.cta("produtos")
+      .then((data) => {
+        if (data) {
+          setCta({
+            titulo: data.titulo,
+            subtitulo: data.subtitulo,
+            ctaTexto: data.ctaTexto,
+            tipoAcao: data.tipoAcao,
+          })
+        }
+      })
+      .catch(() => {})
+
     api.produtos({ size: 100 })
       .then((page) => {
         if (page.content.length > 0) {
@@ -79,6 +108,19 @@ export function ProductsListing() {
       .catch(() => {}) // mantém PRODUCTS como fallback
   }, [])
 
+  useEffect(() => {
+    if (urlFabricante) {
+      const match = PRODUCTS.find(
+        (p) =>
+          p.fabricanteSlug?.toLowerCase() === urlFabricante.toLowerCase() ||
+          p.fabricante?.toLowerCase() === urlFabricante.toLowerCase()
+      )
+      if (match) {
+        setSelectedFabricante(match.fabricante)
+      }
+    }
+  }, [urlFabricante])
+
   const isDefaultView =
     selectedCategory === "Todos" &&
     selectedFabricante === "Todos" &&
@@ -86,6 +128,7 @@ export function ProductsListing() {
 
   const filtered = useMemo(() => {
     const q = searchQuery.trim().toLowerCase()
+    const fabFilter = selectedFabricante.toLowerCase()
     return products.filter((p) => {
       const matchesSearch =
         q === "" ||
@@ -96,12 +139,14 @@ export function ProductsListing() {
       const matchesCategory =
         selectedCategory === "Todos" || p.categoria === selectedCategory
       const matchesFabricante =
-        selectedFabricante === "Todos" || p.fabricante === selectedFabricante
+        selectedFabricante === "Todos" ||
+        p.fabricante.toLowerCase() === fabFilter ||
+        p.fabricanteSlug?.toLowerCase() === fabFilter
       return matchesSearch && matchesCategory && matchesFabricante
     })
   }, [searchQuery, selectedCategory, selectedFabricante, products])
 
-  const featured = useMemo(() => products.filter((p) => p.destaque).slice(0, 3), [products])
+  const featured = useMemo(() => products.filter((p) => p.destaque).slice(0, 6), [products])
   // Na visão padrão, o grid mostra os não-destaque (os destaque já aparecem na faixa).
   const gridProducts = isDefaultView
     ? filtered.filter((p) => !p.destaque)
@@ -339,9 +384,10 @@ export function ProductsListing() {
           {/* CTA */}
           <Reveal delay={0.1} className="mt-20 max-w-6xl mx-auto">
             <ConversionCTA
-              title="Não achou o que procurava?"
-              subtitle="Nosso catálogo vai muito além desta vitrine. Fale com um especialista e encontramos o produto certo — com o melhor fabricante — para o seu desafio."
-              ctaLabel="Falar com especialista"
+              title={cta.titulo ?? "Não achou o que procurava?"}
+              subtitle={cta.subtitulo ?? "Nosso catálogo vai muito além desta vitrine. Fale com um especialista e encontramos o produto certo — com o melhor fabricante — para o seu desafio."}
+              ctaLabel={cta.ctaTexto ?? "Falar com especialista"}
+              tipoAcao={cta.tipoAcao}
               onCtaClick={() => setIsMenuOpen(true)}
             />
           </Reveal>

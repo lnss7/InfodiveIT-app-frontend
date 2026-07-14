@@ -19,7 +19,7 @@ export function SobreHero() {
   const [eyebrow, setEyebrow] = useState("Quem Somos");
   const [headline, setHeadline] = useState("Integradores de tecnologia desde 2003.");
   const [subtitulo, setSubtitulo] = useState("Há mais de duas décadas, a Infodive desenha, implementa e sustenta a infraestrutura crítica de empresas que não podem parar — da arquitetura à operação.");
-  const [highlightWords, setHighlightWords] = useState(["2003"]);
+  const [highlightWords, setHighlightWords] = useState<string[]>(["2003"]);
 
   useEffect(() => {
     api.paginaHero("sobre")
@@ -27,7 +27,14 @@ export function SobreHero() {
         if (data.eyebrow) setEyebrow(data.eyebrow);
         if (data.headline) setHeadline(data.headline);
         if (data.subtitulo) setSubtitulo(data.subtitulo);
-        if (data.tagline) setHighlightWords([data.tagline]);
+        const highlight = data.headlineDestaque || data.tagline;
+        if (highlight) {
+          const words = highlight
+            .split(/\s+/)
+            .map((w) => w.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ""))
+            .filter(Boolean);
+          if (words.length > 0) setHighlightWords(words);
+        }
       })
       .catch(() => { /* mantém fallback */ });
   }, []);
@@ -99,6 +106,7 @@ export function SobreHero() {
 
         <h1 className="mb-6 text-balance text-4xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-5xl md:text-6xl">
           <TextEffect
+            key={`${headline}-${highlightWords.join('-')}`}
             per="word"
             preset="blur"
             as="span"

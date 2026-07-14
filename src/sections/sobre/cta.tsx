@@ -13,7 +13,7 @@ export async function SobreCta() {
             title={cta?.titulo ?? "Pronto para escrever o próximo capítulo com a gente?"}
             subtitle={cta?.subtitulo ?? "Fale com quem integra tecnologia desde 2003 — e descubra o que um parceiro de verdade muda na sua operação."}
             ctaLabel={cta?.ctaTexto ?? "Falar com a gente"}
-            href="/#contact"
+            tipoAcao={cta?.tipoAcao ?? "REDIRECT_HOME_CONTACT"}
           />
         </Reveal>
       </div>

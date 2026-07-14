@@ -200,7 +200,7 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
                               <div className="pb-5 pt-1">
                                 <p className={SECTION_LABEL}>Fabricantes</p>
                                 <ul className="mt-2 grid grid-cols-1 gap-0.5 sm:grid-cols-2">
-                                  {fabricantes.map((fab) => (
+                                  {fabricantes.slice(0, 6).map((fab) => (
                                     <li key={fab.href}>
                                       <Link
                                         href={fab.href}

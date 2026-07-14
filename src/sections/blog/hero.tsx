@@ -11,7 +11,10 @@ export async function BlogHero() {
   const eyebrow = hero?.eyebrow ?? "Conteúdos";
   const headline = hero?.headline ?? "Conhecimento técnico para decisões melhores.";
   const subtitulo = hero?.subtitulo ?? "Artigos, materiais técnicos e o que a Infodive compartilha nas redes.";
-  const highlightWords = hero?.tagline ? [hero.tagline] : ["melhores"];
+  const highlightText = hero?.headlineDestaque || hero?.tagline;
+  const highlightWords = highlightText
+    ? highlightText.split(/\s+/).map((w) => w.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")).filter(Boolean)
+    : ["melhores"];
 
   return (
     <section className="relative overflow-hidden border-b border-white/5 bg-[#050507] pb-24 pt-24 text-white sm:pt-40 md:pb-28">
@@ -49,6 +52,7 @@ export async function BlogHero() {
 
         <h1 className="mb-6 text-balance text-4xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-5xl md:text-6xl">
           <TextEffect
+            key={`${headline}-${highlightWords.join('-')}`}
             per="word"
             preset="blur"
             as="span"

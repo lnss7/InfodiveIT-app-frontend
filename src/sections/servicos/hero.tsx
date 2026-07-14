@@ -22,7 +22,7 @@ export function ServicosHero() {
   const [eyebrow, setEyebrow] = useState("Serviços");
   const [headline, setHeadline] = useState("Tecnologia é só o começo. Resultado vem da execução.");
   const [subtitulo, setSubtitulo] = useState("A Infodive não entrega apenas a tecnologia — planejamos, implantamos, migramos e sustentamos o ambiente que mantém sua empresa no ar.");
-  const [highlightWords, setHighlightWords] = useState(["execução"]);
+  const [highlightWords, setHighlightWords] = useState<string[]>(["execução"]);
 
   useEffect(() => {
     api.paginaHero("servicos")
@@ -30,7 +30,14 @@ export function ServicosHero() {
         if (data.eyebrow) setEyebrow(data.eyebrow);
         if (data.headline) setHeadline(data.headline);
         if (data.subtitulo) setSubtitulo(data.subtitulo);
-        if (data.tagline) setHighlightWords([data.tagline]);
+        const highlight = data.headlineDestaque || data.tagline;
+        if (highlight) {
+          const words = highlight
+            .split(/\s+/)
+            .map((w) => w.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ""))
+            .filter(Boolean);
+          if (words.length > 0) setHighlightWords(words);
+        }
       })
       .catch(() => { /* mantém fallback */ });
   }, []);
@@ -103,6 +110,7 @@ export function ServicosHero() {
 
         <h1 className="mb-6 text-balance text-4xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-5xl md:text-6xl">
           <TextEffect
+            key={`${headline}-${highlightWords.join('-')}`}
             per="word"
             preset="blur"
             as="span"

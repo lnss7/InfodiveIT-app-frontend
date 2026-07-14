@@ -6,13 +6,7 @@
  * de 60 segundos, permitindo respostas rápidas e cache integrado do Next.js.
  */
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL
-
-if (!API_URL && typeof window === 'undefined') {
-  console.warn(
-    '[api] NEXT_PUBLIC_API_URL não está definido. Configure em .env.local.',
-  )
-}
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1'
 
 /**
  * Estrutura de paginação padrão retornada pelo Spring Data Page.
@@ -191,6 +185,7 @@ export type CtaDTO = {
   titulo?: string
   subtitulo?: string
   ctaTexto?: string
+  tipoAcao?: string
 }
 
 export type ConfigFooterDTO = {
@@ -216,6 +211,7 @@ export type ConfigBlogDTO = {
 export type ContatoInfoDTO = {
   eyebrow?: string
   headline?: string
+  headlineDestaque?: string
   subtitulo?: string
   email?: string
   telefone?: string

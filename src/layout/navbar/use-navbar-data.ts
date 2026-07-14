@@ -13,7 +13,7 @@ import {
   ShieldCheck,
   type LucideIcon,
 } from 'lucide-react'
-import { api, type ConteudoDTO } from '@/lib/api'
+import { api, type ConteudoDTO, type ProdutoResumoDTO } from '@/lib/api'
 import {
   categorias as fallbackCategorias,
   fabricantesProdutos as fallbackFabricantes,
@@ -43,13 +43,14 @@ function getUiConfigForSlug(slug: string) {
 }
 
 /**
- * Busca os dados dinâmicos da navbar (categorias, fabricantes e último conteúdo)
+ * Busca os dados dinâmicos da navbar (categorias, fabricantes, último conteúdo e produtos em destaque)
  * a partir da API, mantendo os dados estáticos de `data.ts` como fallback.
  */
 export function useNavbarData() {
   const [categorias, setCategorias] = useState(fallbackCategorias)
   const [fabricantes, setFabricantes] = useState(fallbackFabricantes)
   const [ultimoConteudo, setUltimoConteudo] = useState<ConteudoDTO | null>(null)
+  const [produtosDestaque, setProdutosDestaque] = useState<ProdutoResumoDTO[]>([])
 
   useEffect(() => {
     api
@@ -96,6 +97,15 @@ export function useNavbarData() {
       })
 
     api
+      .produtos({ destaque: true, size: 6 })
+      .then((page) => {
+        if (page.content.length > 0) {
+          setProdutosDestaque(page.content)
+        }
+      })
+      .catch(() => {})
+
+    api
       .conteudos({ tipo: 'ARTIGO', size: 1 })
       .then((page) => {
         if (page.content[0]) setUltimoConteudo(page.content[0])
@@ -105,5 +115,5 @@ export function useNavbarData() {
       })
   }, [])
 
-  return { categorias, fabricantes, ultimoConteudo }
+  return { categorias, fabricantes, ultimoConteudo, produtosDestaque }
 }

@@ -12,7 +12,15 @@ type ProdutosDropdownProps = {
 }
 
 export function ProdutosDropdown({ onItemClick }: ProdutosDropdownProps) {
-  const { fabricantes } = useNavbarData()
+  const { fabricantes, produtosDestaque } = useNavbarData()
+
+  const displayProducts = produtosDestaque.length > 0
+    ? produtosDestaque.slice(0, 6).map((p) => ({
+        nome: p.nome,
+        descricao: p.descricaoCurta || p.categoriaTitle || p.fabricanteNome || '',
+        href: `/produtos/${p.slug}`,
+      }))
+    : produtosIbm.slice(0, 6)
 
   return (
     <motion.div
@@ -34,7 +42,7 @@ export function ProdutosDropdown({ onItemClick }: ProdutosDropdownProps) {
         <div className="col-span-12 lg:col-span-3">
           <ColumnTitle>Fabricantes</ColumnTitle>
           <ul className="flex flex-col gap-1">
-            {fabricantes.map((fab) => {
+            {fabricantes.slice(0, 6).map((fab) => {
               const isActive = fab.nome === 'IBM'
               return (
                 <li key={fab.nome}>
@@ -62,12 +70,11 @@ export function ProdutosDropdown({ onItemClick }: ProdutosDropdownProps) {
           </ul>
         </div>
 
-        {/* CENTER COLUMN — "PRODUTOS IBM" (40% -> col-span-5) */}
+        {/* CENTER COLUMN — "PRODUTOS EM DESTAQUE" (40% -> col-span-5) */}
         <div className="col-span-12 lg:col-span-5">
-          <ColumnTitle>Produtos IBM</ColumnTitle>
+          <ColumnTitle>Produtos em Destaque</ColumnTitle>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {produtosIbm.map((prod) => {
-              const isHovered = prod.isHovered // IBM Guardium is hovered by default in design specifications
+            {displayProducts.map((prod) => {
               return (
                 <li key={prod.nome}>
                   <Link
@@ -76,22 +83,15 @@ export function ProdutosDropdown({ onItemClick }: ProdutosDropdownProps) {
                     role="menuitem"
                     className={cn(
                       'block rounded-md p-2.5 transition-colors border border-transparent',
-                      isHovered
-                        ? 'bg-[#F8F9FA] border-ink-100'
-                        : 'hover:bg-[#F8F9FA]/50 hover:border-ink-100/50',
+                      'hover:bg-[#F8F9FA] hover:border-ink-100',
                     )}
                   >
                     <span className="block text-sm font-semibold text-[#141413]">
                       {prod.nome}
                     </span>
-                    <span className="block mt-0.5 text-xs text-[#7B7B7B] leading-normal">
+                    <span className="block mt-0.5 text-xs text-[#7B7B7B] leading-normal line-clamp-2">
                       {prod.descricao}
                     </span>
-                    {isHovered && (
-                      <span className="block mt-2 text-[11px] font-medium text-[#0E66FF]">
-                        Ver produto →
-                      </span>
-                    )}
                   </Link>
                 </li>
               )
