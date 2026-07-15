@@ -45,7 +45,7 @@ function mapDtoToProduct(dto: ProdutoResumoDTO): Product {
     fabricante: dto.fabricanteNome || staticProduct?.fabricante || dto.fabricanteSlug,
     fabricanteSlug: dto.fabricanteSlug,
     // Logo: usa API primeiro, depois estático, depois VENDOR_LOGOS
-    logo: VENDOR_LOGOS[dto.fabricanteNome || ''] || staticProduct?.logo || dto.fabricanteLogoUrl || '',
+    logo: dto.fabricanteLogoUrl || VENDOR_LOGOS[dto.fabricanteNome || ''] || staticProduct?.logo || '',
     logoClass: staticProduct?.logoClass || 'h-5',
     categoria: dto.categoriaTitle || staticProduct?.categoria || dto.categoriaSlug,
     categoriaSlug: dto.categoriaSlug,

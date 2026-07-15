@@ -179,7 +179,8 @@ export function SolutionDetailContent({
                   <div className="lg:col-span-7">
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                       {solution.vendors.map((vendorName) => {
-                        const logoAsset = VENDOR_LOGOS[vendorName];
+                        const vendorObj = solution.vendorObjects?.find(v => v.nome === vendorName);
+                        const logoAsset = vendorObj?.logoUrl || VENDOR_LOGOS[vendorName];
                         return (
                           <div
                             key={vendorName}
@@ -189,6 +190,8 @@ export function SolutionDetailContent({
                               <Image
                                 src={logoAsset}
                                 alt={vendorName}
+                                width={120}
+                                height={40}
                                 className="max-h-7 object-contain opacity-50 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-300"
                               />
                             ) : (

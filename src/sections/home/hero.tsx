@@ -148,7 +148,7 @@ export function Hero() {
             return {
               name: p.nome,
               description: p.descricaoCurta || p.descricao || "",
-              logo: staticPartner?.logo || p.logoUrl || "",
+              logo: p.logoUrl || staticPartner?.logo || "",
               className: staticPartner?.className || "h-4 sm:h-5",
               keepWhiteOnHover: staticPartner?.keepWhiteOnHover || false
             };

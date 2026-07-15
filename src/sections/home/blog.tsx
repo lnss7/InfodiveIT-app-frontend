@@ -58,7 +58,7 @@ export function Blog() {
                   : "01 jun 2026",
                 tempoLeitura: item.tempoLeitura || `${Math.max(3, Math.round((item.conteudo?.split(" ").length || 200) / 200))} min read`,
                 categoria: defaultCategories[idx % 3],
-                imagem: defaultImages[idx % 3],
+                imagem: (item as any).imagemCapaUrl || (item as any).imagemUrl || defaultImages[idx % 3],
               }));
             setItems(formatted);
           } else {

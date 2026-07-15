@@ -82,7 +82,7 @@ async function getProduct(slug: string): Promise<Product | null> {
       nome: dto.nome,
       fabricante: dto.fabricanteNome || staticProduct?.fabricante || dto.fabricanteSlug,
       fabricanteSlug: dto.fabricanteSlug,
-      logo: VENDOR_LOGOS[dto.fabricanteNome || ''] || staticProduct?.logo || dto.fabricanteLogoUrl || '',
+      logo: dto.fabricanteLogoUrl || VENDOR_LOGOS[dto.fabricanteNome || ''] || staticProduct?.logo || '',
       logoClass: staticProduct?.logoClass || 'h-5',
       categoria: dto.categoriaNome || catObj?.nome || staticProduct?.categoria || dto.categoriaSlug,
       categoriaSlug: dto.categoriaSlug,

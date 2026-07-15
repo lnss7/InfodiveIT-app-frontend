@@ -46,6 +46,7 @@ export interface Solution {
   metrics: Metric[];
   features: Feature[];
   vendors: string[];
+  vendorObjects?: Array<{ nome: string; logoUrl?: string }>;
   caseStudy: {
     client: string;
     segmento: string;

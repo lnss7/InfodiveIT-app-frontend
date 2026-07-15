@@ -21,7 +21,7 @@ type Case = {
   autor: string;
   cargo: string;
   depoimento: string;
-  imagem: StaticImageData;
+  imagem: string | StaticImageData;
 };
 
 const FALLBACK_IMAGES = [financeImg, retailImg, industryImg];
@@ -76,7 +76,7 @@ function fromDTO(dto: CaseDTO, idx: number): Case {
     autor: dto.autor,
     cargo: dto.cargo,
     depoimento: dto.depoimento,
-    imagem: FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length],
+    imagem: (dto as any).imagemUrl || (dto as any).imagem || FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length],
   };
 }
 

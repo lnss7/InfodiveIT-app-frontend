@@ -77,8 +77,9 @@ function ServicesDiagram({ product }: { product: Product }) {
     lastProductSlug.current = product.slug
     serviceRefs.current = product.servicos.map(() => createRef<HTMLDivElement>())
   }
-  const fabLogo = product.fabricante === "Red Hat" ? redhatPretoLogo : VENDOR_LOGOS[product.fabricante]
+  const fabLogo = product.logo || (product.fabricante === "Red Hat" ? redhatPretoLogo : VENDOR_LOGOS[product.fabricante])
   const count = product.servicos.length
+
 
   return (
     <div className="w-full">
@@ -214,8 +215,8 @@ export function ProductDetailContent({ product }: { product: Product }) {
   if (!product) return null
 
   const related = getRelatedProducts(product)
-  const fabLogo = VENDOR_LOGOS[product.fabricante]
-  const lightLogo = product.fabricante === "Red Hat" ? redhatPretoLogo : fabLogo
+  const fabLogo = product.logo || VENDOR_LOGOS[product.fabricante]
+  const lightLogo = product.logo || (product.fabricante === "Red Hat" ? redhatPretoLogo : fabLogo)
 
   return (
     <div className="relative z-20 w-full min-h-screen bg-white text-ink-900">

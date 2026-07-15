@@ -16,6 +16,9 @@ export function categoriaToSolution(cat: SolucaoDTO, fallback?: Solution): Solut
     vendors: cat.fabricantes
       ? cat.fabricantes.map(f => f.nome)
       : (fallback?.vendors || []),
+    vendorObjects: cat.fabricantes
+      ? cat.fabricantes.map(f => ({ nome: f.nome, logoUrl: f.logoUrl }))
+      : [],
     caseStudy: fallback?.caseStudy || { client: '', segmento: '', metric: '', resultado: '' },
     categoriaId: cat.categoriaId,
     categoriaNome: cat.categoriaNome,

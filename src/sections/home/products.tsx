@@ -49,9 +49,10 @@ const FEATURED_FALLBACK: FeaturedProduct[] = [
 
 function toFeatured(dto: ProdutoResumoDTO): FeaturedProduct {
   const logoUrl =
-    STATIC_LOGO_MAP[dto.fabricanteSlug] ||
     dto.fabricanteLogoUrl ||
+    STATIC_LOGO_MAP[dto.fabricanteSlug] ||
     ibmLogo
+
   return {
     nome: dto.nome,
     slug: dto.slug,
