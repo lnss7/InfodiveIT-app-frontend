@@ -150,7 +150,7 @@ export function Hero() {
               description: p.descricaoCurta || p.descricao || "",
               logo: p.logoUrl || staticPartner?.logo || "",
               className: staticPartner?.className || "h-4 sm:h-5",
-              keepWhiteOnHover: staticPartner?.keepWhiteOnHover || false
+              keepWhiteOnHover: staticPartner ? (staticPartner.keepWhiteOnHover ?? false) : true
             };
           }));
         }
