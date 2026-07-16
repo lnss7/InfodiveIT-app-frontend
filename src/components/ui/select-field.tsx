@@ -152,6 +152,8 @@ export function SelectField({
                 ref={panelRef}
                 role="listbox"
                 onKeyDown={handleKeyDown}
+                onWheel={(e) => e.stopPropagation()}
+                onTouchMove={(e) => e.stopPropagation()}
                 style={{
                   position: "fixed",
                   top: coords.top,
@@ -162,7 +164,7 @@ export function SelectField({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -4, scale: 0.98 }}
                 transition={{ duration: 0.15, ease: "easeOut" }}
-                className="z-[9999] max-h-60 overflow-auto rounded-xl border border-gray-200 bg-white py-1 shadow-xl shadow-black/15 origin-top"
+                className="z-[9999] max-h-60 overflow-y-auto overscroll-contain touch-pan-y rounded-xl border border-gray-200 bg-white py-1 shadow-xl shadow-black/15 origin-top"
               >
                 {options.map((option) => {
                   const isSelected = option.value === value

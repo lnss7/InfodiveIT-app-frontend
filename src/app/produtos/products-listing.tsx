@@ -28,11 +28,6 @@ const GsapMenu = dynamic(() => import("@/components/GsapMenu").then((mod) => mod
   ssr: false,
 })
 
-const FABRICANTE_OPTIONS = [
-  { value: "Todos", label: "Todos os fabricantes" },
-  ...PRODUCT_FABRICANTES.map((f) => ({ value: f, label: f })),
-]
-
 import { useEffect } from "react"
 import { api, type ProdutoResumoDTO } from "@/lib/api"
 import type { Product } from "@/lib/products-data"
@@ -78,6 +73,7 @@ export function ProductsListing() {
   const [selectedFabricante, setSelectedFabricante] = useState(initialFabricante)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [products, setProducts] = useState<Product[]>(PRODUCTS)
+  const [fabricantesList, setFabricantesList] = useState<string[]>(PRODUCT_FABRICANTES)
   const [cta, setCta] = useState<{ titulo?: string; subtitulo?: string; ctaTexto?: string; tipoAcao?: string }>({
     titulo: "Não achou o que procurava?",
     subtitulo: "Nosso catálogo vai muito além desta vitrine. Fale com um especialista e encontramos o produto certo — com o melhor fabricante — para o seu desafio.",
@@ -99,6 +95,14 @@ export function ProductsListing() {
       })
       .catch(() => {})
 
+    api.fabricantes()
+      .then((data) => {
+        if (data && data.length > 0) {
+          setFabricantesList(data.map((f) => f.nome))
+        }
+      })
+      .catch(() => {})
+
     api.produtos({ size: 100 })
       .then((page) => {
         if (page.content.length > 0) {
@@ -107,6 +111,19 @@ export function ProductsListing() {
       })
       .catch(() => {}) // mantém PRODUCTS como fallback
   }, [])
+
+  const fabricanteOptions = useMemo(() => {
+    const set = new Set<string>()
+    fabricantesList.forEach((f) => set.add(f))
+    products.forEach((p) => {
+      if (p.fabricante) set.add(p.fabricante)
+    })
+    const sorted = Array.from(set).sort((a, b) => a.localeCompare(b, "pt-BR"))
+    return [
+      { value: "Todos", label: "Todos os fabricantes" },
+      ...sorted.map((f) => ({ value: f, label: f })),
+    ]
+  }, [fabricantesList, products])
 
   useEffect(() => {
     if (urlFabricante) {
@@ -304,7 +321,7 @@ export function ProductsListing() {
                 <SelectField
                   value={selectedFabricante}
                   onChange={setSelectedFabricante}
-                  options={FABRICANTE_OPTIONS}
+                  options={fabricanteOptions}
                   ariaLabel="Filtrar por fabricante"
                   placeholder="Fabricante"
                 />

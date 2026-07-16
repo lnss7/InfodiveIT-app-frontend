@@ -73,25 +73,27 @@ export function ProdutosDropdown({ onItemClick }: ProdutosDropdownProps) {
         {/* CENTER COLUMN — "PRODUTOS EM DESTAQUE" (40% -> col-span-5) */}
         <div className="col-span-12 lg:col-span-5">
           <ColumnTitle>Produtos em Destaque</ColumnTitle>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {displayProducts.map((prod) => {
               return (
-                <li key={prod.nome}>
+                <li key={prod.nome} className="h-full">
                   <Link
                     href={prod.href}
                     onClick={onItemClick}
                     role="menuitem"
                     className={cn(
-                      'block rounded-md p-2.5 transition-colors border border-transparent',
-                      'hover:bg-[#F8F9FA] hover:border-ink-100',
+                      'flex flex-col justify-between h-full rounded-xl p-3.5 border transition-all duration-200 group',
+                      'border-ink-200/80 bg-ink-50/40 hover:bg-white hover:border-brand/40 hover:shadow-[0_4px_16px_rgba(14,102,255,0.08)]'
                     )}
                   >
-                    <span className="block text-sm font-semibold text-[#141413]">
-                      {prod.nome}
-                    </span>
-                    <span className="block mt-0.5 text-xs text-[#7B7B7B] leading-normal line-clamp-2">
-                      {prod.descricao}
-                    </span>
+                    <div>
+                      <span className="block text-sm font-semibold text-ink-950 group-hover:text-brand transition-colors">
+                        {prod.nome}
+                      </span>
+                      <span className="block mt-1 text-xs text-ink-500 leading-relaxed line-clamp-2">
+                        {prod.descricao}
+                      </span>
+                    </div>
                   </Link>
                 </li>
               )
