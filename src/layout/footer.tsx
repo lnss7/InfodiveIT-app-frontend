@@ -26,6 +26,20 @@ export function Footer() {
   const [urlFacebook, setUrlFacebook] = useState("https://www.facebook.com/InfodiveIt");
   const [descricaoEmpresa, setDescricaoEmpresa] = useState<string | null>(null);
 
+  const [solucoesList, setSolucoesList] = useState<Array<{ nome: string; href: string }>>([
+    { nome: "Infraestrutura", href: "/solucoes/infraestrutura" },
+    { nome: "Segurança Cibernética", href: "/solucoes/seguranca" },
+    { nome: "Cloud & Virtualização", href: "/solucoes/cloud" },
+    { nome: "Inteligência Artificial", href: "/solucoes/inteligencia-artificial" },
+  ]);
+
+  const [produtosList, setProdutosList] = useState<Array<{ nome: string; href: string }>>([
+    { nome: "Monitoramento NOC", href: "/produtos" },
+    { nome: "Backup Cloud", href: "/produtos" },
+    { nome: "Firewall Next-Gen", href: "/produtos" },
+    { nome: "Servidores Dedicados", href: "/produtos" },
+  ]);
+
   useEffect(() => {
     api.configFooter()
       .then((data) => {
@@ -33,6 +47,36 @@ export function Footer() {
         if (data.urlInstagram) setUrlInstagram(data.urlInstagram);
         if (data.urlFacebook) setUrlFacebook(data.urlFacebook);
         if (data.descricaoEmpresa) setDescricaoEmpresa(data.descricaoEmpresa);
+      })
+      .catch(() => { /* mantém fallback */ });
+
+    api.solucoes()
+      .then((data) => {
+        if (data && data.length > 0) {
+          const first4 = [...data]
+            .filter((s) => s.ativo)
+            .sort((a, b) => a.ordem - b.ordem)
+            .slice(0, 4)
+            .map((s) => ({
+              nome: s.nome,
+              href: `/solucoes/${s.slug}`,
+            }));
+          if (first4.length > 0) {
+            setSolucoesList(first4);
+          }
+        }
+      })
+      .catch(() => { /* mantém fallback */ });
+
+    api.produtos({ size: 4 })
+      .then((page) => {
+        if (page && page.content && page.content.length > 0) {
+          const first4 = page.content.slice(0, 4).map((p) => ({
+            nome: p.nome,
+            href: `/produtos/${p.slug}`,
+          }));
+          setProdutosList(first4);
+        }
       })
       .catch(() => { /* mantém fallback */ });
   }, []);
@@ -90,16 +134,16 @@ export function Footer() {
       </div>
 
       <div className="relative z-10 w-full mx-auto max-w-[1600px] px-6 md:px-10 pt-20 pb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-16 border-b border-white/10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 pb-16 border-b border-white/10">
             {/* Logo and About Section */}
-            <div className="md:col-span-2 lg:col-span-4 flex flex-col items-start gap-6">
-                <Image
-                  src={logoImg}
-                  alt="Infodive Logo"
-                  className="h-[38px] w-auto object-contain ml-[-10px] filter drop-shadow-[0_0_8px_rgba(255,255,255,0.15)]"
-                  priority
-                />
-              <p className="text-white/60 text-sm max-w-sm leading-relaxed">
+            <div className="lg:col-span-5 flex flex-col items-start gap-6">
+              <Image
+                src={logoImg}
+                alt="Infodive Logo"
+                className="h-[38px] w-auto object-contain ml-[-10px] filter drop-shadow-[0_0_8px_rgba(255,255,255,0.15)]"
+                priority
+              />
+              <p className="text-white/60 text-sm max-w-md leading-relaxed">
                 {descricaoEmpresa || "Consultoria e infraestrutura de TI avançada para empresas em expansão. Projetando a segurança, estabilidade e inteligência do seu amanhã."}
               </p>
 
@@ -116,125 +160,86 @@ export function Footer() {
               </div>
             </div>
 
-            {/* Links Columns */}
-            <div className="md:col-span-1 lg:col-span-2 lg:col-start-6 flex flex-col gap-4">
-              <h4 className="text-sm font-semibold tracking-wider text-white uppercase">
-                Soluções
-              </h4>
-              <ul className="flex flex-col gap-2.5 text-sm text-white/55">
-                <li>
-                  <Link
-                    href="#solutions"
-                    className="hover:text-white hover:translate-x-1 transition-all duration-200 block"
-                  >
-                    Infraestrutura
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#solutions"
-                    className="hover:text-white hover:translate-x-1 transition-all duration-200 block"
-                  >
-                    Segurança Cibernética
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#solutions"
-                    className="hover:text-white hover:translate-x-1 transition-all duration-200 block"
-                  >
-                    Cloud & Virtualização
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#solutions"
-                    className="hover:text-white hover:translate-x-1 transition-all duration-200 block"
-                  >
-                    Inteligência Artificial
-                  </Link>
-                </li>
-              </ul>
-            </div>
+            {/* Links Columns (Equal distribution & spacing) */}
+            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-8 lg:gap-10 items-start pt-2 lg:pt-0">
+              {/* Soluções */}
+              <div className="flex flex-col gap-4">
+                <h4 className="text-sm font-semibold tracking-wider text-white uppercase">
+                  Soluções
+                </h4>
+                <ul className="flex flex-col gap-2.5 text-sm text-white/55">
+                  {solucoesList.map((sol) => (
+                    <li key={sol.href + sol.nome}>
+                      <Link
+                        href={sol.href}
+                        className="hover:text-white hover:translate-x-1 transition-all duration-200 block truncate"
+                      >
+                        {sol.nome}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-            <div className="md:col-span-1 lg:col-span-2 flex flex-col gap-4">
-              <h4 className="text-sm font-semibold tracking-wider text-white uppercase">
-                Produtos
-              </h4>
-              <ul className="flex flex-col gap-2.5 text-sm text-white/55">
-                <li>
-                  <Link
-                    href="#products"
-                    className="hover:text-white hover:translate-x-1 transition-all duration-200 block"
-                  >
-                    Monitoramento NOC
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#products"
-                    className="hover:text-white hover:translate-x-1 transition-all duration-200 block"
-                  >
-                    Backup Cloud
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#products"
-                    className="hover:text-white hover:translate-x-1 transition-all duration-200 block"
-                  >
-                    Firewall Next-Gen
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#products"
-                    className="hover:text-white hover:translate-x-1 transition-all duration-200 block"
-                  >
-                    Servidores Dedicados
-                  </Link>
-                </li>
-              </ul>
-            </div>
+              {/* Produtos */}
+              <div className="flex flex-col gap-4">
+                <h4 className="text-sm font-semibold tracking-wider text-white uppercase">
+                  Produtos
+                </h4>
+                <ul className="flex flex-col gap-2.5 text-sm text-white/55">
+                  {produtosList.map((prod) => (
+                    <li key={prod.href + prod.nome}>
+                      <Link
+                        href={prod.href}
+                        className="hover:text-white hover:translate-x-1 transition-all duration-200 block truncate"
+                      >
+                        {prod.nome}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-            <div className="md:col-span-2 lg:col-span-2 lg:col-start-11 flex flex-col gap-4">
-              <h4 className="text-sm font-semibold tracking-wider text-white uppercase">
-                Empresa
-              </h4>
-              <ul className="flex flex-col gap-2.5 text-sm text-white/55">
-                <li>
-                  <Link
-                    href="#about"
-                    className="hover:text-white hover:translate-x-1 transition-all duration-200 block"
-                  >
-                    Sobre Nós
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#cases"
-                    className="hover:text-white hover:translate-x-1 transition-all duration-200 block"
-                  >
-                    Casos de Sucesso
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#blog"
-                    className="hover:text-white hover:translate-x-1 transition-all duration-200 block"
-                  >
-                    Blog
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#contact"
-                    className="hover:text-white hover:translate-x-1 transition-all duration-200 block"
-                  >
-                    Fale Conosco
-                  </Link>
-                </li>
-              </ul>
+              {/* Empresa */}
+              <div className="flex flex-col gap-4">
+                <h4 className="text-sm font-semibold tracking-wider text-white uppercase">
+                  Empresa
+                </h4>
+                <ul className="flex flex-col gap-2.5 text-sm text-white/55">
+                  <li>
+                    <Link
+                      href="/sobre"
+                      className="hover:text-white hover:translate-x-1 transition-all duration-200 block"
+                    >
+                      Sobre Nós
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/cases"
+                      className="hover:text-white hover:translate-x-1 transition-all duration-200 block"
+                    >
+                      Casos de Sucesso
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/blog"
+                      className="hover:text-white hover:translate-x-1 transition-all duration-200 block"
+                    >
+                      Blog
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/contato"
+                      className="hover:text-white hover:translate-x-1 transition-all duration-200 block"
+                    >
+                      Fale Conosco
+                    </Link>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
 
