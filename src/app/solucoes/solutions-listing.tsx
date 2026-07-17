@@ -2,9 +2,10 @@
 
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, Search, ArrowUpRight, ArrowLeft } from "lucide-react";
-import { SOLUTIONS, SOLUTION_ICONS, type Solution } from "@/lib/solutions-data";
+import { ArrowRight, Search, ArrowUpRight, ArrowLeft, Server } from "lucide-react";
+import { SOLUTIONS, type Solution } from "@/lib/solutions-data";
 import { categoriaToSolution } from "@/lib/converters";
+import { resolveLucideIcon } from "@/lib/lucide-icon-resolver";
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
 import { Reveal } from "@/components/animations/reveal";
 import { Button } from "@/components/ui/button";
@@ -269,7 +270,7 @@ export function SolutionsListing() {
           {filteredSolutions.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               {filteredSolutions.map((solution, index) => {
-                const Icon = SOLUTION_ICONS[solution.iconName] || SOLUTION_ICONS.infraestrutura;
+                const Icon = resolveLucideIcon(solution.iconName, Server);
                 return (
                   <Reveal 
                     key={solution.slug} 

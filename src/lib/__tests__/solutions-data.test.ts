@@ -1,4 +1,5 @@
-import { SOLUTIONS, SOLUTION_ICONS } from "../solutions-data";
+import { SOLUTIONS } from "../solutions-data";
+import { resolveLucideIcon } from "../lucide-icon-resolver";
 
 describe("solutions-data", () => {
   describe("integridade dos dados", () => {
@@ -22,9 +23,9 @@ describe("solutions-data", () => {
       }
     });
 
-    it("referencia um ícone válido em SOLUTION_ICONS", () => {
+    it("referencia um ícone válido", () => {
       for (const solution of SOLUTIONS) {
-        expect(SOLUTION_ICONS[solution.iconName]).toBeDefined();
+        expect(resolveLucideIcon(solution.iconName)).toBeDefined();
       }
     });
 

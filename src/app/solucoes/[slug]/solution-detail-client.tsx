@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, ShieldCheck } from "lucide-react";
-import { type Solution, SOLUTION_ICONS } from "@/lib/solutions-data";
+import { ArrowLeft, Server, ShieldCheck } from "lucide-react";
+import { type Solution } from "@/lib/solutions-data";
+import { resolveLucideIcon } from "@/lib/lucide-icon-resolver";
 import { VENDOR_LOGOS } from "@/lib/vendor-logos";
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
 import { Reveal } from "@/components/animations/reveal";
@@ -24,7 +25,7 @@ interface SolutionDetailContentProps {
 export function SolutionDetailContent({
   solution,
 }: SolutionDetailContentProps) {
-  const Icon = SOLUTION_ICONS[solution.iconName] || SOLUTION_ICONS.infraestrutura;
+  const Icon = resolveLucideIcon(solution.iconName, Server);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (

@@ -23,6 +23,7 @@ export const SOLUTION_ICONS = {
 } as const;
 
 export type SolutionIconName = keyof typeof SOLUTION_ICONS;
+export type SolutionIconValue = SolutionIconName | string;
 
 export interface Feature {
   title: string;
@@ -42,7 +43,7 @@ export interface Solution {
   subtitle: string;
   description: string;
   overview: string;
-  iconName: SolutionIconName;
+  iconName: SolutionIconValue;
   metrics: Metric[];
   features: Feature[];
   vendors: string[];
