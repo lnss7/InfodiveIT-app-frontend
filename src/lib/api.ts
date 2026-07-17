@@ -42,6 +42,10 @@ export type SolucaoDTO = {
   icone?: string
   subtituloCurto?: string
   descricaoCurta?: string
+  recursoChave1?: string
+  recursoChave2?: string
+  recursoChave3?: string
+  recursosChave?: string[]
   descricaoCompleta?: string
   features?: { titulo: string; descricao: string; tag?: string }[]
   imagemUrl?: string
@@ -434,10 +438,10 @@ function buildQuery(params?: Record<string, string | number | boolean | undefine
 export const api = {
   // Conteúdo dinâmico
   categorias: () =>
-    fetchAPI<CategoriaDTO[]>('/categorias'),
+    fetchAPI<CategoriaDTO[]>('/categorias', { revalidate: 0 }),
 
   categoria: (slug: string) =>
-    fetchAPI<CategoriaDTO>(`/categorias/${encodeURIComponent(slug)}`),
+    fetchAPI<CategoriaDTO>(`/categorias/${encodeURIComponent(slug)}`, { revalidate: 0 }),
 
   solucoes: () =>
     fetchAPI<SolucaoDTO[]>('/solucoes', { revalidate: 0 }),
@@ -452,7 +456,7 @@ export const api = {
     fetchAPI<ProdutoDTO>(`/produtos/${encodeURIComponent(slug)}`, { revalidate: 0 }),
 
   fabricantes: (params?: { destaque?: boolean }) =>
-    fetchAPI<FabricanteDTO[]>(`/fabricantes${buildQuery(params)}`),
+    fetchAPI<FabricanteDTO[]>(`/fabricantes${buildQuery(params)}`, { revalidate: 0 }),
 
   fabricante: (slug: string) =>
     fetchAPI<FabricanteDTO>(`/fabricantes/${encodeURIComponent(slug)}`),

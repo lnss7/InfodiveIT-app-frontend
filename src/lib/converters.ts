@@ -25,5 +25,8 @@ export function categoriaToSolution(cat: SolucaoDTO, fallback?: Solution): Solut
     caseStudy: fallback?.caseStudy || { client: '', segmento: '', metric: '', resultado: '' },
     categoriaId: cat.categoriaId,
     categoriaNome: cat.categoriaNome,
+    recursosChave: (cat.recursosChave && cat.recursosChave.length > 0)
+      ? cat.recursosChave
+      : ([cat.recursoChave1, cat.recursoChave2, cat.recursoChave3].filter(Boolean) as string[]),
   }
 }

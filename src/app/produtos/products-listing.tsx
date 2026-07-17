@@ -80,6 +80,11 @@ export function ProductsListing() {
     ctaTexto: "Falar com especialista",
     tipoAcao: "DRAWER",
   })
+  const [stats, setStats] = useState({
+    produtos: PRODUCT_STATS.produtos,
+    fabricantes: PRODUCT_STATS.fabricantes,
+    categorias: PRODUCT_STATS.categorias,
+  })
 
   useEffect(() => {
     api.cta("produtos")
@@ -110,6 +115,24 @@ export function ProductsListing() {
         }
       })
       .catch(() => {}) // mantém PRODUCTS como fallback
+
+    Promise.all([
+      api.produtos({ size: 100 }).catch(() => null),
+      api.fabricantes().catch(() => null),
+      api.categorias().catch(() => null),
+    ])
+      .then(([produtosPage, fabricantes, categorias]) => {
+        const totalProdutos = produtosPage?.totalElements ?? (produtosPage?.content?.length || PRODUCTS.length)
+        const totalFabricantes = (fabricantes && fabricantes.length > 0) ? fabricantes.length : PRODUCT_FABRICANTES.length
+        const totalCategorias = (categorias && categorias.length > 0) ? categorias.filter((c) => c.ativo).length : (PRODUCT_CATEGORIES.length - 1)
+
+        setStats({
+          produtos: totalProdutos,
+          fabricantes: totalFabricantes,
+          categorias: totalCategorias,
+        })
+      })
+      .catch(() => {})
   }, [])
 
   const fabricanteOptions = useMemo(() => {
@@ -231,9 +254,9 @@ export function ProductsListing() {
           <Reveal delay={0.28}>
             <div className="mt-10 flex items-center justify-center gap-8 sm:gap-12">
               {[
-                { value: PRODUCT_STATS.produtos, label: "Produtos" },
-                { value: PRODUCT_STATS.fabricantes, label: "Fabricantes" },
-                { value: PRODUCT_STATS.categorias, label: "Categorias" },
+                { value: stats.produtos, label: "Produtos" },
+                { value: stats.fabricantes, label: "Fabricantes" },
+                { value: stats.categorias, label: "Categorias" },
               ].map((stat) => (
                 <div key={stat.label} className="flex flex-col items-center">
                   <span className="text-3xl sm:text-4xl font-bold text-white">

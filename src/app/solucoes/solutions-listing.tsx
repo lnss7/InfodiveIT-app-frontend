@@ -311,10 +311,13 @@ export function SolutionsListing() {
                           <div className="border-t border-ink-100 pt-4 mb-6">
                             <p className="text-[10px] font-semibold uppercase tracking-wider text-ink-400 mb-2">Recursos Chave</p>
                             <ul className="space-y-1.5">
-                              {solution.features.slice(0, 2).map((feat, i) => (
+                              {((solution.recursosChave && solution.recursosChave.length > 0)
+                                ? solution.recursosChave
+                                : solution.features.map(f => f.title)
+                              ).slice(0, 3).map((item, i) => (
                                 <li key={i} className="text-xs text-ink-600 flex items-center gap-1.5 font-light">
                                   <span className="h-1 w-1 rounded-full bg-brand shrink-0" />
-                                  <span className="truncate">{feat.title}</span>
+                                  <span className="truncate">{item}</span>
                                 </li>
                               ))}
                             </ul>

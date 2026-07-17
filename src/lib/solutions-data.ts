@@ -58,6 +58,7 @@ export interface Solution {
   imageUrl?: string;
   fabricantesTitulo?: string;
   fabricantesDescricao?: string;
+  recursosChave?: string[];
 }
 
 export const SOLUTIONS: Solution[] = [
