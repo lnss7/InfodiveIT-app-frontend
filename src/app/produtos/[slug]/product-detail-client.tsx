@@ -209,12 +209,20 @@ function RelatedCarousel({ products }: { products: Product[] }) {
   )
 }
 
-export function ProductDetailContent({ product }: { product: Product }) {
+export function ProductDetailContent({
+  product,
+  relatedProducts,
+}: {
+  product: Product
+  relatedProducts?: Product[]
+}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   if (!product) return null
 
-  const related = getRelatedProducts(product)
+  const related = (relatedProducts && relatedProducts.length > 0)
+    ? relatedProducts
+    : getRelatedProducts(product)
   const fabLogo = product.logo || VENDOR_LOGOS[product.fabricante]
   const lightLogo = product.logo || (product.fabricante === "Red Hat" ? redhatPretoLogo : fabLogo)
 
@@ -324,20 +332,26 @@ export function ProductDetailContent({ product }: { product: Product }) {
               </Reveal>
             </div>
 
-            {/* Direita: imagem do produto (placeholder até a API ter imagem) */}
+            {/* Direita: imagem do produto */}
             <div className="lg:col-span-5 w-full flex items-center justify-center">
               <Reveal delay={0.28} className="w-full">
                 <div className="relative mx-auto aspect-[4/3] w-full max-w-[440px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.02] flex items-center justify-center">
                   <BorderBeam size={120} duration={8} colorFrom="#0E66FF" colorTo="#7aa9ff" />
-                  {fabLogo && (
+                  {product.imageUrl ? (
+                    <Image
+                      src={product.imageUrl}
+                      alt={product.nome}
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  ) : fabLogo ? (
                     <Image
                       src={fabLogo}
                       alt={product.fabricante}
                       className="h-10 w-auto max-w-[160px] object-contain opacity-30 brightness-0 invert"
                     />
-                  )}
-                  {/* Quando a API fornecer a imagem:
-                      <Image src={product.imageUrl} alt={product.nome} fill className="object-cover" /> */}
+                  ) : null}
                 </div>
               </Reveal>
             </div>
@@ -447,14 +461,13 @@ export function ProductDetailContent({ product }: { product: Product }) {
               <section>
                 <Reveal className="mb-8 text-center">
                   <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand mb-3">
-                    Mais que um produto
+                    {product.servicosEyebrow || "Mais que um produto"}
                   </p>
                   <h2 className="text-2xl sm:text-3xl font-bold text-ink-950 tracking-tight">
-                    Integra com nossos serviços
+                    {product.servicosTitulo || "Integra com nossos serviços"}
                   </h2>
                   <p className="mt-3 text-sm text-ink-500 font-light leading-relaxed max-w-xl mx-auto">
-                    Não entregamos só a licença: projetamos, implantamos e sustentamos o
-                    {" "}{product.nome} dentro do seu ambiente, de ponta a ponta.
+                    {product.servicosDescricao || `Não entregamos só a licença: projetamos, implantamos e sustentamos o ${product.nome} dentro do seu ambiente, de ponta a ponta.`}
                   </p>
                 </Reveal>
                 <Reveal delay={0.1}>
@@ -493,12 +506,12 @@ export function ProductDetailContent({ product }: { product: Product }) {
                       </div>
                     </div>
                     <a
-                      href={VENDOR_URLS[product.fabricante] || "#"}
+                      href={product.linkOficial || VENDOR_URLS[product.fabricante] || "#"}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-brand hover:text-brand-deep transition-colors"
                     >
-                      Ver fabricante
+                      Ver produto
                       <ArrowUpRight className="h-4 w-4" strokeWidth={2.5} />
                     </a>
                   </div>
@@ -531,7 +544,7 @@ export function ProductDetailContent({ product }: { product: Product }) {
             <Reveal delay={0.1}>
               <ConversionCTA
                 title="Comece a transformação da sua empresa"
-                subtitle={`Agende uma conversa com nossos especialistas e veja como o ${product.nome} se encaixa na sua estratégia de TI — com projeto, implantação e SLA garantidos.`}
+                subtitle={`Agende uma conversa com nossos especialistas e veja como o ${product.nome} se encaixa na sua estratégia de TI, com projeto, implantação e SLA garantidos.`}
                 ctaLabel="Falar com especialista"
                 onCtaClick={() => setIsMenuOpen(true)}
               />

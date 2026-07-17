@@ -168,16 +168,21 @@ export function Footer() {
                   Soluções
                 </h4>
                 <ul className="flex flex-col gap-2.5 text-sm text-white/55">
-                  {solucoesList.map((sol) => (
-                    <li key={sol.href + sol.nome}>
-                      <Link
-                        href={sol.href}
-                        className="hover:text-white hover:translate-x-1 transition-all duration-200 block truncate"
-                      >
-                        {sol.nome}
-                      </Link>
-                    </li>
-                  ))}
+                  {solucoesList.map((sol) => {
+                    const words = sol.nome ? sol.nome.trim().split(/\s+/) : [];
+                    const displayName = words.length > 1 ? `${words[0]}...` : sol.nome;
+                    return (
+                      <li key={sol.href + sol.nome}>
+                        <Link
+                          href={sol.href}
+                          title={sol.nome}
+                          className="hover:text-white hover:translate-x-1 transition-all duration-200 block truncate"
+                        >
+                          {displayName}
+                        </Link>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
 

@@ -60,6 +60,11 @@ export interface Product {
   casosDeUso: ProductUseCase[];
   /** serviços profissionais que se integram ao produto (diagrama AnimatedBeam) */
   servicos: ProductService[];
+  imageUrl?: string;
+  linkOficial?: string;
+  servicosEyebrow?: string;
+  servicosTitulo?: string;
+  servicosDescricao?: string;
 }
 
 export const PRODUCTS: Product[] = [
@@ -523,7 +528,6 @@ export function getRelatedProducts(product: Product, limit = 4): Product[] {
   return PRODUCTS.filter(
     (p) =>
       p.slug !== product.slug &&
-      (p.categoriaSlug === product.categoriaSlug ||
-        p.fabricanteSlug === product.fabricanteSlug),
+      p.categoriaSlug === product.categoriaSlug,
   ).slice(0, limit);
 }

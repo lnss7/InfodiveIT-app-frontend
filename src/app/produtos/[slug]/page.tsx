@@ -91,6 +91,11 @@ async function getProduct(slug: string): Promise<Product | null> {
       subcategoria: dto.subcategoria || staticProduct?.subcategoria || '',
       descricaoCurta: dto.descricaoCurta || staticProduct?.descricaoCurta || '',
       descricaoCompleta: dto.descricaoCompleta || staticProduct?.descricaoCompleta || '',
+      imageUrl: dto.imagemUrl || staticProduct?.imageUrl || '',
+      linkOficial: dto.linkOficial || staticProduct?.linkOficial || '',
+      servicosEyebrow: dto.servicosEyebrow || staticProduct?.servicosEyebrow || '',
+      servicosTitulo: dto.servicosTitulo || staticProduct?.servicosTitulo || '',
+      servicosDescricao: dto.servicosDescricao || staticProduct?.servicosDescricao || '',
       destaque: dto.destaque,
       diferenciais,
       casosDeUso,
@@ -161,6 +166,37 @@ export default async function ProductDetailPage({ params }: PageProps) {
     notFound()
   }
 
+  let relatedProducts: Product[] = []
+  if (product.categoriaSlug) {
+    try {
+      const pageRel = await api.produtos({ categoria: product.categoriaSlug, size: 6 })
+      if (pageRel && pageRel.content && pageRel.content.length > 0) {
+        relatedProducts = pageRel.content
+          .filter((p) => p.slug !== product.slug)
+          .slice(0, 4)
+          .map((p) => ({
+            slug: p.slug,
+            nome: p.nome,
+            fabricante: p.fabricanteNome || p.fabricanteSlug,
+            fabricanteSlug: p.fabricanteSlug,
+            logo: p.fabricanteLogoUrl || VENDOR_LOGOS[p.fabricanteNome || ''] || '',
+            logoClass: 'h-5',
+            categoria: p.categoriaTitle || p.categoriaSlug,
+            categoriaSlug: p.categoriaSlug,
+            solucaoSlug: p.solucaoSlug,
+            solucaoTitle: p.solucaoTitle,
+            subcategoria: p.subcategoria || '',
+            descricaoCurta: p.descricaoCurta || '',
+            descricaoCompleta: '',
+            destaque: p.destaque,
+            diferenciais: [],
+            casosDeUso: [],
+            servicos: [],
+          }))
+      }
+    } catch {}
+  }
+
   const productJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -190,7 +226,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
       />
       <main id="main-content">
-        <ProductDetailContent product={product} />
+        <ProductDetailContent product={product} relatedProducts={relatedProducts} />
       </main>
       <Footer />
     </>

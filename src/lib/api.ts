@@ -114,6 +114,7 @@ export type ProdutoDTO = {
   servicosTitulo?: string
   servicosDescricao?: string
   imagemUrl?: string
+  linkOficial?: string
   destaque: boolean
   ativo: boolean
   categoriaId: string
@@ -445,10 +446,10 @@ export const api = {
     fetchAPI<SolucaoDTO>(`/solucoes/${encodeURIComponent(slug)}`, { revalidate: 0 }),
 
   produtos: (params?: { categoria?: string; fabricante?: string; destaque?: boolean; page?: number; size?: number }) =>
-    fetchAPI<SpringPageResponse<ProdutoResumoDTO>>(`/produtos${buildQuery(params)}`),
+    fetchAPI<SpringPageResponse<ProdutoResumoDTO>>(`/produtos${buildQuery(params)}`, { revalidate: 0 }),
 
   produto: (slug: string) =>
-    fetchAPI<ProdutoDTO>(`/produtos/${encodeURIComponent(slug)}`),
+    fetchAPI<ProdutoDTO>(`/produtos/${encodeURIComponent(slug)}`, { revalidate: 0 }),
 
   fabricantes: (params?: { destaque?: boolean }) =>
     fetchAPI<FabricanteDTO[]>(`/fabricantes${buildQuery(params)}`),
