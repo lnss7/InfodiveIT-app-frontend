@@ -439,10 +439,10 @@ export const api = {
     fetchAPI<CategoriaDTO>(`/categorias/${encodeURIComponent(slug)}`),
 
   solucoes: () =>
-    fetchAPI<SolucaoDTO[]>('/solucoes'),
+    fetchAPI<SolucaoDTO[]>('/solucoes', { revalidate: 0 }),
 
   solucao: (slug: string) =>
-    fetchAPI<SolucaoDTO>(`/solucoes/${encodeURIComponent(slug)}`),
+    fetchAPI<SolucaoDTO>(`/solucoes/${encodeURIComponent(slug)}`, { revalidate: 0 }),
 
   produtos: (params?: { categoria?: string; fabricante?: string; destaque?: boolean; page?: number; size?: number }) =>
     fetchAPI<SpringPageResponse<ProdutoResumoDTO>>(`/produtos${buildQuery(params)}`),

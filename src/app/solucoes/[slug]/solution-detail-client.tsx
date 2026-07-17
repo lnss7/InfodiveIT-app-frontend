@@ -100,7 +100,7 @@ export function SolutionDetailContent({
               </Reveal>
             </div>
 
-            {/* Hero Right: Container para imagem da solução (virá da API/backend) */}
+            {/* Hero Right: Container para imagem da solução */}
             <div className="lg:col-span-5 w-full flex items-center justify-center">
               <Reveal delay={0.28} className="w-full">
                 <div className="relative mx-auto aspect-[4/3] w-full max-w-[440px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.02] flex items-center justify-center">
@@ -110,8 +110,15 @@ export function SolutionDetailContent({
                     colorFrom="#0E66FF"
                     colorTo="#7aa9ff"
                   />
-                  {/* Quando a API fornecer a imagem, renderizar:
-                      <Image src={solution.imageUrl} alt={solution.title} fill className="object-cover" /> */}
+                  {solution.imageUrl ? (
+                    <Image
+                      src={solution.imageUrl}
+                      alt={solution.title}
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  ) : null}
                 </div>
               </Reveal>
             </div>
@@ -167,12 +174,10 @@ export function SolutionDetailContent({
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                   <div className="lg:col-span-5">
                     <h3 className="text-lg font-bold text-ink-950 mb-3">
-                      Parcerias e Fabricantes Homologados
+                      {solution.fabricantesTitulo || "Parcerias e Fabricantes Homologados"}
                     </h3>
                     <p className="text-sm text-ink-500 font-light leading-relaxed">
-                      Trabalhamos com os líderes globais de hardware e software
-                      para desenhar projetos corporativos que garantem suporte
-                      direto de fábrica e conformidade.
+                      {solution.fabricantesDescricao || "Trabalhamos com os líderes globais de hardware e software para desenhar projetos corporativos que garantem suporte direto de fábrica e conformidade."}
                     </p>
                   </div>
 

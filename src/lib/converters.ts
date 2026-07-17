@@ -4,12 +4,15 @@ import { type SolucaoDTO } from "@/lib/api"
 export function categoriaToSolution(cat: SolucaoDTO, fallback?: Solution): Solution {
   return {
     slug: cat.slug,
-    title: cat.nome,
+    title: cat.nome || fallback?.title || '',
     subtitle: cat.subtituloCurto || fallback?.subtitle || '',
     description: cat.descricaoCurta || fallback?.description || '',
     overview: cat.descricaoCompleta || fallback?.overview || '',
+    imageUrl: cat.imagemUrl || fallback?.imageUrl || '',
+    fabricantesTitulo: cat.fabricantesTitulo || fallback?.fabricantesTitulo || '',
+    fabricantesDescricao: cat.fabricantesDescricao || fallback?.fabricantesDescricao || '',
     iconName: (cat.icone as any) || fallback?.iconName || 'infraestrutura',
-    metrics: fallback?.metrics || [],  // não existe na API, usa fallback
+    metrics: fallback?.metrics || [],
     features: cat.features
       ? cat.features.map(f => ({ title: f.titulo, description: f.descricao, tag: f.tag }))
       : (fallback?.features || []),

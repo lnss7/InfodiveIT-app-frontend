@@ -55,6 +55,9 @@ export interface Solution {
   };
   categoriaId?: string;
   categoriaNome?: string;
+  imageUrl?: string;
+  fabricantesTitulo?: string;
+  fabricantesDescricao?: string;
 }
 
 export const SOLUTIONS: Solution[] = [
