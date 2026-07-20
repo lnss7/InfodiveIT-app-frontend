@@ -438,25 +438,25 @@ function buildQuery(params?: Record<string, string | number | boolean | undefine
 export const api = {
   // Conteúdo dinâmico
   categorias: () =>
-    fetchAPI<CategoriaDTO[]>('/categorias', { revalidate: 3600 }),
+    fetchAPI<CategoriaDTO[]>('/categorias'),
 
   categoria: (slug: string) =>
-    fetchAPI<CategoriaDTO>(`/categorias/${encodeURIComponent(slug)}`, { revalidate: 3600 }),
+    fetchAPI<CategoriaDTO>(`/categorias/${encodeURIComponent(slug)}`),
 
   solucoes: () =>
-    fetchAPI<SolucaoDTO[]>('/solucoes', { revalidate: 3600 }),
+    fetchAPI<SolucaoDTO[]>('/solucoes'),
 
   solucao: (slug: string) =>
-    fetchAPI<SolucaoDTO>(`/solucoes/${encodeURIComponent(slug)}`, { revalidate: 3600 }),
+    fetchAPI<SolucaoDTO>(`/solucoes/${encodeURIComponent(slug)}`),
 
   produtos: (params?: { categoria?: string; fabricante?: string; destaque?: boolean; page?: number; size?: number }) =>
-    fetchAPI<SpringPageResponse<ProdutoResumoDTO>>(`/produtos${buildQuery(params)}`, { revalidate: 300 }),
+    fetchAPI<SpringPageResponse<ProdutoResumoDTO>>(`/produtos${buildQuery(params)}`),
 
   produto: (slug: string) =>
-    fetchAPI<ProdutoDTO>(`/produtos/${encodeURIComponent(slug)}`, { revalidate: 300 }),
+    fetchAPI<ProdutoDTO>(`/produtos/${encodeURIComponent(slug)}`),
 
   fabricantes: (params?: { destaque?: boolean }) =>
-    fetchAPI<FabricanteDTO[]>(`/fabricantes${buildQuery(params)}`, { revalidate: 3600 }),
+    fetchAPI<FabricanteDTO[]>(`/fabricantes${buildQuery(params)}`),
 
   fabricante: (slug: string) =>
     fetchAPI<FabricanteDTO>(`/fabricantes/${encodeURIComponent(slug)}`),
