@@ -72,21 +72,26 @@ function ServicesDiagram({ product }: { product: Product }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const centerRef = useRef<HTMLDivElement>(null)
   const lastProductSlug = useRef(product.slug)
-  const serviceRefs = useRef(product.servicos.map(() => createRef<HTMLDivElement>()))
+  const servicosList = (product.servicos || []).slice(0, 6)
+  const count = servicosList.length
+  const serviceRefs = useRef(servicosList.map(() => createRef<HTMLDivElement>()))
+
   if (lastProductSlug.current !== product.slug) {
     lastProductSlug.current = product.slug
-    serviceRefs.current = product.servicos.map(() => createRef<HTMLDivElement>())
+    serviceRefs.current = servicosList.map(() => createRef<HTMLDivElement>())
   }
-  const fabLogo = product.logo || (product.fabricante === "Red Hat" ? redhatPretoLogo : VENDOR_LOGOS[product.fabricante])
-  const count = product.servicos.length
 
+  const fabLogo = product.logo || (product.fabricante === "Red Hat" ? redhatPretoLogo : VENDOR_LOGOS[product.fabricante])
+  const dynamicHeightClass = count > 4 ? "min-h-[420px]" : "min-h-[340px]"
+  const flexGapClass = count > 4 ? "gap-2 sm:gap-2.5" : "gap-3.5 sm:gap-4"
+  const curvatureStep = count > 4 ? 28 : 45
 
   return (
     <div className="w-full">
       {/* 1. Layout Mobile (abaixo de sm) */}
-      <div className="flex flex-col items-center gap-5 p-5 sm:hidden">
-        {/* Nó do produto */}
-        <div className="flex h-16 w-16 items-center justify-center rounded-xl border border-ink-200 bg-white p-2 shadow-sm">
+      <div className="flex flex-col items-center gap-4 sm:hidden px-4 py-6 rounded-2xl border border-ink-200 bg-ink-50/50">
+        {/* Nó central: o produto */}
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-ink-200 bg-white p-3 shadow-md">
           {fabLogo ? (
             <Image
               src={fabLogo}
@@ -102,20 +107,20 @@ function ServicesDiagram({ product }: { product: Product }) {
         <div className="h-6 w-0.5 border-l-2 border-dashed border-ink-200" />
 
         {/* Serviços empilhados */}
-        <div className="w-full flex flex-col gap-3">
-          {product.servicos.map((service) => {
+        <div className="w-full flex flex-col gap-2.5">
+          {servicosList.map((service) => {
             const Icon = typeof service.icon === 'string'
               ? (SERVICE_ICONS[service.icon] || SERVICE_ICONS.default)
               : service.icon;
             return (
               <div
                 key={service.nome}
-                className="flex items-center gap-3 rounded-xl border border-ink-200 bg-white px-4 py-3 shadow-sm w-full"
+                className="flex items-center gap-3 rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 shadow-sm w-full"
               >
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand/5 text-brand shrink-0">
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand/5 text-brand shrink-0">
                   {Icon && <Icon className="h-4 w-4" strokeWidth={1.75} />}
                 </span>
-                <span className="text-sm font-semibold text-ink-800">
+                <span className="text-xs font-semibold text-ink-800 sm:text-sm">
                   {service.nome}
                 </span>
               </div>
@@ -127,7 +132,7 @@ function ServicesDiagram({ product }: { product: Product }) {
       {/* 2. Layout Desktop (sm e acima) */}
       <div
         ref={containerRef}
-        className="hidden sm:flex relative mx-auto h-[320px] w-full max-w-2xl items-center justify-between px-8 py-4"
+        className={`hidden sm:flex relative mx-auto ${dynamicHeightClass} w-full max-w-2xl items-center justify-between px-8 py-6`}
       >
         {/* Nó central: o produto */}
         <div
@@ -146,8 +151,8 @@ function ServicesDiagram({ product }: { product: Product }) {
         </div>
 
         {/* Nós laterais: serviços */}
-        <div className="relative z-10 flex flex-col gap-4">
-          {product.servicos.map((service, i) => {
+        <div className={`relative z-10 flex flex-col ${flexGapClass}`}>
+          {servicosList.map((service, i) => {
             const Icon = typeof service.icon === 'string'
               ? (SERVICE_ICONS[service.icon] || SERVICE_ICONS.default)
               : service.icon;
@@ -157,7 +162,7 @@ function ServicesDiagram({ product }: { product: Product }) {
                 ref={serviceRefs.current[i]}
                 className="flex items-center gap-2.5 rounded-xl border border-ink-200 bg-white px-3 py-2 shadow-sm"
               >
-                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand/5 text-brand">
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand/5 text-brand shrink-0">
                   <Icon className="h-4 w-4" strokeWidth={1.75} />
                 </span>
                 <span className="whitespace-nowrap text-xs font-semibold text-ink-800 sm:text-sm">
@@ -169,20 +174,20 @@ function ServicesDiagram({ product }: { product: Product }) {
         </div>
 
         {/* Feixes animados ligando o produto a cada serviço */}
-        {product.servicos.map((service, i) => (
+        {servicosList.map((service, i) => (
           <AnimatedBeam
             key={service.nome}
             containerRef={containerRef}
             fromRef={centerRef}
             toRef={serviceRefs.current[i]}
-            curvature={(i - (count - 1) / 2) * 45}
+            curvature={(i - (count - 1) / 2) * curvatureStep}
             gradientStartColor="#0E66FF"
             gradientStopColor="#7aa9ff"
             pathColor="#D8D8D8"
             pathWidth={1.5}
             pathOpacity={0.35}
             duration={4}
-            delay={i * 0.5}
+            delay={i * 0.4}
           />
         ))}
       </div>
