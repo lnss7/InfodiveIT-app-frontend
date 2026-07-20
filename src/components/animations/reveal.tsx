@@ -45,7 +45,11 @@ export function Reveal({
   const M = MOTION[as] as typeof motion.div
 
   if (reduce) {
-    return <M className={className}>{children}</M>
+    return (
+      <M className={className} style={{ opacity: 1, filter: "none", transform: "none" }}>
+        {children}
+      </M>
+    )
   }
 
   return (

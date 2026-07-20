@@ -190,9 +190,11 @@ export function DashboardCarousel({
   React.useEffect(() => {
     if (!emblaApi) return;
 
+    emblaApi.reInit();
     setTweenNodes(emblaApi);
     setTweenFactor(emblaApi);
     tweenEffect(emblaApi);
+    ScrollTrigger.refresh();
 
     emblaApi
       .on("reInit", setTweenNodes)
@@ -209,14 +211,18 @@ export function DashboardCarousel({
         .off("scroll", tweenEffect)
         .off("slideFocus", tweenEffect);
     };
-  }, [emblaApi, setTweenNodes, setTweenFactor, tweenEffect]);
+  }, [emblaApi, items, setTweenNodes, setTweenFactor, tweenEffect]);
 
   // Spread por scroll: liga o progresso 0→1 do ScrollTrigger ao afastamento das laterais.
   // Ao descer a página as laterais se afastam da central; ao subir, voltam.
   React.useEffect(() => {
     if (!rootRef.current) return;
-    // Respeita usuários que preferem menos movimento.
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // Respeita usuários que preferem menos movimento abrindo as fotos estaticamente
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      spreadRef.current = 0.8;
+      applyTransforms();
+      return;
+    }
 
     const st = ScrollTrigger.create({
       trigger: rootRef.current,

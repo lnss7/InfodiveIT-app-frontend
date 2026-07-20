@@ -108,7 +108,7 @@ const renderHeadline = (text: string, highlight?: string) => {
 export function Hero() {
   const { scrollTo } = useSmoothScroll();
   const [activePartnerIndex, setActivePartnerIndex] = useState<number | null>(null);
-  const [slides, setSlides] = useState<any[]>(SHOWCASE_SLIDES);
+  const [slides, setSlides] = useState<any[] | null>(null);
   const [partners, setPartners] = useState<any[]>(PARTNERS);
   const [heroData, setHeroData] = useState<any>(null);
 
@@ -133,10 +133,13 @@ export function Hero() {
             src: item.imagemUrl,
             alt: "Dashboard Infodive " + item.ordem
           })));
+        } else {
+          setSlides(SHOWCASE_SLIDES);
         }
       })
       .catch((err) => {
         console.error("Hero: failed to fetch carousel data:", err);
+        setSlides(SHOWCASE_SLIDES);
       });
 
     api.fabricantes({ destaque: true })
@@ -408,8 +411,8 @@ export function Hero() {
           Cortado a ~75%: a margem negativa encolhe a caixa do wrapper e o fundo
           da foto some no overflow-hidden (corte seco, sem invadir a seção branca). */}
       <Reveal delay={0.9} className="relative z-0 w-full mt-8 sm:mt-12 overflow-hidden">
-        <div className="-mb-16 sm:-mb-20 md:-mb-28 lg:-mb-40">
-          <DashboardCarousel slides={slides} className="w-full" />
+        <div className="-mb-16 sm:-mb-20 md:-mb-28 lg:-mb-40 min-h-[220px] sm:min-h-[300px]">
+          {slides && <DashboardCarousel slides={slides} className="w-full" />}
         </div>
       </Reveal>
     </section>
