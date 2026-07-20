@@ -26,45 +26,6 @@ type Case = {
 
 const FALLBACK_IMAGES = [financeImg, retailImg, industryImg];
 
-const CASES_FALLBACK: Case[] = [
-  {
-    segmento: "Setor Financeiro",
-    cliente: "Banco Regional",
-    titulo: "Migração crítica de datacenter legado para nuvem redundante de alta performance",
-    desafio: "Datacenter on-premise defasado, com problemas constantes de hardware e quedas frequentes que interrompiam as operações bancárias.",
-    resultado: "Migração total para arquitetura multicloud redundante gerenciada pela Infodive, com alta disponibilidade nativa.",
-    metrica: "99.98% Uptime",
-    autor: "Ricardo Almeida",
-    cargo: "Head de Infraestrutura de TI",
-    depoimento: "A Infodive planejou e executou a migração crítica sem qualquer impacto para nossos clientes. A estabilidade operacional hoje é absoluta e as quedas foram zeradas.",
-    imagem: financeImg,
-  },
-  {
-    segmento: "Varejo e E-commerce",
-    cliente: "Rede Cosmos",
-    titulo: "Segurança de dados e backups imutáveis automáticos contra ameaças virtuais",
-    desafio: "Processos manuais de backup lentos e vulneráveis, expondo dados vitais de faturamento e vendas diárias a riscos graves de perda.",
-    resultado: "Implementação de rotina de proteção de dados imutável em nuvem com restauração automatizada instantânea sob demanda.",
-    metrica: "< 10 min RTO",
-    autor: "Mariana Souza",
-    cargo: "Diretora de Tecnologia",
-    depoimento: "Mitigamos 100% o risco de perda de dados. O processo de restauração é tão rápido e transparente que nem sequer afeta nossas frentes de caixa nas lojas.",
-    imagem: retailImg,
-  },
-  {
-    segmento: "Indústria Pesada",
-    cliente: "Vesta Manufatura",
-    titulo: "Modernização de infraestrutura híbrida com ganhos expressivos em velocidade",
-    desafio: "Servidores locais obsoletos limitando a capacidade de processamento do sistema ERP na linha de montagem e gerando gargalos.",
-    resultado: "Renovação completa do cluster de processamento local conectado com servidores híbridos escaláveis e de alta densidade.",
-    metrica: "+40% Performance",
-    autor: "Carlos Henrique",
-    cargo: "Gerente de Planta Industrial",
-    depoimento: "Ganhamos eficiência imediata na linha de montagem. O processamento das ordens de produção ficou incrivelmente ágil, destravando a produção diária.",
-    imagem: industryImg,
-  },
-];
-
 function fromDTO(dto: CaseDTO, idx: number): Case {
   return {
     segmento: dto.segmento,
@@ -81,7 +42,7 @@ function fromDTO(dto: CaseDTO, idx: number): Case {
 }
 
 export function CasesCarousel() {
-  const [cases, setCases] = useState<Case[]>(CASES_FALLBACK);
+  const [cases, setCases] = useState<Case[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [sectionInfo, setSectionInfo] = useState({
@@ -99,7 +60,7 @@ export function CasesCarousel() {
           setActiveIndex(0);
         }
       })
-      .catch(() => { /* mantém fallback */ });
+      .catch(() => {});
 
     api.secaoHome("cases")
       .then((data) => {
@@ -111,7 +72,7 @@ export function CasesCarousel() {
           });
         }
       })
-      .catch(() => { /* mantém fallback */ });
+      .catch(() => {});
   }, []);
 
   const handleNext = () => {
@@ -132,6 +93,8 @@ export function CasesCarousel() {
       if (autoplayTimer.current) clearInterval(autoplayTimer.current);
     };
   }, [isHovered, activeIndex, cases.length]);
+
+  if (cases.length === 0) return null;
 
   return (
     <>

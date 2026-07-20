@@ -11,17 +11,9 @@ type FAQItem = {
   answer: string
 }
 
-const FAQ_FALLBACK: FAQItem[] = [
-  { question: "Que tipos de suporte a Infodive oferece?", answer: "Oferecemos suporte completo com atendimento NOC 24/7/365 para incidentes críticos, além de suporte comercial e consultivo estruturado em níveis de atendimento (N1, N2 e N3) com acordos de SLA rígidos para garantir a continuidade da sua operação." },
-  { question: "A Infodive atua com migração e sustentação em nuvem (Cloud)?", answer: "Sim. Auxiliamos empresas no planejamento estratégico, migração segura (seja por decolagem direta ou refatoração de código) e sustentação contínua de infraestruturas em nuvem pública (AWS e Azure), privada e ambientes híbridos." },
-  { question: "Quais são os prazos de resposta (SLA) para chamados críticos?", answer: "Para incidentes de gravidade crítica (Nível 1), nosso SLA padrão de resposta inicial é de até 15 minutos, monitorado e gerido de ponta a ponta pelo nosso time de NOC especializado." },
-  { question: "Como funciona a parceria com fabricantes como IBM, Dell, Lenovo e Microsoft?", answer: "Somos parceiros homologados e certificados das principais marcas de tecnologia globais. Isso nos permite desenhar projetos unificados com hardware oficial, licenciamento correto, suporte de fábrica direto e condições comerciais altamente competitivas." },
-  { question: "Os projetos e serviços da Infodive estão em conformidade com a LGPD?", answer: "Sim, todos os nossos serviços gerenciados, políticas de backup e projetos de segurança de dados seguem estritamente as diretrizes da LGPD (Lei Geral de Proteção de Dados), garantindo total privacidade e conformidade jurídica para o seu negócio." },
-]
-
 export function FAQ() {
   const { scrollTo } = useSmoothScroll()
-  const [items, setItems] = useState<FAQItem[]>(FAQ_FALLBACK)
+  const [items, setItems] = useState<FAQItem[]>([])
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
   useEffect(() => {
@@ -31,7 +23,7 @@ export function FAQ() {
           setItems(data.map((d) => ({ question: d.pergunta, answer: d.resposta })))
         }
       })
-      .catch(() => { /* mantém fallback */ })
+      .catch(() => {})
   }, [])
 
   const toggle = (index: number) => {
@@ -55,6 +47,8 @@ export function FAQ() {
   const handleContactClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (scrollTo("contact")) e.preventDefault();
   };
+
+  if (items.length === 0) return null;
 
   return (
     <section id="faq" className="relative bg-ink-50 py-20 md:py-28 border-t border-ink-200/40">

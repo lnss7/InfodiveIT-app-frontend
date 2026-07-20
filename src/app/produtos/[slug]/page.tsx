@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-import { PRODUCTS, type Product } from "@/lib/products-data"
+import type { Product } from "@/lib/products-data"
 import { ProductDetailContent } from "./product-detail-client"
 import { Footer } from "@/layout/footer"
 import { api } from "@/lib/api"
@@ -44,35 +44,25 @@ function getIconName(icon: any): string {
 async function getProduct(slug: string): Promise<Product | null> {
   try {
     const dto = await api.produto(slug)
-    if (!dto || !dto.ativo) {
-      const staticProduct = PRODUCTS.find((p) => p.slug === slug)
-      return staticProduct || null
-    }
+    if (!dto || !dto.ativo) return null
 
     const [categorias] = await Promise.all([
       api.categorias().catch(() => []),
     ])
 
-    const staticProduct = PRODUCTS.find((p) => p.slug === dto.slug)
     const catObj = categorias.find((c) => c.id === dto.categoriaId)
 
-    // diferenciais: API retorna array agora, não mais string
-    let diferenciais = staticProduct?.diferenciais || []
+    let diferenciais: { title: string; description: string }[] = []
     if (dto.diferenciais && dto.diferenciais.length > 0) {
       diferenciais = dto.diferenciais.map(d => ({ title: d.titulo, description: d.descricao }))
     }
 
-    // casosDeUso: idem
-    let casosDeUso = staticProduct?.casosDeUso || []
+    let casosDeUso: { title: string; description: string }[] = []
     if (dto.casosDeUso && dto.casosDeUso.length > 0) {
       casosDeUso = dto.casosDeUso.map(c => ({ title: c.titulo, description: c.descricao }))
     }
 
-    // servicos: API retorna objetos completos agora, e fallback usa string de ícones para serialização RSC
-    let servicos = (staticProduct?.servicos || []).map(s => ({
-      nome: s.nome,
-      icon: getIconName(s.icon),
-    }))
+    let servicos: { nome: string; icon: string }[] = []
     if (dto.servicos && dto.servicos.length > 0) {
       servicos = dto.servicos.map(s => ({
         nome: s.nome,
@@ -83,30 +73,29 @@ async function getProduct(slug: string): Promise<Product | null> {
     return {
       slug: dto.slug,
       nome: dto.nome,
-      fabricante: dto.fabricanteNome || staticProduct?.fabricante || dto.fabricanteSlug,
-      fabricanteSlug: dto.fabricanteSlug,
-      logo: dto.fabricanteLogoUrl || VENDOR_LOGOS[dto.fabricanteNome || ''] || staticProduct?.logo || '',
-      logoClass: staticProduct?.logoClass || 'h-5',
-      categoria: dto.categoriaNome || catObj?.nome || staticProduct?.categoria || dto.categoriaSlug,
-      categoriaSlug: dto.categoriaSlug,
+      fabricante: dto.fabricanteNome || dto.fabricanteSlug || '',
+      fabricanteSlug: dto.fabricanteSlug || '',
+      logo: dto.fabricanteLogoUrl || VENDOR_LOGOS[dto.fabricanteNome || ''] || '',
+      logoClass: 'h-5',
+      categoria: dto.categoriaNome || catObj?.nome || dto.categoriaSlug || '',
+      categoriaSlug: dto.categoriaSlug || '',
       solucaoSlug: dto.solucaoSlug,
       solucaoTitle: dto.solucaoNome,
-      subcategoria: dto.subcategoria || staticProduct?.subcategoria || '',
-      descricaoCurta: dto.descricaoCurta || staticProduct?.descricaoCurta || '',
-      descricaoCompleta: dto.descricaoCompleta || staticProduct?.descricaoCompleta || '',
-      imageUrl: dto.imagemUrl || staticProduct?.imageUrl || '',
-      linkOficial: dto.linkOficial || staticProduct?.linkOficial || '',
-      servicosEyebrow: dto.servicosEyebrow || staticProduct?.servicosEyebrow || '',
-      servicosTitulo: dto.servicosTitulo || staticProduct?.servicosTitulo || '',
-      servicosDescricao: dto.servicosDescricao || staticProduct?.servicosDescricao || '',
+      subcategoria: dto.subcategoria || '',
+      descricaoCurta: dto.descricaoCurta || '',
+      descricaoCompleta: dto.descricaoCompleta || '',
+      imageUrl: dto.imagemUrl || '',
+      linkOficial: dto.linkOficial || '',
+      servicosEyebrow: dto.servicosEyebrow || '',
+      servicosTitulo: dto.servicosTitulo || '',
+      servicosDescricao: dto.servicosDescricao || '',
       destaque: dto.destaque,
       diferenciais,
       casosDeUso,
       servicos,
     }
   } catch (e) {
-    const staticProduct = PRODUCTS.find((p) => p.slug === slug)
-    return staticProduct || null
+    return null
   }
 }
 
@@ -119,28 +108,13 @@ interface PageProps {
 export const dynamicParams = true
 
 export async function generateStaticParams() {
-  let apiSlugs: { slug: string }[] = []
   try {
     const page = await api.produtos({ size: 100 })
     if (page && page.content) {
-      apiSlugs = page.content.map((p) => ({ slug: p.slug }))
+      return page.content.map((p) => ({ slug: p.slug }))
     }
   } catch {}
-
-  const staticSlugs = PRODUCTS.map((p) => ({ slug: p.slug }))
-
-  const slugSet = new Set<string>();
-  const allSlugs: { slug: string }[] = [];
-
-  const combined = [...apiSlugs, ...staticSlugs];
-  combined.forEach((item) => {
-    if (item.slug && !slugSet.has(item.slug)) {
-      slugSet.add(item.slug);
-      allSlugs.push(item);
-    }
-  });
-
-  return allSlugs
+  return []
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

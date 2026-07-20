@@ -38,15 +38,6 @@ const STATIC_LOGO_MAP: Record<string, StaticImageData> = {
   microsoft: microsoftLogo,
 }
 
-const FEATURED_FALLBACK: FeaturedProduct[] = [
-  { nome: "IBM Guardium", slug: "ibm-guardium", fabricanteNome: "IBM", logoUrl: ibmLogo, categoria: "Segurança", descricao: "Descoberta, monitoramento e proteção de dados sensíveis em tempo real." },
-  { nome: "Veeam Data Platform", slug: "veeam-data-platform", fabricanteNome: "Veeam", logoUrl: veeamLogo, categoria: "Proteção de Dados", descricao: "Backup e recuperação confiáveis para ambientes híbridos e multicloud." },
-  { nome: "Dell PowerEdge", slug: "dell-poweredge", fabricanteNome: "Dell Technologies", logoUrl: dellLogo, categoria: "Infraestrutura", descricao: "Servidores de alta performance para as cargas mais críticas do negócio." },
-  { nome: "Acronis Cyber Protect", slug: "acronis-cyber-protect", fabricanteNome: "Acronis", logoUrl: acronisLogo, categoria: "Segurança", descricao: "Cibersegurança e backup unificados em uma única solução integrada." },
-  { nome: "Red Hat OpenShift", slug: "red-hat-openshift", fabricanteNome: "Red Hat", logoUrl: redhatPretoLogo, categoria: "Cloud", descricao: "Plataforma Kubernetes corporativa para nuvem pública, privada e híbrida." },
-  { nome: "Microsoft Azure", slug: "microsoft-azure", fabricanteNome: "Microsoft", logoUrl: microsoftLogo, categoria: "Cloud", descricao: "Nuvem escalável para modernização, inovação e analytics em escala global." },
-]
-
 function toFeatured(dto: ProdutoResumoDTO): FeaturedProduct {
   const logoUrl =
     dto.fabricanteLogoUrl ||
@@ -64,7 +55,7 @@ function toFeatured(dto: ProdutoResumoDTO): FeaturedProduct {
 }
 
 export function Products() {
-  const [products, setProducts] = React.useState<FeaturedProduct[]>(FEATURED_FALLBACK)
+  const [products, setProducts] = React.useState<FeaturedProduct[]>([])
   const [active, setActive] = React.useState("Todos")
   const [sectionInfo, setSectionInfo] = React.useState({
     eyebrow: "Produtos",

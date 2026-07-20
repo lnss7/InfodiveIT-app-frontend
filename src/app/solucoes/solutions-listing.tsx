@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, Search, ArrowUpRight, ArrowLeft, Server } from "lucide-react";
-import { SOLUTIONS, type Solution } from "@/lib/solutions-data";
+import type { Solution } from "@/lib/solutions-data";
 import { categoriaToSolution } from "@/lib/converters";
 import { resolveLucideIcon } from "@/lib/lucide-icon-resolver";
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
@@ -44,8 +44,8 @@ export function SolutionsListing() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todas");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [solutions, setSolutions] = useState<Solution[]>(SOLUTIONS);
-  const [categories, setCategories] = useState<string[]>(FALLBACK_CATEGORIES);
+  const [solutions, setSolutions] = useState<Solution[]>([]);
+  const [categories, setCategories] = useState<string[]>(["Todas"]);
   const [categoryList, setCategoryList] = useState<CategoriaDTO[]>([]);
   const [cta, setCta] = useState<{ titulo?: string; subtitulo?: string; ctaTexto?: string; tipoAcao?: string }>({
     titulo: "Sua infraestrutura crítica precisa de sustentação?",
@@ -96,10 +96,7 @@ export function SolutionsListing() {
       .then((data) => {
         if (data && data.length > 0) {
           const sorted = [...data].sort((a, b) => a.ordem - b.ordem);
-          const mapped = sorted.map(cat => {
-            const fallback = SOLUTIONS.find(s => s.slug === cat.slug);
-            return categoriaToSolution(cat, fallback);
-          });
+          const mapped = sorted.map(cat => categoriaToSolution(cat));
           setSolutions(mapped);
           try {
             localStorage.setItem("infodive_solutions_listing_cache_v1", JSON.stringify({

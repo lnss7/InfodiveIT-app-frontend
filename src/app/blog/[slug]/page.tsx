@@ -7,7 +7,6 @@ import {
   type Artigo,
   type TipoConteudo,
   TIPO_CONFIG,
-  ARTIGOS,
 } from "@/lib/blog-data";
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern";
 import { Reveal } from "@/components/animations/reveal";
@@ -31,11 +30,7 @@ const TIPO_MAP: Record<string, TipoConteudo> = {
 async function getArtigo(slug: string): Promise<{ artigo: Artigo; publicadoEmIso: string } | null> {
   try {
     const dto = await api.conteudo(slug);
-    if (!dto || !dto.ativo) {
-      const staticArtigo = ARTIGOS.find((a) => a.slug === slug);
-      if (staticArtigo) return { artigo: staticArtigo, publicadoEmIso: new Date().toISOString() };
-      return null;
-    }
+    if (!dto || !dto.ativo) return null;
 
     const [categorias, fabricantes] = await Promise.all([
       api.solucoes().catch(() => []),
@@ -72,8 +67,6 @@ async function getArtigo(slug: string): Promise<{ artigo: Artigo; publicadoEmIso
 
     return { artigo, publicadoEmIso: dto.publicadoEm || new Date().toISOString() };
   } catch (e) {
-    const staticArtigo = ARTIGOS.find((a) => a.slug === slug);
-    if (staticArtigo) return { artigo: staticArtigo, publicadoEmIso: new Date().toISOString() };
     return null;
   }
 }
@@ -115,30 +108,15 @@ async function getRelacionados(currentSlug: string, limit = 3): Promise<Artigo[]
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
-  let apiSlugs: { slug: string }[] = [];
   try {
     const page = await api.conteudos({ size: 100 });
     if (page && page.content) {
-      apiSlugs = page.content
+      return page.content
         .filter((c) => c.tipo !== "POST_SOCIAL")
         .map((c) => ({ slug: c.slug }));
     }
   } catch (e) {}
-
-  const staticSlugs = ARTIGOS.map((a) => ({ slug: a.slug }));
-
-  const slugSet = new Set<string>();
-  const allSlugs: { slug: string }[] = [];
-
-  const combined = [...apiSlugs, ...staticSlugs];
-  combined.forEach((item) => {
-    if (item.slug && !slugSet.has(item.slug)) {
-      slugSet.add(item.slug);
-      allSlugs.push(item);
-    }
-  });
-
-  return allSlugs;
+  return [];
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

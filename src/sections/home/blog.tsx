@@ -32,6 +32,7 @@ const defaultCategories = ["IA", "NUVEM", "IA"];
 
 export function Blog() {
   const [items, setItems] = useState<ContentItem[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -64,11 +65,13 @@ export function Blog() {
           } else {
             setItems([]);
           }
+          setIsLoaded(true);
         }
       })
       .catch(() => {
         if (active) {
           setItems([]);
+          setIsLoaded(true);
         }
       });
 
@@ -76,6 +79,8 @@ export function Blog() {
       active = false;
     };
   }, []);
+
+  if (isLoaded && items.length === 0) return null;
 
   return (
     <section

@@ -7,12 +7,7 @@ import { Search, ArrowLeft } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 import { useSearchParams } from "next/navigation"
 
-import {
-  PRODUCTS,
-  PRODUCT_CATEGORIES,
-  PRODUCT_FABRICANTES,
-  PRODUCT_STATS,
-} from "@/lib/products-data"
+
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern"
 import { Reveal } from "@/components/animations/reveal"
 import { Marquee } from "@/components/ui/marquee"
@@ -33,24 +28,22 @@ import { api, type ProdutoResumoDTO } from "@/lib/api"
 import type { Product } from "@/lib/products-data"
 
 function mapDtoToProduct(dto: ProdutoResumoDTO): Product {
-  const staticProduct = PRODUCTS.find((p) => p.slug === dto.slug)
   return {
     slug: dto.slug,
     nome: dto.nome,
-    fabricante: dto.fabricanteNome || staticProduct?.fabricante || dto.fabricanteSlug,
-    fabricanteSlug: dto.fabricanteSlug,
-    // Logo: usa API primeiro, depois estático, depois VENDOR_LOGOS
-    logo: dto.fabricanteLogoUrl || VENDOR_LOGOS[dto.fabricanteNome || ''] || staticProduct?.logo || '',
-    logoClass: staticProduct?.logoClass || 'h-5',
-    categoria: dto.categoriaTitle || staticProduct?.categoria || dto.categoriaSlug,
-    categoriaSlug: dto.categoriaSlug,
-    subcategoria: dto.subcategoria || staticProduct?.subcategoria || '',
-    descricaoCurta: dto.descricaoCurta || staticProduct?.descricaoCurta || '',
-    descricaoCompleta: staticProduct?.descricaoCompleta || '',
+    fabricante: dto.fabricanteNome || dto.fabricanteSlug || '',
+    fabricanteSlug: dto.fabricanteSlug || '',
+    logo: dto.fabricanteLogoUrl || VENDOR_LOGOS[dto.fabricanteNome || ''] || '',
+    logoClass: 'h-5',
+    categoria: dto.categoriaTitle || dto.categoriaSlug || '',
+    categoriaSlug: dto.categoriaSlug || '',
+    subcategoria: dto.subcategoria || '',
+    descricaoCurta: dto.descricaoCurta || '',
+    descricaoCompleta: '',
     destaque: dto.destaque,
-    diferenciais: staticProduct?.diferenciais || [],
-    casosDeUso: staticProduct?.casosDeUso || [],
-    servicos: staticProduct?.servicos || [],
+    diferenciais: [],
+    casosDeUso: [],
+    servicos: [],
   }
 }
 
@@ -60,20 +53,15 @@ export function ProductsListing() {
 
   const initialFabricante = useMemo(() => {
     if (!urlFabricante) return "Todos"
-    const match = PRODUCTS.find(
-      (p) =>
-        p.fabricanteSlug?.toLowerCase() === urlFabricante.toLowerCase() ||
-        p.fabricante?.toLowerCase() === urlFabricante.toLowerCase()
-    )
-    return match ? match.fabricante : urlFabricante
+    return urlFabricante
   }, [urlFabricante])
 
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("Todos")
   const [selectedFabricante, setSelectedFabricante] = useState(initialFabricante)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [products, setProducts] = useState<Product[]>(PRODUCTS)
-  const [fabricantesList, setFabricantesList] = useState<string[]>(PRODUCT_FABRICANTES)
+  const [products, setProducts] = useState<Product[]>([])
+  const [fabricantesList, setFabricantesList] = useState<string[]>([])
   const [cta, setCta] = useState<{ titulo?: string; subtitulo?: string; ctaTexto?: string; tipoAcao?: string }>({
     titulo: "Não achou o que procurava?",
     subtitulo: "Nosso catálogo vai muito além desta vitrine. Fale com um especialista e encontramos o produto certo — com o melhor fabricante — para o seu desafio.",
@@ -81,9 +69,9 @@ export function ProductsListing() {
     tipoAcao: "DRAWER",
   })
   const [stats, setStats] = useState({
-    produtos: PRODUCT_STATS.produtos,
-    fabricantes: PRODUCT_STATS.fabricantes,
-    categorias: PRODUCT_STATS.categorias,
+    produtos: 0,
+    fabricantes: 0,
+    categorias: 0,
   })
 
   useEffect(() => {
@@ -134,7 +122,7 @@ export function ProductsListing() {
           } catch {}
         }
       })
-      .catch(() => {}) // mantém PRODUCTS como fallback
+      .catch(() => {})
 
     Promise.all([
       api.produtos({ size: 100 }).catch(() => null),
@@ -142,9 +130,9 @@ export function ProductsListing() {
       api.categorias().catch(() => null),
     ])
       .then(([produtosPage, fabricantes, categorias]) => {
-        const totalProdutos = produtosPage?.totalElements ?? (produtosPage?.content?.length || PRODUCTS.length)
-        const totalFabricantes = (fabricantes && fabricantes.length > 0) ? fabricantes.length : PRODUCT_FABRICANTES.length
-        const totalCategorias = (categorias && categorias.length > 0) ? categorias.filter((c) => c.ativo).length : (PRODUCT_CATEGORIES.length - 1)
+        const totalProdutos = produtosPage?.totalElements ?? produtosPage?.content?.length ?? 0
+        const totalFabricantes = (fabricantes && fabricantes.length > 0) ? fabricantes.length : 0
+        const totalCategorias = (categorias && categorias.length > 0) ? categorias.filter((c) => c.ativo).length : 0
 
         setStats({
           produtos: totalProdutos,
@@ -154,6 +142,11 @@ export function ProductsListing() {
       })
       .catch(() => {})
   }, [])
+
+  const productCategories = useMemo(() => {
+    const cats = Array.from(new Set(products.map((p) => p.categoria).filter(Boolean)))
+    return ["Todos", ...cats]
+  }, [products])
 
   const fabricanteOptions = useMemo(() => {
     const set = new Set<string>()
@@ -170,16 +163,18 @@ export function ProductsListing() {
 
   useEffect(() => {
     if (urlFabricante) {
-      const match = PRODUCTS.find(
+      const match = products.find(
         (p) =>
           p.fabricanteSlug?.toLowerCase() === urlFabricante.toLowerCase() ||
           p.fabricante?.toLowerCase() === urlFabricante.toLowerCase()
       )
       if (match) {
         setSelectedFabricante(match.fabricante)
+      } else {
+        setSelectedFabricante(urlFabricante)
       }
     }
-  }, [urlFabricante])
+  }, [urlFabricante, products])
 
   const isDefaultView =
     selectedCategory === "Todos" &&
@@ -295,22 +290,26 @@ export function ProductsListing() {
         {/* Marquee de fabricantes */}
         <div className="relative z-10 mt-14 [mask-image:linear-gradient(to_right,transparent,white_10%,white_90%,transparent)]">
           <Marquee pauseOnHover duration="60s">
-            {[...PRODUCT_FABRICANTES, ...PRODUCT_FABRICANTES, ...PRODUCT_FABRICANTES, ...PRODUCT_FABRICANTES].map((fab, idx) => {
-              const logo = VENDOR_LOGOS[fab]
-              return (
-                <div key={`${fab}-${idx}`} className="flex h-10 items-center justify-center px-4">
-                  {logo ? (
-                    <Image
-                      src={logo}
-                      alt={fab}
-                      className="h-6 w-auto object-contain opacity-40 brightness-0 invert transition-opacity duration-300 hover:opacity-80"
-                    />
-                  ) : (
-                    <span className="text-sm font-semibold text-white/40">{fab}</span>
-                  )}
-                </div>
-              )
-            })}
+            {(() => {
+              const list = fabricantesList.length > 0 ? fabricantesList : Object.keys(VENDOR_LOGOS)
+              const repeated = [...list, ...list, ...list, ...list]
+              return repeated.map((fab, idx) => {
+                const logo = VENDOR_LOGOS[fab]
+                return (
+                  <div key={`${fab}-${idx}`} className="flex h-10 items-center justify-center px-4">
+                    {logo ? (
+                      <Image
+                        src={logo}
+                        alt={fab}
+                        className="h-6 w-auto object-contain opacity-40 brightness-0 invert transition-opacity duration-300 hover:opacity-80"
+                      />
+                    ) : (
+                      <span className="text-sm font-semibold text-white/40">{fab}</span>
+                    )}
+                  </div>
+                )
+              })
+            })()}
           </Marquee>
         </div>
       </div>
@@ -335,7 +334,7 @@ export function ProductsListing() {
 
               {/* Tabs de categoria */}
               <div className="flex overflow-x-auto no-scrollbar gap-1.5 w-full lg:flex-1 lg:min-w-0 justify-start py-1 px-1 select-none">
-                {PRODUCT_CATEGORIES.map((category) => {
+                {productCategories.map((category) => {
                   const isActive = selectedCategory === category
                   return (
                     <button

@@ -1,9 +1,7 @@
 import { MetadataRoute } from 'next'
-import { SOLUTIONS } from '@/lib/solutions-data'
-import { PRODUCTS } from '@/lib/products-data'
-import { ARTIGOS } from '@/lib/blog-data'
+import { api } from '@/lib/api'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://infodive.com.br'
 
   // 1. Static pages
@@ -23,29 +21,46 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: route === '' ? 1.0 : 0.8,
   }))
 
-  // 2. Dynamic Solutions
-  const solutionRoutes = SOLUTIONS.map((s) => ({
-    url: `${baseUrl}/solucoes/${s.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }))
+  let solutionRoutes: MetadataRoute.Sitemap = []
+  let productRoutes: MetadataRoute.Sitemap = []
+  let articleRoutes: MetadataRoute.Sitemap = []
 
-  // 3. Dynamic Products
-  const productRoutes = PRODUCTS.map((p) => ({
-    url: `${baseUrl}/produtos/${p.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }))
+  try {
+    const [solucoes, produtosPage, conteudosPage] = await Promise.all([
+      api.solucoes().catch(() => []),
+      api.produtos({ size: 100 }).catch(() => null),
+      api.conteudos({ size: 100 }).catch(() => null),
+    ])
 
-  // 4. Dynamic Blog Articles
-  const articleRoutes = ARTIGOS.map((a) => ({
-    url: `${baseUrl}/blog/${a.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.6,
-  }))
+    if (solucoes && solucoes.length > 0) {
+      solutionRoutes = solucoes.map((s) => ({
+        url: `${baseUrl}/solucoes/${s.slug}`,
+        lastModified: new Date(),
+        changeFrequency: 'monthly' as const,
+        priority: 0.7,
+      }))
+    }
+
+    if (produtosPage && produtosPage.content && produtosPage.content.length > 0) {
+      productRoutes = produtosPage.content.map((p) => ({
+        url: `${baseUrl}/produtos/${p.slug}`,
+        lastModified: new Date(),
+        changeFrequency: 'monthly' as const,
+        priority: 0.7,
+      }))
+    }
+
+    if (conteudosPage && conteudosPage.content && conteudosPage.content.length > 0) {
+      articleRoutes = conteudosPage.content
+        .filter((c) => c.tipo !== 'POST_SOCIAL')
+        .map((a) => ({
+          url: `${baseUrl}/blog/${a.slug}`,
+          lastModified: new Date(),
+          changeFrequency: 'weekly' as const,
+          priority: 0.6,
+        }))
+    }
+  } catch {}
 
   return [...staticRoutes, ...solutionRoutes, ...productRoutes, ...articleRoutes]
 }

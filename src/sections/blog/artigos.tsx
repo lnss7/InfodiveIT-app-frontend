@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Reveal } from "@/components/animations/reveal";
 import { api, type ConteudoDTO } from "@/lib/api";
-import { ARTIGOS, FILTROS, type Artigo, type TipoConteudo } from "@/lib/blog-data";
+import { FILTROS, type Artigo, type TipoConteudo } from "@/lib/blog-data";
 import { cn } from "@/lib/utils";
 import { ArtigoCard } from "./article-card";
 
@@ -34,7 +34,7 @@ function conteudoToArtigo(dto: ConteudoDTO): Artigo {
 }
 
 export function BlogArtigos() {
-  const [artigos, setArtigos] = useState<Artigo[]>(ARTIGOS);
+  const [artigos, setArtigos] = useState<Artigo[]>([]);
   const [filtroAtivo, setFiltroAtivo] = useState<TipoConteudo | "todos">("todos");
   const [eyebrow, setEyebrow] = useState("Artigos & Materiais");
   const [headline, setHeadline] = useState("Conteúdo técnico produzido pela equipe Infodive.");
@@ -66,7 +66,7 @@ export function BlogArtigos() {
           } catch {}
         }
       })
-      .catch(() => {}); // mantém ARTIGOS como fallback
+      .catch(() => {});
 
     api.configBlog()
       .then((data) => {

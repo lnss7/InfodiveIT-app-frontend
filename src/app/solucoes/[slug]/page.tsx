@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { SOLUTIONS, type Solution } from "@/lib/solutions-data";
+import type { Solution } from "@/lib/solutions-data";
 import { categoriaToSolution } from "@/lib/converters";
 import { SolutionDetailContent } from "./solution-detail-client";
 import { Footer } from "@/layout/footer";
@@ -13,49 +13,28 @@ interface PageProps {
 }
 
 async function getSolution(slug: string): Promise<Solution | null> {
-  let cat;
   try {
-    cat = await api.solucao(slug);
-    if (cat && !cat.ativo) {
-      cat = null;
+    const cat = await api.solucao(slug);
+    if (cat && cat.ativo) {
+      return categoriaToSolution(cat);
     }
+    return null;
   } catch {
-    cat = null;
+    return null;
   }
-
-  const staticSol = SOLUTIONS.find((s) => s.slug === slug);
-
-  // Se API retornou dados, converter; senão usar estático
-  const solution = cat ? categoriaToSolution(cat, staticSol) : staticSol;
-  return solution || null;
 }
 
 export const dynamicParams = true;
 
 // Pre-generate dynamic paths at build time for ultimate performance
 export async function generateStaticParams() {
-  let apiSlugs: { slug: string }[] = [];
   try {
     const cats = await api.solucoes();
     if (cats && cats.length > 0) {
-      apiSlugs = cats.map((cat) => ({ slug: cat.slug }));
+      return cats.map((cat) => ({ slug: cat.slug }));
     }
   } catch {}
-
-  const staticSlugs = SOLUTIONS.map((s) => ({ slug: s.slug }));
-
-  const slugSet = new Set<string>();
-  const allSlugs: { slug: string }[] = [];
-
-  const combined = [...apiSlugs, ...staticSlugs];
-  combined.forEach((item) => {
-    if (item.slug && !slugSet.has(item.slug)) {
-      slugSet.add(item.slug);
-      allSlugs.push(item);
-    }
-  });
-
-  return allSlugs;
+  return [];
 }
 
 // Generate high-fidelity dynamic SEO metadata for each page

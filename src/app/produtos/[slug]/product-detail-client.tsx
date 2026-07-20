@@ -19,7 +19,7 @@ import {
   Cloud,
   Cog
 } from "lucide-react"
-import { type Product, getProductBySlug, getRelatedProducts } from "@/lib/products-data"
+import type { Product } from "@/lib/products-data"
 import { VENDOR_LOGOS, VENDOR_URLS } from "@/lib/vendor-logos"
 import redhatPretoLogo from "@/assets/Red Hat Preto Logo.svg"
 import { InteractiveGridPattern } from "@/components/animations/interactive-grid-pattern"
@@ -220,9 +220,7 @@ export function ProductDetailContent({
 
   if (!product) return null
 
-  const related = (relatedProducts && relatedProducts.length > 0)
-    ? relatedProducts
-    : getRelatedProducts(product)
+  const related = relatedProducts || []
   const fabLogo = product.logo || VENDOR_LOGOS[product.fabricante]
   const lightLogo = product.logo || (product.fabricante === "Red Hat" ? redhatPretoLogo : fabLogo)
 
