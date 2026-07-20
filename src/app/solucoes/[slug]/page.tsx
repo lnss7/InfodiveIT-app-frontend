@@ -30,14 +30,32 @@ async function getSolution(slug: string): Promise<Solution | null> {
   return solution || null;
 }
 
+export const dynamicParams = true;
+
 // Pre-generate dynamic paths at build time for ultimate performance
 export async function generateStaticParams() {
+  let apiSlugs: { slug: string }[] = [];
   try {
     const cats = await api.solucoes();
-    if (cats.length > 0) return cats.map((cat) => ({ slug: cat.slug }));
+    if (cats && cats.length > 0) {
+      apiSlugs = cats.map((cat) => ({ slug: cat.slug }));
+    }
   } catch {}
-  // fallback: slugs estáticos garantem prerender mesmo sem backend
-  return SOLUTIONS.map((s) => ({ slug: s.slug }));
+
+  const staticSlugs = SOLUTIONS.map((s) => ({ slug: s.slug }));
+
+  const slugSet = new Set<string>();
+  const allSlugs: { slug: string }[] = [];
+
+  const combined = [...apiSlugs, ...staticSlugs];
+  combined.forEach((item) => {
+    if (item.slug && !slugSet.has(item.slug)) {
+      slugSet.add(item.slug);
+      allSlugs.push(item);
+    }
+  });
+
+  return allSlugs;
 }
 
 // Generate high-fidelity dynamic SEO metadata for each page

@@ -40,6 +40,16 @@ export function BlogArtigos() {
   const [headline, setHeadline] = useState("Conteúdo técnico produzido pela equipe Infodive.");
 
   useEffect(() => {
+    try {
+      const cached = localStorage.getItem("infodive_blog_artigos_cache_v1");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed.artigos && parsed.artigos.length > 0) setArtigos(parsed.artigos);
+        if (parsed.eyebrow) setEyebrow(parsed.eyebrow);
+        if (parsed.headline) setHeadline(parsed.headline);
+      }
+    } catch {}
+
     api.conteudos({ size: 50 })
       .then((page) => {
         const mapped = page.content
@@ -47,6 +57,13 @@ export function BlogArtigos() {
           .map(conteudoToArtigo);
         if (mapped.length > 0) {
           setArtigos(mapped);
+          try {
+            localStorage.setItem("infodive_blog_artigos_cache_v1", JSON.stringify({
+              artigos: mapped,
+              eyebrow,
+              headline,
+            }));
+          } catch {}
         }
       })
       .catch(() => {}); // mantém ARTIGOS como fallback

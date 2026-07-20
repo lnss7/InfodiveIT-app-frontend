@@ -44,7 +44,10 @@ function getIconName(icon: any): string {
 async function getProduct(slug: string): Promise<Product | null> {
   try {
     const dto = await api.produto(slug)
-    if (!dto || !dto.ativo) return null
+    if (!dto || !dto.ativo) {
+      const staticProduct = PRODUCTS.find((p) => p.slug === slug)
+      return staticProduct || null
+    }
 
     const [categorias] = await Promise.all([
       api.categorias().catch(() => []),
@@ -102,7 +105,8 @@ async function getProduct(slug: string): Promise<Product | null> {
       servicos,
     }
   } catch (e) {
-    return null
+    const staticProduct = PRODUCTS.find((p) => p.slug === slug)
+    return staticProduct || null
   }
 }
 
@@ -112,12 +116,31 @@ interface PageProps {
   }
 }
 
+export const dynamicParams = true
+
 export async function generateStaticParams() {
+  let apiSlugs: { slug: string }[] = []
   try {
     const page = await api.produtos({ size: 100 })
-    if (page.content.length > 0) return page.content.map((p) => ({ slug: p.slug }))
+    if (page && page.content) {
+      apiSlugs = page.content.map((p) => ({ slug: p.slug }))
+    }
   } catch {}
-  return PRODUCTS.map((p) => ({ slug: p.slug }))  // fallback estático
+
+  const staticSlugs = PRODUCTS.map((p) => ({ slug: p.slug }))
+
+  const slugSet = new Set<string>();
+  const allSlugs: { slug: string }[] = [];
+
+  const combined = [...apiSlugs, ...staticSlugs];
+  combined.forEach((item) => {
+    if (item.slug && !slugSet.has(item.slug)) {
+      slugSet.add(item.slug);
+      allSlugs.push(item);
+    }
+  });
+
+  return allSlugs
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

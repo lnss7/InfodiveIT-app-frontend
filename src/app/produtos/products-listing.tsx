@@ -87,6 +87,17 @@ export function ProductsListing() {
   })
 
   useEffect(() => {
+    try {
+      const cached = localStorage.getItem("infodive_products_listing_cache_v1")
+      if (cached) {
+        const parsed = JSON.parse(cached)
+        if (parsed.products && parsed.products.length > 0) setProducts(parsed.products)
+        if (parsed.fabricantesList && parsed.fabricantesList.length > 0) setFabricantesList(parsed.fabricantesList)
+        if (parsed.stats) setStats(parsed.stats)
+        if (parsed.cta) setCta(parsed.cta)
+      }
+    } catch {}
+
     api.cta("produtos")
       .then((data) => {
         if (data) {
@@ -111,7 +122,16 @@ export function ProductsListing() {
     api.produtos({ size: 100 })
       .then((page) => {
         if (page.content.length > 0) {
-          setProducts(page.content.map(mapDtoToProduct))
+          const mapped = page.content.map(mapDtoToProduct)
+          setProducts(mapped)
+          try {
+            localStorage.setItem("infodive_products_listing_cache_v1", JSON.stringify({
+              products: mapped,
+              fabricantesList,
+              stats,
+              cta,
+            }))
+          } catch {}
         }
       })
       .catch(() => {}) // mantém PRODUCTS como fallback

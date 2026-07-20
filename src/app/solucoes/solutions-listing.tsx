@@ -55,6 +55,17 @@ export function SolutionsListing() {
   });
 
   useEffect(() => {
+    try {
+      const cached = localStorage.getItem("infodive_solutions_listing_cache_v1");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed.solutions && parsed.solutions.length > 0) setSolutions(parsed.solutions);
+        if (parsed.categories && parsed.categories.length > 0) setCategories(parsed.categories);
+        if (parsed.categoryList && parsed.categoryList.length > 0) setCategoryList(parsed.categoryList);
+        if (parsed.cta) setCta(parsed.cta);
+      }
+    } catch {}
+
     // 0. Fetch CTA
     api.cta("solucoes")
       .then((data) => {
@@ -85,10 +96,19 @@ export function SolutionsListing() {
       .then((data) => {
         if (data && data.length > 0) {
           const sorted = [...data].sort((a, b) => a.ordem - b.ordem);
-          setSolutions(sorted.map(cat => {
+          const mapped = sorted.map(cat => {
             const fallback = SOLUTIONS.find(s => s.slug === cat.slug);
             return categoriaToSolution(cat, fallback);
-          }));
+          });
+          setSolutions(mapped);
+          try {
+            localStorage.setItem("infodive_solutions_listing_cache_v1", JSON.stringify({
+              solutions: mapped,
+              categories,
+              categoryList,
+              cta,
+            }));
+          } catch {}
         }
       })
       .catch(() => {});

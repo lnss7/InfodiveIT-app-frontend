@@ -74,10 +74,30 @@ export function Products() {
   })
 
   React.useEffect(() => {
+    try {
+      const cached = localStorage.getItem("infodive_home_products_cache_v1")
+      if (cached) {
+        const parsed = JSON.parse(cached)
+        if (parsed.products && parsed.products.length > 0) setProducts(parsed.products)
+        if (parsed.sectionInfo) setSectionInfo(parsed.sectionInfo)
+      }
+    } catch {}
+
+    let currentProducts = products
+    let currentInfo = sectionInfo
+
     api.produtos({ destaque: true, size: 6 })
       .then((res) => {
         if (res.content.length > 0) {
-          setProducts(res.content.map(toFeatured))
+          const mapped = res.content.map(toFeatured)
+          setProducts(mapped)
+          currentProducts = mapped
+          try {
+            localStorage.setItem("infodive_home_products_cache_v1", JSON.stringify({
+              products: currentProducts,
+              sectionInfo: currentInfo,
+            }))
+          } catch {}
         }
       })
       .catch(() => { /* mantém fallback */ })
@@ -85,12 +105,20 @@ export function Products() {
     api.secaoHome("produtos")
       .then((data) => {
         if (data) {
-          setSectionInfo({
+          const infoObj = {
             eyebrow: data.eyebrow || "Produtos",
             headline: data.headline || "Produtos em destaque",
             subtitulo: data.subtitulo || "Uma seleção do nosso catálogo dos principais fabricantes do mundo — prontos para resolver desafios reais de infraestrutura, segurança e cloud.",
             headlineDestaque: data.headlineDestaque || "",
-          })
+          }
+          setSectionInfo(infoObj)
+          currentInfo = infoObj
+          try {
+            localStorage.setItem("infodive_home_products_cache_v1", JSON.stringify({
+              products: currentProducts,
+              sectionInfo: currentInfo,
+            }))
+          } catch {}
         }
       })
       .catch(() => { /* mantém fallback */ })
