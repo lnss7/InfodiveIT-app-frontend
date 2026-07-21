@@ -1,4 +1,5 @@
 import { type ComponentPropsWithoutRef, type ReactNode } from "react"
+import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { ArrowRight } from "lucide-react"
 
@@ -81,13 +82,15 @@ const BentoCard = ({
   <div
     key={name}
     className={cn(
-      "group relative col-span-3 flex flex-col justify-between overflow-hidden rounded-xl",
+      "group relative col-span-3 flex flex-col justify-between overflow-hidden rounded-xl cursor-pointer",
       "bg-[#f7f9f8] border border-ink-200",
       "[box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]",
       className
     )}
     {...props}
   >
+    <Link href={href} className="absolute inset-0 z-30" aria-label={name} />
+
     <div>{background}</div>
 
     {/* Desfoque progressivo no rodapé (estilo Magic UI): pilha de camadas com blur
@@ -107,13 +110,13 @@ const BentoCard = ({
     </div>
 
     <div className="pointer-events-none absolute bottom-0 z-20 flex w-full translate-y-10 transform-gpu flex-row items-center p-6 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-      <a
+      <Link
         href={href}
         className="pointer-events-auto inline-flex items-center gap-1 text-sm font-medium text-brand hover:text-brand-deep"
       >
         {cta}
         <ArrowRight className="h-4 w-4" />
-      </a>
+      </Link>
     </div>
 
     <div className="pointer-events-none absolute inset-0 transform-gpu transition-all duration-300 group-hover:bg-ink-950/[0.02]" />

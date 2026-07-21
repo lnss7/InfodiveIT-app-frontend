@@ -68,7 +68,7 @@ describe("api", () => {
       expect(result).toEqual(mockData);
     });
 
-    it("usa next: { revalidate: 60 } por padrão", async () => {
+    it("usa next: { revalidate: 3600 } por padrão", async () => {
       const mockResponse = { content: [] };
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
@@ -80,7 +80,7 @@ describe("api", () => {
       expect(global.fetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          next: expect.objectContaining({ revalidate: 60 }),
+          next: expect.objectContaining({ revalidate: 3600 }),
         }),
       );
     });

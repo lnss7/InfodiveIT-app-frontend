@@ -263,6 +263,9 @@ export type HomeSolucoesBentoDTO = {
   imagemIaUrl?: string
   textoCarrossel?: string
   ordem: number
+  solucaoId?: string
+  solucaoSlug?: string
+  solucaoTitulo?: string
 }
 
 export type HomeSegurancaMarqueeDTO = {
@@ -390,15 +393,15 @@ export type SobreCulturaDTO = {
 // ─── Infraestrutura HTTP ──────────────────────────────────────────────────────
 
 type FetchOptions = Omit<RequestInit, 'next'> & {
-  /** Tempo de revalidação em segundos. Default 60s. Passe 0 para sempre fresco. */
-  revalidate?: number
+  /** Tempo de revalidação em segundos. Default 3600s (1h) para cache On-Demand. */
+  revalidate?: number | false
   /** Tags para revalidação on-demand via revalidateTag(). */
   tags?: string[]
 }
 
 export async function fetchAPI<T>(
   path: string,
-  { revalidate = 60, tags, ...init }: FetchOptions = {},
+  { revalidate = 3600, tags, ...init }: FetchOptions = {},
 ): Promise<T> {
   if (!API_URL) {
     throw new Error('NEXT_PUBLIC_API_URL is not configured.')
@@ -438,101 +441,101 @@ function buildQuery(params?: Record<string, string | number | boolean | undefine
 export const api = {
   // Conteúdo dinâmico
   categorias: () =>
-    fetchAPI<CategoriaDTO[]>('/categorias'),
+    fetchAPI<CategoriaDTO[]>('/categorias', { tags: ['categorias'] }),
 
   categoria: (slug: string) =>
-    fetchAPI<CategoriaDTO>(`/categorias/${encodeURIComponent(slug)}`),
+    fetchAPI<CategoriaDTO>(`/categorias/${encodeURIComponent(slug)}`, { tags: ['categorias'] }),
 
   solucoes: () =>
-    fetchAPI<SolucaoDTO[]>('/solucoes'),
+    fetchAPI<SolucaoDTO[]>('/solucoes', { tags: ['solucoes'] }),
 
   solucao: (slug: string) =>
-    fetchAPI<SolucaoDTO>(`/solucoes/${encodeURIComponent(slug)}`),
+    fetchAPI<SolucaoDTO>(`/solucoes/${encodeURIComponent(slug)}`, { tags: ['solucoes'] }),
 
   produtos: (params?: { categoria?: string; fabricante?: string; destaque?: boolean; page?: number; size?: number }) =>
-    fetchAPI<SpringPageResponse<ProdutoResumoDTO>>(`/produtos${buildQuery(params)}`),
+    fetchAPI<SpringPageResponse<ProdutoResumoDTO>>(`/produtos${buildQuery(params)}`, { tags: ['produtos'] }),
 
   produto: (slug: string) =>
-    fetchAPI<ProdutoDTO>(`/produtos/${encodeURIComponent(slug)}`),
+    fetchAPI<ProdutoDTO>(`/produtos/${encodeURIComponent(slug)}`, { tags: ['produtos'] }),
 
   fabricantes: (params?: { destaque?: boolean }) =>
-    fetchAPI<FabricanteDTO[]>(`/fabricantes${buildQuery(params)}`),
+    fetchAPI<FabricanteDTO[]>(`/fabricantes${buildQuery(params)}`, { tags: ['fabricantes'] }),
 
   fabricante: (slug: string) =>
-    fetchAPI<FabricanteDTO>(`/fabricantes/${encodeURIComponent(slug)}`),
+    fetchAPI<FabricanteDTO>(`/fabricantes/${encodeURIComponent(slug)}`, { tags: ['fabricantes'] }),
 
   servicos: () =>
-    fetchAPI<ServicoDTO[]>('/servicos'),
+    fetchAPI<ServicoDTO[]>('/servicos', { tags: ['servicos'] }),
 
   servico: (slug: string) =>
-    fetchAPI<ServicoDTO>(`/servicos/${encodeURIComponent(slug)}`),
+    fetchAPI<ServicoDTO>(`/servicos/${encodeURIComponent(slug)}`, { tags: ['servicos'] }),
 
   conteudos: (params?: { tipo?: ConteudoDTO['tipo']; origem?: ConteudoDTO['origem']; destaque?: boolean; page?: number; size?: number }) =>
-    fetchAPI<SpringPageResponse<ConteudoDTO>>(`/conteudos${buildQuery(params)}`),
+    fetchAPI<SpringPageResponse<ConteudoDTO>>(`/conteudos${buildQuery(params)}`, { tags: ['conteudos'] }),
 
   conteudo: (slug: string) =>
-    fetchAPI<ConteudoDTO>(`/conteudos/${encodeURIComponent(slug)}`),
+    fetchAPI<ConteudoDTO>(`/conteudos/${encodeURIComponent(slug)}`, { tags: ['conteudos'] }),
 
   cases: () =>
-    fetchAPI<CaseDTO[]>('/cases'),
+    fetchAPI<CaseDTO[]>('/cases', { tags: ['cases'] }),
 
   faq: () =>
-    fetchAPI<FaqDTO[]>('/faq'),
+    fetchAPI<FaqDTO[]>('/faq', { tags: ['faq'] }),
 
   // Configuração de página
   paginaHero: (pagina: string) =>
-    fetchAPI<PaginaHeroDTO>(`/paginas-hero/${encodeURIComponent(pagina)}`),
+    fetchAPI<PaginaHeroDTO>(`/paginas-hero/${encodeURIComponent(pagina)}`, { tags: ['pagina-hero'] }),
 
   cta: (pagina: string) =>
-    fetchAPI<CtaDTO>(`/ctas/${encodeURIComponent(pagina)}`),
+    fetchAPI<CtaDTO>(`/ctas/${encodeURIComponent(pagina)}`, { tags: ['ctas'] }),
 
   configFooter: () =>
-    fetchAPI<ConfigFooterDTO>('/config-footer'),
+    fetchAPI<ConfigFooterDTO>('/config-footer', { tags: ['config-footer'] }),
 
   configBlog: () =>
-    fetchAPI<ConfigBlogDTO>('/config-blog'),
+    fetchAPI<ConfigBlogDTO>('/config-blog', { tags: ['config-blog'] }),
 
   contatoInfo: () =>
-    fetchAPI<ContatoInfoDTO>('/contato-info'),
+    fetchAPI<ContatoInfoDTO>('/contato-info', { tags: ['contato-info'] }),
 
   secaoHome: (secao: string) =>
-    fetchAPI<SecaoHomeDTO>(`/secoes-home/${encodeURIComponent(secao)}`),
+    fetchAPI<SecaoHomeDTO>(`/secoes-home/${encodeURIComponent(secao)}`, { tags: ['secoes-home'] }),
 
   // Seções da Home
   heroCarousel: () =>
-    fetchAPI<HeroCarouselDTO[]>('/hero-carousel'),
+    fetchAPI<HeroCarouselDTO[]>('/hero-carousel', { tags: ['home-hero'] }),
 
   homeSolucoesBento: () =>
-    fetchAPI<HomeSolucoesBentoDTO[]>('/home-solucoes-bento'),
+    fetchAPI<HomeSolucoesBentoDTO[]>('/home-solucoes-bento', { tags: ['home-bento'] }),
 
   homeSegurancaMarquee: () =>
-    fetchAPI<HomeSegurancaMarqueeDTO[]>('/home-seguranca-marquee'),
+    fetchAPI<HomeSegurancaMarqueeDTO[]>('/home-seguranca-marquee', { tags: ['home-marquee'] }),
 
   homeProblemas: () =>
-    fetchAPI<HomeProblemasDTO[]>('/home-problemas'),
+    fetchAPI<HomeProblemasDTO[]>('/home-problemas', { tags: ['home-problemas'] }),
 
   homeTrustStats: () =>
-    fetchAPI<HomeTrustStatsDTO[]>('/home-trust-stats'),
+    fetchAPI<HomeTrustStatsDTO[]>('/home-trust-stats', { tags: ['home-trust'] }),
 
   // Seções de Serviços
   servicosEtapas: () =>
-    fetchAPI<ServicosEtapasDTO>('/servicos-etapas'),
+    fetchAPI<ServicosEtapasDTO>('/servicos-etapas', { tags: ['servicos-etapas'] }),
 
   servicosMetodologia: () =>
-    fetchAPI<ServicosMetodologiaDTO>('/servicos-metodologia'),
+    fetchAPI<ServicosMetodologiaDTO>('/servicos-metodologia', { tags: ['servicos-metodologia'] }),
 
   // Seções Sobre
   sobreNumeros: () =>
-    fetchAPI<SobreNumerosDTO>('/sobre-numeros'),
+    fetchAPI<SobreNumerosDTO>('/sobre-numeros', { tags: ['sobre-numeros'] }),
 
   sobreTimeline: () =>
-    fetchAPI<SobreTimelineDTO>('/sobre-timeline'),
+    fetchAPI<SobreTimelineDTO>('/sobre-timeline', { tags: ['sobre-timeline'] }),
 
   sobreValores: () =>
-    fetchAPI<SobreValoresDTO>('/sobre-valores'),
+    fetchAPI<SobreValoresDTO>('/sobre-valores', { tags: ['sobre-valores'] }),
 
   sobreCultura: () =>
-    fetchAPI<SobreCulturaDTO>('/sobre-cultura'),
+    fetchAPI<SobreCulturaDTO>('/sobre-cultura', { tags: ['sobre-cultura'] }),
 
   // Leads (sem cache — sempre fresco)
   enviarLead: (data: {

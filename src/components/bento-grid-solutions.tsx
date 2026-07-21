@@ -275,16 +275,16 @@ const features = [
     Icon: ShieldCheck,
     name: "Segurança & Proteção de Dados",
     description: "Cibersegurança, backup e recuperação para manter a operação sempre de pé.",
-    href: "/solucoes",
+    href: "/solucoes/seguranca",
     cta: "Saiba mais",
     className: "col-span-3 lg:col-span-1",
     background: <SecurityMarquee />,
   },
-    {
+  {
     Icon: Server,
     name: "Infraestrutura",
     description: "Servidores, storage e redes de alta performance para cargas críticas.",
-    href: "/solucoes",
+    href: "/solucoes/infraestrutura",
     cta: "Saiba mais",
     className: "col-span-3 lg:col-span-2",
     background: (
@@ -299,7 +299,7 @@ const features = [
     Icon: BrainCircuit,
     name: "Inteligência Artificial",
     description: "IA aplicada ao negócio, integrada à sua infraestrutura.",
-    href: "/solucoes",
+    href: "/solucoes/inteligencia-artificial",
     cta: "Saiba mais",
     className: "col-span-3 lg:col-span-2",
     background: (
@@ -318,7 +318,7 @@ const features = [
     Icon: Cloud,
     name: "Cloud",
     description: "Migração, gestão e otimização de nuvem pública, privada e híbrida.",
-    href: "/solucoes",
+    href: "/solucoes/cloud",
     cta: "Saiba mais",
     className: "col-span-3 lg:col-span-1",
     background: <CloudOrbit />,
@@ -413,16 +413,20 @@ export function BentoGridSolutions() {
           }
         }
 
+        const cardHref = item.solucaoSlug ? `/solucoes/${item.solucaoSlug}` : "/solucoes";
+
         return {
           Icon: iconComponent,
           name: item.nome,
           description: item.descricao,
-          href: "/solucoes",
+          href: cardHref,
           cta: "Saiba mais",
           className: "col-span-3 lg:col-span-1",
           background: <SecurityMarquee events={marqueeList} />,
         };
       }
+
+      const cardHref = item.solucaoSlug ? `/solucoes/${item.solucaoSlug}` : "/solucoes";
 
       if (iconeLower.includes("server")) {
         const iconComponent = resolveIcon(item.icone, Server);
@@ -430,7 +434,7 @@ export function BentoGridSolutions() {
           Icon: iconComponent,
           name: item.nome,
           description: item.descricao,
-          href: "/solucoes",
+          href: cardHref,
           cta: "Saiba mais",
           className: "col-span-3 lg:col-span-2",
           background: (
@@ -450,7 +454,7 @@ export function BentoGridSolutions() {
           Icon: iconComponent,
           name: item.nome,
           description: item.descricao,
-          href: "/solucoes",
+          href: cardHref,
           cta: "Saiba mais",
           className: "col-span-3 lg:col-span-2",
           background: (
@@ -474,7 +478,7 @@ export function BentoGridSolutions() {
           Icon: iconComponent,
           name: item.nome,
           description: item.descricao,
-          href: "/solucoes",
+          href: cardHref,
           cta: "Saiba mais",
           className: "col-span-3 lg:col-span-1",
           background: <CloudOrbit />,
@@ -486,7 +490,7 @@ export function BentoGridSolutions() {
         Icon: defaultIcon,
         name: item.nome,
         description: item.descricao,
-        href: "/solucoes",
+        href: cardHref,
         cta: "Saiba mais",
         className: "col-span-3 lg:col-span-1",
         background: null,
