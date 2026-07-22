@@ -123,9 +123,9 @@ export function ProdutosDropdown({ onItemClick }: ProdutosDropdownProps) {
           )}
         </div>
 
-        {/* RIGHT COLUMN — "EM DESTAQUE / NOVIDADE" (35% -> col-span-4) */}
+        {/* RIGHT COLUMN — "NOVIDADES & LANÇAMENTOS" (35% -> col-span-4) */}
         <div className="col-span-12 lg:col-span-4">
-          <ColumnTitle>Em destaque</ColumnTitle>
+          <ColumnTitle>Novidades & Lançamentos</ColumnTitle>
           {isLoading && !targetProduct ? (
             <div className="h-[280px] rounded-lg bg-ink-100 animate-pulse" />
           ) : (
