@@ -338,14 +338,14 @@ export function ProductDetailContent({
             {/* Direita: imagem do produto */}
             <div className="lg:col-span-5 w-full flex items-center justify-center">
               <Reveal delay={0.28} className="w-full">
-                <div className="relative mx-auto aspect-[4/3] w-full max-w-[440px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.02] flex items-center justify-center">
+                <div className="relative mx-auto aspect-[3/2] w-full max-w-[480px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.02] flex items-center justify-center shadow-2xl group">
                   <BorderBeam size={120} duration={8} colorFrom="#0E66FF" colorTo="#7aa9ff" />
                   {product.imageUrl ? (
                     <Image
                       src={product.imageUrl}
                       alt={product.nome}
                       fill
-                      className="object-cover"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
                       unoptimized
                     />
                   ) : fabLogo ? (

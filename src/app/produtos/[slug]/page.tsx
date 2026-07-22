@@ -3,7 +3,7 @@ import { notFound } from "next/navigation"
 import type { Product } from "@/lib/products-data"
 import { ProductDetailContent } from "./product-detail-client"
 import { Footer } from "@/layout/footer"
-import { api } from "@/lib/api"
+import { api, normalizeImageUrl } from "@/lib/api"
 import { VENDOR_LOGOS } from "@/lib/vendor-logos"
 import {
   Activity,
@@ -84,7 +84,7 @@ async function getProduct(slug: string): Promise<Product | null> {
       subcategoria: dto.subcategoria || '',
       descricaoCurta: dto.descricaoCurta || '',
       descricaoCompleta: dto.descricaoCompleta || '',
-      imageUrl: dto.imagemUrl || '',
+      imageUrl: normalizeImageUrl(dto.imagemUrl),
       linkOficial: dto.linkOficial || '',
       servicosEyebrow: dto.servicosEyebrow || '',
       servicosTitulo: dto.servicosTitulo || '',

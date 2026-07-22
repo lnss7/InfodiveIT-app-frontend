@@ -1,5 +1,5 @@
 import { type Solution } from "@/lib/solutions-data"
-import { type SolucaoDTO } from "@/lib/api"
+import { type SolucaoDTO, normalizeImageUrl } from "@/lib/api"
 
 export function categoriaToSolution(cat: SolucaoDTO): Solution {
   return {
@@ -8,7 +8,7 @@ export function categoriaToSolution(cat: SolucaoDTO): Solution {
     subtitle: cat.subtituloCurto || '',
     description: cat.descricaoCurta || '',
     overview: cat.descricaoCompleta || '',
-    imageUrl: cat.imagemUrl || '',
+    imageUrl: normalizeImageUrl(cat.imagemUrl),
     fabricantesTitulo: cat.fabricantesTitulo || '',
     fabricantesDescricao: cat.fabricantesDescricao || '',
     iconName: (cat.icone as any) || 'infraestrutura',

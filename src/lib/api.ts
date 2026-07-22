@@ -9,6 +9,28 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1'
 
 /**
+ * Normaliza qualquer formato de URL de imagem recebido do backend/admin.
+ * Trata strings puras, JSON de objetos {src:...} ou objetos brutos.
+ */
+export function normalizeImageUrl(rawUrl: any): string {
+  if (!rawUrl) return ''
+  if (typeof rawUrl === 'string') {
+    if (rawUrl === '[object Object]') return ''
+    if (rawUrl.startsWith('{') && rawUrl.includes('"src"')) {
+      try {
+        const parsed = JSON.parse(rawUrl)
+        return parsed.src || ''
+      } catch {}
+    }
+    return rawUrl
+  }
+  if (typeof rawUrl === 'object' && rawUrl !== null && (rawUrl as any).src) {
+    return (rawUrl as any).src
+  }
+  return ''
+}
+
+/**
  * Estrutura de paginação padrão retornada pelo Spring Data Page.
  */
 export type SpringPageResponse<T> = {
