@@ -52,13 +52,15 @@ export type NavFabricanteItem = {
   href: string
 }
 
-const LOCAL_STORAGE_KEY = 'infodive_navbar_cache_v2'
+const LOCAL_STORAGE_KEY = 'infodive_navbar_cache_v3'
 
 interface CacheData {
   categorias: { nome: string; slug: string; descricao: string; href: string }[]
   fabricantes: NavFabricanteItem[]
   ultimoConteudo: ConteudoDTO | null
+  ultimosConteudos: ConteudoDTO[]
   produtosDestaque: ProdutoResumoDTO[]
+  produtoNovidade: ProdutoResumoDTO | null
   timestamp: number
 }
 
@@ -70,7 +72,9 @@ export function useNavbarData() {
   const [categorias, setCategorias] = useState<NavCategoriaItem[]>([])
   const [fabricantes, setFabricantes] = useState<NavFabricanteItem[]>([])
   const [ultimoConteudo, setUltimoConteudo] = useState<ConteudoDTO | null>(null)
+  const [ultimosConteudos, setUltimosConteudos] = useState<ConteudoDTO[]>([])
   const [produtosDestaque, setProdutosDestaque] = useState<ProdutoResumoDTO[]>([])
+  const [produtoNovidade, setProdutoNovidade] = useState<ProdutoResumoDTO | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   useEffect(() => {
@@ -89,7 +93,11 @@ export function useNavbarData() {
         }
         if (cached.fabricantes) setFabricantes(cached.fabricantes)
         if (cached.ultimoConteudo) setUltimoConteudo(cached.ultimoConteudo)
+        if (cached.ultimosConteudos && cached.ultimosConteudos.length > 0) {
+          setUltimosConteudos(cached.ultimosConteudos)
+        }
         if (cached.produtosDestaque) setProdutosDestaque(cached.produtosDestaque)
+        if (cached.produtoNovidade) setProdutoNovidade(cached.produtoNovidade)
         setIsLoading(false)
       }
     } catch {
@@ -103,14 +111,17 @@ export function useNavbarData() {
       api.categorias(),
       api.fabricantes({ destaque: true }),
       api.produtos({ destaque: true, size: 6 }),
-      api.conteudos({ tipo: 'ARTIGO', size: 1 }),
-    ]).then(([resCat, resFab, resProd, resCont]) => {
+      api.conteudos({ size: 2 }),
+      api.produtoNovidade(),
+    ]).then(([resCat, resFab, resProd, resCont, resNovidade]) => {
       if (!isMounted) return
 
       let newCategorias: NavCategoriaItem[] = []
       let newFabricantes: NavFabricanteItem[] = []
       let newProdutosDestaque: ProdutoResumoDTO[] = []
       let newUltimoConteudo: ConteudoDTO | null = null
+      let newUltimosConteudos: ConteudoDTO[] = []
+      let newProdutoNovidade: ProdutoResumoDTO | null = null
 
       if (resCat.status === 'fulfilled' && resCat.value.length > 0) {
         newCategorias = resCat.value
@@ -146,9 +157,16 @@ export function useNavbarData() {
         setProdutosDestaque(newProdutosDestaque)
       }
 
-      if (resCont.status === 'fulfilled' && resCont.value.content[0]) {
-        newUltimoConteudo = resCont.value.content[0]
+      if (resCont.status === 'fulfilled' && resCont.value.content.length > 0) {
+        newUltimosConteudos = resCont.value.content.slice(0, 2)
+        newUltimoConteudo = newUltimosConteudos[0] || null
+        setUltimosConteudos(newUltimosConteudos)
         setUltimoConteudo(newUltimoConteudo)
+      }
+
+      if (resNovidade.status === 'fulfilled' && resNovidade.value) {
+        newProdutoNovidade = resNovidade.value
+        setProdutoNovidade(newProdutoNovidade)
       }
 
       setIsLoading(false)
@@ -164,7 +182,9 @@ export function useNavbarData() {
           })),
           fabricantes: newFabricantes,
           ultimoConteudo: newUltimoConteudo,
+          ultimosConteudos: newUltimosConteudos,
           produtosDestaque: newProdutosDestaque,
+          produtoNovidade: newProdutoNovidade,
           timestamp: Date.now(),
         }
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(cacheToSave))
@@ -178,5 +198,5 @@ export function useNavbarData() {
     }
   }, [])
 
-  return { categorias, fabricantes, ultimoConteudo, produtosDestaque, isLoading }
+  return { categorias, fabricantes, ultimoConteudo, ultimosConteudos, produtosDestaque, produtoNovidade, isLoading }
 }

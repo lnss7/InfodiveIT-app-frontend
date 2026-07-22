@@ -5,7 +5,6 @@ import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
-  ultimoConteudoDestaque,
   type NavConteudo,
 } from './data'
 import { useNavbarData, type NavCategoriaItem } from './use-navbar-data'
@@ -15,16 +14,14 @@ type SolucoesDropdownProps = {
 }
 
 export function SolucoesDropdown({ onItemClick }: SolucoesDropdownProps) {
-  const { categorias, ultimoConteudo, isLoading } = useNavbarData()
+  const { categorias, ultimosConteudos, isLoading } = useNavbarData()
 
-  const destaque: NavConteudo = ultimoConteudo
-    ? {
-        titulo: ultimoConteudo.titulo,
-        descricao: ultimoConteudo.descricao ?? '',
-        href: `/blog/${ultimoConteudo.slug}`,
-        tag: 'Artigo',
-      }
-    : ultimoConteudoDestaque
+  const artigos: NavConteudo[] = ultimosConteudos.map((item) => ({
+    titulo: item.titulo,
+    descricao: item.descricao ?? '',
+    href: `/blog/${item.slug}`,
+    tag: item.tipo === 'CASE' ? 'Case de Sucesso' : 'Artigo',
+  }))
 
   return (
     <motion.div
@@ -43,7 +40,7 @@ export function SolucoesDropdown({ onItemClick }: SolucoesDropdownProps) {
     >
       <div className="grid grid-cols-12 gap-8 p-8">
         <ColumnCategorias categorias={categorias} isLoading={isLoading} onItemClick={onItemClick} />
-        <ColumnDestaque destaque={destaque} isLoading={isLoading} onItemClick={onItemClick} />
+        <ColumnDestaque artigos={artigos.slice(0, 2)} isLoading={isLoading} onItemClick={onItemClick} />
       </div>
 
       <div className="flex items-center justify-between border-t border-ink-200 bg-ink-50 px-8 py-4">
@@ -138,53 +135,57 @@ function ColumnCategorias({
 }
 
 function ColumnDestaque({
-  destaque,
+  artigos,
   isLoading,
   onItemClick,
 }: {
-  destaque: NavConteudo
+  artigos: NavConteudo[]
   isLoading: boolean
   onItemClick?: () => void
 }) {
   return (
     <div className="col-span-12 md:col-span-6">
-      <ColumnTitle>Em destaque</ColumnTitle>
-      {isLoading ? (
+      <ColumnTitle>Artigos & Insights Recentes</ColumnTitle>
+      {isLoading && artigos.length === 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="h-[180px] rounded-lg border border-ink-200 bg-ink-50 animate-pulse" />
-          <div className="h-[180px] rounded-lg border border-ink-200 bg-ink-50 animate-pulse" />
+          <div className="h-[220px] rounded-lg border border-ink-200 bg-ink-50 animate-pulse" />
+          <div className="h-[220px] rounded-lg border border-ink-200 bg-ink-50 animate-pulse" />
         </div>
       ) : (
         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <li>
-            <Link
-              href={destaque.href}
-              onClick={onItemClick}
-              role="menuitem"
-              className="group block rounded-lg border border-ink-200 overflow-hidden transition-colors hover:border-ink-500 h-full"
-            >
-              <div className="aspect-[4/3] w-full bg-gradient-to-br from-ink-950 via-ink-900 to-brand-deep relative">
-                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_30%_20%,white,transparent_50%)]" />
-                {destaque.tag && (
-                  <span className="absolute left-3 top-3 inline-flex items-center rounded bg-white/95 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-ink-950">
-                    {destaque.tag}
+          {artigos.map((item, index) => (
+            <li key={item.href + index} className="h-full">
+              <Link
+                href={item.href}
+                onClick={onItemClick}
+                role="menuitem"
+                className="group flex flex-col justify-between rounded-xl border border-ink-200/80 bg-white overflow-hidden transition-all duration-200 hover:border-brand/40 hover:shadow-[0_4px_16px_rgba(14,102,255,0.08)] h-full"
+              >
+                <div className="aspect-[16/9] w-full bg-gradient-to-br from-ink-950 via-ink-900 to-brand-deep relative overflow-hidden">
+                  <div className="absolute inset-0 opacity-25 bg-[radial-gradient(circle_at_30%_20%,white,transparent_50%)]" />
+                  {item.tag && (
+                    <span className="absolute left-3 top-3 inline-flex items-center rounded bg-white/95 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-ink-950 shadow-sm">
+                      {item.tag}
+                    </span>
+                  )}
+                </div>
+                <div className="p-3.5 flex flex-col flex-1 justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-ink-950 leading-snug group-hover:text-brand transition-colors line-clamp-2">
+                      {item.titulo}
+                    </p>
+                    <p className="mt-1.5 text-xs text-ink-500 leading-snug line-clamp-2">
+                      {item.descricao}
+                    </p>
+                  </div>
+                  <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-brand group-hover:text-blue-700 transition-colors">
+                    Ler mais
+                    <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" strokeWidth={2} />
                   </span>
-                )}
-              </div>
-              <div className="p-3.5">
-                <p className="text-sm font-medium text-ink-950 leading-snug group-hover:text-brand transition-colors">
-                  {destaque.titulo}
-                </p>
-                <p className="mt-1.5 text-xs text-ink-500 leading-snug line-clamp-3">
-                  {destaque.descricao}
-                </p>
-                <span className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-ink-950 group-hover:text-brand transition-colors">
-                  Ler mais
-                  <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" strokeWidth={2} />
-                </span>
-              </div>
-            </Link>
-          </li>
+                </div>
+              </Link>
+            </li>
+          ))}
         </ul>
       )}
     </div>

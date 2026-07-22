@@ -96,6 +96,7 @@ export type ProdutoResumoDTO = {
   descricaoCurta?: string
   imagemUrl?: string
   destaque: boolean
+  novidade?: boolean
   categoriaSlug: string
   categoriaTitle?: string
   solucaoSlug?: string
@@ -120,6 +121,7 @@ export type ProdutoDTO = {
   imagemUrl?: string
   linkOficial?: string
   destaque: boolean
+  novidade?: boolean
   ativo: boolean
   categoriaId: string
   categoriaSlug: string
@@ -452,8 +454,11 @@ export const api = {
   solucao: (slug: string) =>
     fetchAPI<SolucaoDTO>(`/solucoes/${encodeURIComponent(slug)}`, { tags: ['solucoes'] }),
 
-  produtos: (params?: { categoria?: string; fabricante?: string; destaque?: boolean; page?: number; size?: number }) =>
+  produtos: (params?: { categoria?: string; fabricante?: string; destaque?: boolean; novidade?: boolean; page?: number; size?: number }) =>
     fetchAPI<SpringPageResponse<ProdutoResumoDTO>>(`/produtos${buildQuery(params)}`, { tags: ['produtos'] }),
+
+  produtoNovidade: () =>
+    fetchAPI<ProdutoResumoDTO | null>('/produtos/novidade', { tags: ['produtos'] }).catch(() => null),
 
   produto: (slug: string) =>
     fetchAPI<ProdutoDTO>(`/produtos/${encodeURIComponent(slug)}`, { tags: ['produtos'] }),

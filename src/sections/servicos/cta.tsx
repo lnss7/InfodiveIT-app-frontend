@@ -13,7 +13,7 @@ export async function ServicosCta() {
             title={cta?.titulo ?? "Pronto para tirar seu projeto do papel?"}
             subtitle={cta?.subtitulo ?? "Do diagnóstico à operação assistida, a Infodive assume o ciclo completo. Conte o desafio — a gente desenha o caminho."}
             ctaLabel={cta?.ctaTexto ?? "Falar com especialista"}
-            tipoAcao={cta?.tipoAcao ?? "REDIRECT_HOME_CONTACT"}
+            tipoAcao={cta?.tipoAcao ?? "DRAWER"}
           />
         </Reveal>
       </div>

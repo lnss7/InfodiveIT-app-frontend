@@ -1,8 +1,10 @@
 "use client"
 
+import { useState } from "react"
 import { motion } from "framer-motion"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { GsapMenu } from "@/components/GsapMenu"
 import Link from "next/link"
 
 interface ConversionCTAProps {
@@ -26,6 +28,8 @@ export function ConversionCTA({
   tipoAcao,
   onCtaClick,
 }: ConversionCTAProps) {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+
   const handleClick = () => {
     if (tipoAcao === "REDIRECT_HOME_CONTACT") {
       if (typeof window !== "undefined") {
@@ -40,6 +44,8 @@ export function ConversionCTA({
       }
     } else if (onCtaClick) {
       onCtaClick()
+    } else {
+      setIsDrawerOpen(true)
     }
   }
 
@@ -127,6 +133,8 @@ export function ConversionCTA({
           </Button>
         )}
       </div>
+
+      <GsapMenu isOpen={isDrawerOpen} onToggle={setIsDrawerOpen} />
     </div>
   )
 }

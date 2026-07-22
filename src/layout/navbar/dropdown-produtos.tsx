@@ -11,7 +11,7 @@ type ProdutosDropdownProps = {
 }
 
 export function ProdutosDropdown({ onItemClick }: ProdutosDropdownProps) {
-  const { fabricantes, produtosDestaque, isLoading } = useNavbarData()
+  const { fabricantes, produtosDestaque, produtoNovidade, isLoading } = useNavbarData()
 
   const displayProducts = produtosDestaque.slice(0, 6).map((p) => ({
     nome: p.nome,
@@ -19,11 +19,14 @@ export function ProdutosDropdown({ onItemClick }: ProdutosDropdownProps) {
     href: `/produtos/${p.slug}`,
   }))
 
-  const mainDestaque = produtosDestaque[0]
+  const targetProduct = produtoNovidade || produtosDestaque[0]
+  const badgeLabel = produtoNovidade ? 'Novidade' : 'Destaque'
+
+  const mainDestaque = targetProduct
     ? {
-        nome: produtosDestaque[0].nome,
-        descricao: produtosDestaque[0].descricaoCurta || 'Solução corporativa em destaque para a sua empresa.',
-        href: `/produtos/${produtosDestaque[0].slug}`,
+        nome: targetProduct.nome,
+        descricao: targetProduct.descricaoCurta || 'Solução corporativa em destaque para a sua empresa.',
+        href: `/produtos/${targetProduct.slug}`,
       }
     : {
         nome: 'Catálogo de Produtos TI',
@@ -120,10 +123,10 @@ export function ProdutosDropdown({ onItemClick }: ProdutosDropdownProps) {
           )}
         </div>
 
-        {/* RIGHT COLUMN — "EM DESTAQUE" (35% -> col-span-4) */}
+        {/* RIGHT COLUMN — "EM DESTAQUE / NOVIDADE" (35% -> col-span-4) */}
         <div className="col-span-12 lg:col-span-4">
           <ColumnTitle>Em destaque</ColumnTitle>
-          {isLoading && produtosDestaque.length === 0 ? (
+          {isLoading && !targetProduct ? (
             <div className="h-[280px] rounded-lg bg-ink-100 animate-pulse" />
           ) : (
             <ul className="list-none">
@@ -136,7 +139,7 @@ export function ProdutosDropdown({ onItemClick }: ProdutosDropdownProps) {
                 >
                   <div>
                     <span className="inline-flex items-center rounded bg-white/95 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-ink-950">
-                      Destaque
+                      {badgeLabel}
                     </span>
                     <p className="mt-3 text-base font-semibold text-white leading-snug">
                       {mainDestaque.nome}

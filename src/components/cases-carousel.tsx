@@ -45,6 +45,7 @@ export function CasesCarousel() {
   const [cases, setCases] = useState<Case[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [imageErrorMap, setImageErrorMap] = useState<Record<number, boolean>>({});
   const [sectionInfo, setSectionInfo] = useState({
     eyebrow: "Cases de sucesso",
     headline: "Tecnologia aplicada a resultados de negócios",
@@ -95,6 +96,11 @@ export function CasesCarousel() {
   }, [isHovered, activeIndex, cases.length]);
 
   if (cases.length === 0) return null;
+
+  const currentCase = cases[activeIndex];
+  const currentImage = imageErrorMap[activeIndex]
+    ? FALLBACK_IMAGES[activeIndex % FALLBACK_IMAGES.length]
+    : currentCase.imagem;
 
   return (
     <>
@@ -149,11 +155,14 @@ export function CasesCarousel() {
               className="absolute inset-0"
             >
               <Image
-                src={cases[activeIndex].imagem}
-                alt={cases[activeIndex].cliente}
+                src={currentImage}
+                alt={currentCase.cliente}
                 fill
                 sizes="(max-width: 1024px) 100vw, 40vw"
                 className="object-cover opacity-90 transition-transform duration-700 group-hover:scale-105"
+                onError={() => {
+                  setImageErrorMap((prev) => ({ ...prev, [activeIndex]: true }));
+                }}
               />
             </motion.div>
           </AnimatePresence>

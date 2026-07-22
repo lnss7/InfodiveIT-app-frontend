@@ -13,7 +13,7 @@ export async function BlogCta() {
             title={cta?.titulo ?? "Quer receber conteúdos técnicos em primeira mão?"}
             subtitle={cta?.subtitulo ?? "Artigos, whitepapers e cases direto da equipe Infodive. Fale com a gente e acompanhe o que produzimos sobre infraestrutura, segurança e cloud."}
             ctaLabel={cta?.ctaTexto ?? "Falar com um especialista"}
-            tipoAcao={cta?.tipoAcao ?? "REDIRECT_HOME_CONTACT"}
+            tipoAcao={cta?.tipoAcao ?? "DRAWER"}
           />
         </Reveal>
       </div>
