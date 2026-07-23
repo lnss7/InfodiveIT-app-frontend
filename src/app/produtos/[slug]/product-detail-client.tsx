@@ -96,7 +96,8 @@ function ServicesDiagram({ product }: { product: Product }) {
             <Image
               src={fabLogo}
               alt={product.fabricante}
-              className="h-8 w-auto max-w-[48px] object-contain"
+              className="h-7 w-auto max-w-[50px] object-contain"
+              unoptimized
             />
           ) : (
             <span className="text-[10px] font-bold text-ink-700">{product.fabricante}</span>
@@ -144,6 +145,7 @@ function ServicesDiagram({ product }: { product: Product }) {
               src={fabLogo}
               alt={product.fabricante}
               className="h-11 w-auto max-w-[64px] object-contain"
+              unoptimized
             />
           ) : (
             <span className="text-[10px] font-bold text-ink-700">{product.fabricante}</span>
@@ -214,6 +216,8 @@ function RelatedCarousel({ products }: { products: Product[] }) {
   )
 }
 
+import { api, normalizeImageUrl } from "@/lib/api"
+
 export function ProductDetailContent({
   product,
   relatedProducts,
@@ -226,8 +230,9 @@ export function ProductDetailContent({
   if (!product) return null
 
   const related = relatedProducts || []
-  const fabLogo = product.logo || VENDOR_LOGOS[product.fabricante]
-  const lightLogo = product.logo || (product.fabricante === "Red Hat" ? redhatPretoLogo : fabLogo)
+  const rawLogo = normalizeImageUrl(product.logo) || VENDOR_LOGOS[product.fabricante]
+  const fabLogo = rawLogo
+  const lightLogo = rawLogo || (product.fabricante === "Red Hat" ? redhatPretoLogo : fabLogo)
 
   return (
     <div className="relative z-20 w-full min-h-screen bg-white text-ink-900">
@@ -290,6 +295,7 @@ export function ProductDetailContent({
                         src={fabLogo}
                         alt={product.fabricante}
                         className="h-8 w-auto object-contain"
+                        unoptimized
                       />
                     ) : (
                       <span className="text-sm font-bold text-white">
@@ -491,6 +497,7 @@ export function ProductDetailContent({
                             src={lightLogo}
                             alt={product.fabricante}
                             className="max-h-7 w-auto object-contain"
+                            unoptimized
                           />
                         ) : (
                           <span className="text-sm font-bold text-ink-700">

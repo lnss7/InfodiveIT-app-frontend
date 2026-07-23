@@ -75,7 +75,7 @@ async function getProduct(slug: string): Promise<Product | null> {
       nome: dto.nome,
       fabricante: dto.fabricanteNome || dto.fabricanteSlug || '',
       fabricanteSlug: dto.fabricanteSlug || '',
-      logo: dto.fabricanteLogoUrl || VENDOR_LOGOS[dto.fabricanteNome || ''] || '',
+      logo: normalizeImageUrl(dto.fabricanteLogoUrl) || VENDOR_LOGOS[dto.fabricanteNome || ''] || '',
       logoClass: 'h-5',
       categoria: dto.categoriaNome || catObj?.nome || dto.categoriaSlug || '',
       categoriaSlug: dto.categoriaSlug || '',

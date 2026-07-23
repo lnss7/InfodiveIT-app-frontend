@@ -28,16 +28,21 @@ export function ProductCard({
       <GlowBorderOverlay glowColor="#0E66FF" glowSize={240} />
 
       <div className="relative flex items-center justify-between gap-3">
-        <Image
-          src={product.logo}
-          alt={product.fabricante}
-          width={120}
-          height={32}
-          className={cn(
-            "w-auto object-contain opacity-90 transition-opacity duration-300 group-hover:opacity-100",
-            product.logoClass
-          )}
-        />
+        {product.logo ? (
+          <Image
+            src={product.logo}
+            alt={product.fabricante}
+            width={120}
+            height={32}
+            className={cn(
+              "w-auto object-contain opacity-90 transition-opacity duration-300 group-hover:opacity-100 max-h-8",
+              product.logoClass
+            )}
+            unoptimized
+          />
+        ) : (
+          <span className="text-sm font-semibold text-ink-700">{product.fabricante}</span>
+        )}
         <Badge variant="brand">{product.categoria}</Badge>
       </div>
 

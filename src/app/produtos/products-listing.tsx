@@ -24,7 +24,7 @@ const GsapMenu = dynamic(() => import("@/components/GsapMenu").then((mod) => mod
 })
 
 import { useEffect } from "react"
-import { api, type ProdutoResumoDTO } from "@/lib/api"
+import { api, normalizeImageUrl, type ProdutoResumoDTO } from "@/lib/api"
 import type { Product } from "@/lib/products-data"
 
 function mapDtoToProduct(dto: ProdutoResumoDTO): Product {
@@ -33,7 +33,7 @@ function mapDtoToProduct(dto: ProdutoResumoDTO): Product {
     nome: dto.nome,
     fabricante: dto.fabricanteNome || dto.fabricanteSlug || '',
     fabricanteSlug: dto.fabricanteSlug || '',
-    logo: dto.fabricanteLogoUrl || VENDOR_LOGOS[dto.fabricanteNome || ''] || '',
+    logo: normalizeImageUrl(dto.fabricanteLogoUrl) || VENDOR_LOGOS[dto.fabricanteNome || ''] || '',
     logoClass: 'h-5',
     categoria: dto.categoriaTitle || dto.categoriaSlug || '',
     categoriaSlug: dto.categoriaSlug || '',
