@@ -6,6 +6,8 @@ import { SolutionDetailContent } from "./solution-detail-client";
 import { Footer } from "@/layout/footer";
 import { api } from "@/lib/api";
 
+export const revalidate = 0;
+
 interface PageProps {
   params: {
     slug: string;
