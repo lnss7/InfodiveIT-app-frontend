@@ -359,6 +359,7 @@ export function ProductDetailContent({
                       src={fabLogo}
                       alt={product.fabricante}
                       className="h-10 w-auto max-w-[160px] object-contain opacity-30 brightness-0 invert"
+                      unoptimized
                     />
                   ) : null}
                 </div>
