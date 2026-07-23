@@ -417,7 +417,7 @@ export type SobreCulturaDTO = {
 // ─── Infraestrutura HTTP ──────────────────────────────────────────────────────
 
 type FetchOptions = Omit<RequestInit, 'next'> & {
-  /** Tempo de revalidação em segundos. Default 3600s (1h) para cache On-Demand. */
+  /** Tempo de revalidação em segundos. Default 0 para atualização instantânea. */
   revalidate?: number | false
   /** Tags para revalidação on-demand via revalidateTag(). */
   tags?: string[]
@@ -425,7 +425,7 @@ type FetchOptions = Omit<RequestInit, 'next'> & {
 
 export async function fetchAPI<T>(
   path: string,
-  { revalidate = 3600, tags, ...init }: FetchOptions = {},
+  { revalidate = 0, tags, ...init }: FetchOptions = {},
 ): Promise<T> {
   if (!API_URL) {
     throw new Error('NEXT_PUBLIC_API_URL is not configured.')

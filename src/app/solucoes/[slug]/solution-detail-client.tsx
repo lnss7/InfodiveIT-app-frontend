@@ -13,6 +13,7 @@ import { GlowBorderOverlay, handleGlowMove } from "@/components/ui/glow-border";
 import { BorderBeam } from "@/components/ui/border-beam";
 import dynamic from "next/dynamic";
 import { ConversionCTA } from "@/components/conversion-cta";
+import { normalizeImageUrl } from "@/lib/api";
 
 const GsapMenu = dynamic(() => import("@/components/GsapMenu").then((mod) => mod.GsapMenu), {
   ssr: false,
@@ -186,7 +187,7 @@ export function SolutionDetailContent({
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                       {solution.vendors.map((vendorName) => {
                         const vendorObj = solution.vendorObjects?.find(v => v.nome === vendorName);
-                        const logoAsset = vendorObj?.logoUrl || VENDOR_LOGOS[vendorName];
+                        const logoAsset = normalizeImageUrl(vendorObj?.logoUrl) || VENDOR_LOGOS[vendorName];
                         return (
                           <div
                             key={vendorName}
@@ -199,6 +200,7 @@ export function SolutionDetailContent({
                                 width={120}
                                 height={40}
                                 className="max-h-7 object-contain opacity-50 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-300"
+                                unoptimized
                               />
                             ) : (
                               <span className="text-xs font-bold text-ink-500 group-hover:text-brand transition-colors">
