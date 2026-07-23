@@ -142,7 +142,7 @@ export function Hero() {
         setSlides(SHOWCASE_SLIDES);
       });
 
-    api.fabricantes({ destaque: true })
+    api.fabricantes()
       .then((data) => {
         if (data && data.length > 0) {
           const sorted = [...data].sort((a, b) => a.ordem - b.ordem);
