@@ -6,6 +6,7 @@ import { SolutionDetailContent } from "./solution-detail-client";
 import { Footer } from "@/layout/footer";
 import { api } from "@/lib/api";
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 interface PageProps {
