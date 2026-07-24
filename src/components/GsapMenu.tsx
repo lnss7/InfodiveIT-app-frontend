@@ -39,6 +39,30 @@ function FieldError({ message }: { message?: string }) {
   );
 }
 
+// Mascara automatica para o campo de Celular: +55 (00) 00000-0000
+function formatPhone(value: string): string {
+  const raw = value.replace(/\D/g, "");
+  if (!raw) return "";
+
+  let digits = raw;
+  if (digits.startsWith("55") && digits.length > 2) {
+    digits = digits.slice(2);
+  }
+
+  digits = digits.slice(0, 11);
+
+  if (digits.length <= 2) {
+    return `+55 (${digits}`;
+  }
+  if (digits.length <= 6) {
+    return `+55 (${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  }
+  if (digits.length <= 10) {
+    return `+55 (${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+  }
+  return `+55 (${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+}
+
 interface GsapMenuProps {
   isOpen: boolean;
   onToggle: (open: boolean) => void;
@@ -324,15 +348,15 @@ export function GsapMenu({
             color: "#141413"
           }}
         >
-          <div className="relative w-full flex flex-col pt-4 pb-6 sm:pb-16 px-4 md:px-8">
+          <div className="relative w-full flex flex-col pt-1 pb-2 px-2 sm:px-4 md:px-6">
             
             {/* Header Area */}
-            <div className="flex justify-between items-start mb-4 sm:mb-6">
-              <div className="pr-8">
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight tracking-tight">
+            <div className="flex justify-between items-start mb-3 sm:mb-4">
+              <div className="pr-6">
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 leading-tight tracking-tight">
                   Falar com vendas
                 </h3>
-                <p className="text-xs md:text-sm text-gray-500 mt-2 leading-relaxed font-normal">
+                <p className="text-xs sm:text-sm text-gray-500 mt-1 leading-relaxed font-normal">
                   Tem uma pergunta? Fale com um especialista e tire todas as suas dúvidas sobre a plataforma.
                 </p>
               </div>
@@ -341,7 +365,7 @@ export function GsapMenu({
               <button
                 type="button"
                 onClick={() => onToggle(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-full cursor-pointer -mt-1 -mr-1"
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1.5 hover:bg-gray-100 rounded-full cursor-pointer -mt-1 -mr-1"
                 aria-label="Fechar"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -352,24 +376,24 @@ export function GsapMenu({
             </div>
 
             {status === "success" ? (
-              <div className="flex flex-col items-center justify-center py-20 text-center my-auto">
-                <div className="w-16 h-16 bg-[#E4EAFF] text-[#0E66FF] rounded-full flex items-center justify-center mb-6">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-8 h-8">
+              <div className="flex flex-col items-center justify-center py-12 text-center my-auto">
+                <div className="w-14 h-14 bg-[#E4EAFF] text-[#0E66FF] rounded-full flex items-center justify-center mb-4">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-7 h-7">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Mensagem enviada com sucesso!</h3>
-                <p className="text-sm text-gray-500 max-w-sm">
+                <h3 className="text-lg font-bold text-gray-900 mb-1">Mensagem enviada com sucesso!</h3>
+                <p className="text-xs sm:text-sm text-gray-500 max-w-sm">
                   Obrigado pelo contato, {firstName}. Nossos consultores retornarão em até 1 hora.
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4 sm:gap-5 text-left text-gray-900 font-sans">
+              <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-3 sm:gap-4 text-left text-gray-900 font-sans">
 
                 {/* Nome & Sobrenome */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                   <div className="nav-item">
-                    <label className="block text-xs font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
                       Nome <span className="text-danger">*</span>
                     </label>
                     <input
@@ -380,7 +404,7 @@ export function GsapMenu({
                       onChange={(e) => { setFirstName(e.target.value); clearError("firstName"); }}
                       placeholder="Nome"
                       className={cn(
-                        "w-full px-4 h-12 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-[#0E66FF] focus:ring-2 focus:ring-[#0E66FF]/10 bg-white text-gray-900 transition-all",
+                        "w-full px-3.5 h-10 sm:h-11 text-xs sm:text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-[#0E66FF] focus:ring-2 focus:ring-[#0E66FF]/10 bg-white text-gray-900 transition-all",
                         errors.firstName && "field-error"
                       )}
                       disabled={status === "submitting"}
@@ -388,7 +412,7 @@ export function GsapMenu({
                     <FieldError message={errors.firstName} />
                   </div>
                   <div className="nav-item">
-                    <label className="block text-xs font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
                       Sobrenome <span className="text-danger">*</span>
                     </label>
                     <input
@@ -399,7 +423,7 @@ export function GsapMenu({
                       onChange={(e) => { setLastName(e.target.value); clearError("lastName"); }}
                       placeholder="Sobrenome"
                       className={cn(
-                        "w-full px-4 h-12 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-[#0E66FF] focus:ring-2 focus:ring-[#0E66FF]/10 bg-white text-gray-900 transition-all",
+                        "w-full px-3.5 h-10 sm:h-11 text-xs sm:text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-[#0E66FF] focus:ring-2 focus:ring-[#0E66FF]/10 bg-white text-gray-900 transition-all",
                         errors.lastName && "field-error"
                       )}
                       disabled={status === "submitting"}
@@ -409,9 +433,9 @@ export function GsapMenu({
                 </div>
 
                 {/* E-mail & Celular */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                   <div className="nav-item">
-                    <label className="block text-xs font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
                       E-mail <span className="text-danger">*</span>
                     </label>
                     <input
@@ -422,7 +446,7 @@ export function GsapMenu({
                       onChange={(e) => { setEmail(e.target.value); clearError("email"); }}
                       placeholder="E-mail"
                       className={cn(
-                        "w-full px-4 h-12 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-[#0E66FF] focus:ring-2 focus:ring-[#0E66FF]/10 bg-white text-gray-900 transition-all",
+                        "w-full px-3.5 h-10 sm:h-11 text-xs sm:text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-[#0E66FF] focus:ring-2 focus:ring-[#0E66FF]/10 bg-white text-gray-900 transition-all",
                         errors.email && "field-error"
                       )}
                       disabled={status === "submitting"}
@@ -430,7 +454,7 @@ export function GsapMenu({
                     <FieldError message={errors.email} />
                   </div>
                   <div className="nav-item">
-                    <label className="block text-xs font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
                       Celular <span className="text-danger">*</span>
                     </label>
                     <input
@@ -438,10 +462,11 @@ export function GsapMenu({
                       required
                       aria-invalid={!!errors.phone}
                       value={phone}
-                      onChange={(e) => { setPhone(e.target.value); clearError("phone"); }}
-                      placeholder="+000 (00) 00000-0000"
+                      onChange={(e) => { setPhone(formatPhone(e.target.value)); clearError("phone"); }}
+                      placeholder="+55 (00) 00000-0000"
+                      maxLength={19}
                       className={cn(
-                        "w-full px-4 h-12 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-[#0E66FF] focus:ring-2 focus:ring-[#0E66FF]/10 bg-white text-gray-900 transition-all",
+                        "w-full px-3.5 h-10 sm:h-11 text-xs sm:text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-[#0E66FF] focus:ring-2 focus:ring-[#0E66FF]/10 bg-white text-gray-900 transition-all",
                         errors.phone && "field-error"
                       )}
                       disabled={status === "submitting"}
@@ -451,9 +476,9 @@ export function GsapMenu({
                 </div>
 
                 {/* Empresa & Cargo */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                   <div className="nav-item">
-                    <label className="block text-xs font-medium text-gray-700 mb-2">
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
                       Empresa <span className="text-danger">*</span>
                     </label>
                     <input
@@ -464,7 +489,7 @@ export function GsapMenu({
                       onChange={(e) => { setCompany(e.target.value); clearError("company"); }}
                       placeholder="Nome da empresa"
                       className={cn(
-                        "w-full px-4 h-12 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-[#0E66FF] focus:ring-2 focus:ring-[#0E66FF]/10 bg-white text-gray-900 transition-all",
+                        "w-full px-3.5 h-10 sm:h-11 text-xs sm:text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-[#0E66FF] focus:ring-2 focus:ring-[#0E66FF]/10 bg-white text-gray-900 transition-all",
                         errors.company && "field-error"
                       )}
                       disabled={status === "submitting"}
@@ -472,7 +497,7 @@ export function GsapMenu({
                     <FieldError message={errors.company} />
                   </div>
                   <div className="nav-item">
-                    <label className="block text-xs font-medium text-gray-700 mb-2">Cargo</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Cargo</label>
                     <SelectField
                       value={role}
                       onChange={setRole}
@@ -492,10 +517,10 @@ export function GsapMenu({
 
                 {/* Qual tecnologia está procurando? */}
                 <div className="nav-item">
-                  <span className="block text-sm font-semibold text-gray-800 mb-3">
+                  <span className="block text-xs sm:text-sm font-semibold text-gray-800 mb-1.5 sm:mb-2">
                     Qual tecnologia está procurando?
                   </span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-1.5 sm:gap-y-2 gap-x-3">
                     {[
                       { id: "cloud", label: "Computação em Nuvem" },
                       { id: "services", label: "Serviços" },
@@ -507,13 +532,13 @@ export function GsapMenu({
                     ].map((tech) => (
                       <label 
                         key={tech.id} 
-                        className="flex items-center gap-3 text-sm font-normal text-gray-600 cursor-pointer select-none"
+                        className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer select-none"
                       >
                         <input
                           type="checkbox"
                           checked={technologies.includes(tech.label)}
                           onChange={() => handleTechChange(tech.label)}
-                          className="w-4 h-4 rounded border-gray-300 text-[#0E66FF] focus:ring-[#0E66FF] cursor-pointer"
+                          className="w-3.5 h-3.5 rounded border-gray-300 text-[#0E66FF] focus:ring-[#0E66FF] cursor-pointer"
                           disabled={status === "submitting"}
                         />
                         {tech.label}
@@ -524,18 +549,18 @@ export function GsapMenu({
 
                 {/* Quais são as necessidades da sua empresa? */}
                 <div className="nav-item">
-                  <label className="block text-sm font-semibold text-gray-800 mb-2">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-800 mb-1">
                     Quais são as necessidades da sua empresa? <span className="text-danger">*</span>
                   </label>
                   <textarea
                     required
-                    rows={4}
+                    rows={2}
                     aria-invalid={!!errors.message}
                     value={message}
                     onChange={(e) => { setMessage(e.target.value); clearError("message"); }}
                     placeholder="Digite sua mensagem..."
                     className={cn(
-                      "w-full px-4 py-3 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-[#0E66FF] focus:ring-2 focus:ring-[#0E66FF]/10 resize-none bg-white placeholder-gray-400 transition-all",
+                      "w-full px-3.5 py-2 text-xs sm:text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-[#0E66FF] focus:ring-2 focus:ring-[#0E66FF]/10 resize-none bg-white placeholder-gray-400 transition-all",
                       errors.message && "field-error"
                     )}
                     disabled={status === "submitting"}
@@ -545,7 +570,7 @@ export function GsapMenu({
 
                 {/* Termos de Uso */}
                 <div className="nav-item">
-                  <label className="flex items-start gap-3 text-sm font-normal text-gray-600 cursor-pointer select-none">
+                  <label className="flex items-start gap-2.5 text-xs font-normal text-gray-600 cursor-pointer select-none">
                     <input
                       type="checkbox"
                       required
@@ -553,7 +578,7 @@ export function GsapMenu({
                       checked={agreeToTerms}
                       onChange={(e) => { setAgreeToTerms(e.target.checked); clearError("agreeToTerms"); }}
                       className={cn(
-                        "w-4 h-4 mt-0.5 rounded border-gray-300 text-[#0E66FF] focus:ring-[#0E66FF] cursor-pointer",
+                        "w-3.5 h-3.5 mt-0.5 rounded border-gray-300 text-[#0E66FF] focus:ring-[#0E66FF] cursor-pointer",
                         errors.agreeToTerms && "field-error"
                       )}
                       disabled={status === "submitting"}
@@ -569,10 +594,10 @@ export function GsapMenu({
                 </div>
 
                 {/* Submit button aligned bottom right */}
-                <div className="nav-login flex justify-end mt-2">
+                <div className="nav-login flex justify-end mt-1">
                   <button
                     type="submit"
-                    className="px-8 py-3 bg-[#001DFF] hover:bg-[#0b21e8] text-white font-sans font-semibold rounded-full text-sm transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 active:scale-95 shadow-md shadow-[#001DFF]/15"
+                    className="px-6 py-2.5 bg-[#001DFF] hover:bg-[#0b21e8] text-white font-sans font-semibold rounded-full text-xs sm:text-sm transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 active:scale-95 shadow-md shadow-[#001DFF]/15"
                     disabled={status === "submitting"}
                   >
                     {status === "submitting" ? (

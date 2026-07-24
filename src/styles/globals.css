@@ -400,14 +400,15 @@
 }
 
 .gsap-menu-theme .nav-top {
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   width: 100%;
   background: var(--white);
   color: var(--black);
   transform: translateX(-101%);
   display: flex;
   flex-direction: column;
-  padding: 50px 28px 28px;
+  padding: 24px 24px 20px;
   overflow-y: auto;
   position: relative;
   z-index: 3;
@@ -415,8 +416,15 @@
   overscroll-behavior: contain;
 }
 
+@media (max-height: 800px) {
+  .gsap-menu-theme .nav-top {
+    padding: 16px 20px 16px;
+  }
+}
+
 .gsap-menu-theme .nav-middle {
   position: relative;
+  flex-shrink: 0;
   width: 100%;
   background: linear-gradient(
     135deg,
@@ -428,10 +436,36 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 24px 28px;
+  padding: 14px 24px;
   z-index: 2;
   border-color: #2c2150;
-  min-height: 180px;
+  min-height: auto;
+}
+
+@media (max-height: 850px) {
+  .gsap-menu-theme .nav-middle {
+    padding: 10px 20px;
+  }
+  .gsap-menu-theme .nav-middle-header {
+    margin-bottom: 4px;
+  }
+  .gsap-menu-theme .nav-middle-badge {
+    width: 36px;
+    height: 36px;
+  }
+  .gsap-menu-theme .nav-middle-badge svg {
+    width: 18px;
+    height: 18px;
+  }
+  .gsap-menu-theme .nav-middle-actions {
+    margin-top: 8px;
+  }
+}
+
+@media (max-height: 720px) {
+  .gsap-menu-theme .nav-middle-desc {
+    display: none;
+  }
 }
 
 .gsap-menu-theme .nav-middle-header {
@@ -515,14 +549,16 @@
 
 .gsap-menu-theme .nav-bottom {
   position: relative;
-  height: 120px;
+  flex-shrink: 0;
+  height: auto;
+  min-height: 48px;
   width: 100%;
   background: var(--black);
   color: var(--s50);
   transform: translateX(101%);
   display: flex;
   align-items: center;
-  padding: 24px 28px;
+  padding: 10px 24px;
   z-index: 1;
   border-color: var(--s25);
 }
