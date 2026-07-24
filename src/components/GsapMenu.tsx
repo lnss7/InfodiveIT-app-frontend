@@ -39,28 +39,21 @@ function FieldError({ message }: { message?: string }) {
   );
 }
 
-// Mascara automatica para o campo de Celular: +55 (00) 00000-0000
-function formatPhone(value: string): string {
-  const raw = value.replace(/\D/g, "");
-  if (!raw) return "";
-
-  let digits = raw;
-  if (digits.startsWith("55") && digits.length > 2) {
-    digits = digits.slice(2);
-  }
-
-  digits = digits.slice(0, 11);
+// Mascara automatica para o campo de Celular iniciando no DDD com +55 fixo
+function formatPhoneFromDDD(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 11);
+  if (!digits) return "";
 
   if (digits.length <= 2) {
-    return `+55 (${digits}`;
+    return `(${digits}`;
   }
   if (digits.length <= 6) {
-    return `+55 (${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
   }
   if (digits.length <= 10) {
-    return `+55 (${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
   }
-  return `+55 (${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
 }
 
 interface GsapMenuProps {
@@ -297,7 +290,7 @@ export function GsapMenu({
     api.enviarLead({
       nomeCompleto: `${firstName} ${lastName}`.trim(),
       email,
-      telefone: phone || undefined,
+      telefone: phone ? `+55 ${phone}` : undefined,
       empresa: company,
       cargo: role || undefined,
       mensagem: message || undefined,
@@ -457,20 +450,25 @@ export function GsapMenu({
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       Celular <span className="text-danger">*</span>
                     </label>
-                    <input
-                      type="tel"
-                      required
-                      aria-invalid={!!errors.phone}
-                      value={phone}
-                      onChange={(e) => { setPhone(formatPhone(e.target.value)); clearError("phone"); }}
-                      placeholder="+55 (00) 00000-0000"
-                      maxLength={19}
-                      className={cn(
-                        "w-full px-3.5 h-10 sm:h-11 text-xs sm:text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-[#0E66FF] focus:ring-2 focus:ring-[#0E66FF]/10 bg-white text-gray-900 transition-all",
-                        errors.phone && "field-error"
-                      )}
-                      disabled={status === "submitting"}
-                    />
+                    <div className="flex items-center w-full">
+                      <span className="h-10 sm:h-11 px-3 bg-gray-100 border border-r-0 border-gray-200 rounded-l-xl text-xs sm:text-sm font-semibold text-gray-600 flex items-center shrink-0 select-none">
+                        +55
+                      </span>
+                      <input
+                        type="tel"
+                        required
+                        aria-invalid={!!errors.phone}
+                        value={phone}
+                        onChange={(e) => { setPhone(formatPhoneFromDDD(e.target.value)); clearError("phone"); }}
+                        placeholder="(00) 00000-0000"
+                        maxLength={15}
+                        className={cn(
+                          "w-full px-3.5 h-10 sm:h-11 text-xs sm:text-sm border border-gray-200 rounded-r-xl rounded-l-none focus:outline-none focus:border-[#0E66FF] focus:ring-2 focus:ring-[#0E66FF]/10 bg-white text-gray-900 transition-all",
+                          errors.phone && "field-error"
+                        )}
+                        disabled={status === "submitting"}
+                      />
+                    </div>
                     <FieldError message={errors.phone} />
                   </div>
                 </div>
